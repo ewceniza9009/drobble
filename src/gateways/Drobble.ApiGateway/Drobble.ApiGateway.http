@@ -1,0 +1,6 @@
+@Drobble.ApiGateway_HostAddress = http://localhost:5015
+
+GET {{Drobble.ApiGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,6 @@
+@Drobble.Payment.Api_HostAddress = http://localhost:5081
+
+GET {{Drobble.Payment.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,103 @@
+# Auto-created file: docker-compose.yml# docker-compose.yml
+# Defines the local development infrastructure for the Drobble platform.
+# Run 'docker-compose up -d' from the root directory to start all services.
+
+version: '3.9'
+
+services:
+  # PostgreSQL for services like User Management and Order Management
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: drobble-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpass} # Use environment variable or default to 'devpass'
+      POSTGRES_DB: drobble-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB for services like Product Catalog and Shopping Cart
+  mongo-db:
+    image: mongo:7.0
+    container_name: drobble-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # RabbitMQ for asynchronous event-driven communication
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: drobble-rabbitmq
+    ports:
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    networks:
+      - backend
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Elasticsearch for the Search & Discovery Service
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2 # Use a specific version
+    container_name: drobble-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false # Disable security for local dev
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # Limit memory usage
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sS http://localhost:9200/_cluster/health | grep -q '\"status\":\"green|yellow\"'"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  # Seq for centralized, structured logging during development
+  seq:
+    image: datalust/seq:latest
+    container_name: drobble-seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:80" # Host port 5341 maps to container port 80 for the UI
+      - "5342:5341" # Ingestion port
+    networks:
+      - backend
+
+# Define networks for services to communicate
+networks:
+  backend:
+    driver: bridge
+
+# Define named volumes for data persistence
+volumes:
+  postgres-data:
+  mongo-data:
+  es-data:
