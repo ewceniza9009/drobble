@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from './store/store'; 
 import { fetchCart } from './store/cartSlice'; 
-import HomePage from './pages/HomPage';
+import HomePage from './pages/HomePage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage';
 import CartIcon from './components/CartIcon';

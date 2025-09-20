@@ -36,7 +36,17 @@ export const removeItemFromCart = createAsyncThunk(
 
 export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
   const response = await api.get('/cart');
-  return response.data?.items || []; // Return items or an empty array if no cart
+
+  // DEBUG: Log the full response to see its structure
+  //console.log("Full API Response for /cart:", response.data); 
+
+  // A more robust way to handle the response
+  if (response.data && response.data.items) {
+    return response.data.items;
+  }
+
+  // If no data or no items property, return an empty array
+  return [];
 });
 
 const cartSlice = createSlice({

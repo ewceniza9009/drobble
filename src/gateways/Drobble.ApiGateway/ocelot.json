@@ -40,6 +40,18 @@
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
+      "DownstreamPathTemplate": "/api/v1/carts/items/{productId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5256
+        }
+      ],
+      "UpstreamPathTemplate": "/api/cart/items/{productId}",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/carts/items",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

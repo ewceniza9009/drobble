@@ -3,6 +3,7 @@ import { store } from '../store/store'; // Import the Redux store
 
 const api = axios.create({
   baseURL: 'http://localhost:5015/api',
+  withCredentials: true,
 });
 
 // This interceptor runs before each request is sent
