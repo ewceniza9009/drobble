@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Drobble.OrderManagement.Application.Features.Orders.Commands;
 
 public record CreateOrderCommand(
-    Guid UserId,
+    // Guid UserId,
     List<OrderItemDto> Items,
     string Currency) : IRequest<Guid>;
 
