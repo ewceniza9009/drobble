@@ -1,0 +1,32 @@
+# tye.yml
+name: drobble
+services:
+- name: product-catalog
+  project: src/services/ProductCatalog/Drobble.ProductCatalog.Api/Drobble.ProductCatalog.Api.csproj
+  bindings:
+    - port: 5220
+      protocol: http
+
+- name: user-management
+  project: src/services/UserManagement/Drobble.UserManagement.Api/Drobble.UserManagement.Api.csproj
+  bindings:
+    - port: 5297
+      protocol: http
+
+- name: order-management
+  project: src/services/OrderManagement/Drobble.OrderManagement.Api/Drobble.OrderManagement.Api.csproj
+  bindings:
+    - port: 5059
+      protocol: http
+
+- name: shopping-cart
+  project: src/services/ShoppingCart/Drobble.ShoppingCart.Api/Drobble.ShoppingCart.Api.csproj
+  bindings:
+    - port: 5256
+      protocol: http
+
+# - name: api-gateway
+#   project: src/gateways/Drobble.ApiGateway/Drobble.ApiGateway.csproj
+#   bindings:
+#     - port: 5015
+#       protocol: http
