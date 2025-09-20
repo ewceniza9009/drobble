@@ -1,4 +1,5 @@
 ﻿using Drobble.ShoppingCart.Application.Features.Carts.Commands;
+using Drobble.ShoppingCart.Application.Features.Carts.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -55,5 +56,38 @@ public class CartsController : ControllerBase
         var cartDto = await _mediator.Send(command);
 
         return Ok(cartDto);
+    }
+
+    [HttpDelete("items/{productId}")]
+    public async Task<IActionResult> RemoveItemFromCart(string productId)
+    {
+        Guid? userId = null;
+        string? sessionId = Request.Cookies[SessionCookieName];
+
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var id))
+            {
+                userId = id;
+            }
+        }
+
+        if (userId is null && sessionId is null)
+        {
+            return BadRequest("No active cart session found.");
+        }
+
+        var command = new RemoveItemFromCartCommand(productId, userId, sessionId);
+        var cartDto = await _mediator.Send(command);
+
+        return Ok(cartDto);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCart()
+    {
+        var cart = await _mediator.Send(new GetCartQuery());
+        return cart is not null ? Ok(cart) : Ok(null); // Return OK with null if no cart exists
     }
 }

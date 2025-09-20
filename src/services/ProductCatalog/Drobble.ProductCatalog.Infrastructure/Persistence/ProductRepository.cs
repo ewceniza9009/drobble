@@ -29,6 +29,20 @@ public class ProductRepository : IProductRepository
     {
         await _productsCollection.InsertOneAsync(product, null, cancellationToken);
     }
+
+    public async Task<(IEnumerable<Product> Products, int Total)> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Product>.Filter.Eq(p => p.IsActive, true);
+
+        var total = await _productsCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
+
+        var products = await _productsCollection.Find(filter)
+            .Skip((page - 1) * pageSize)
+            .Limit(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (products, (int)total);
+    }
 }
 
 // Helper class to bind appsettings.json to a C# object

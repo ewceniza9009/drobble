@@ -6,10 +6,25 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configure Ocelot
+var AllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+// 1. Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: AllowSpecificOrigins,
+        policy =>
+        {
+            // Allow requests from our Vite frontend development server
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+// 2. Configure Ocelot
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
-// 2. Add JWT Authentication
+// 3. Add JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -29,7 +44,8 @@ builder.Services.AddOcelot(builder.Configuration);
 
 var app = builder.Build();
 
-// 3. Use Authentication and Ocelot middleware
+// 4. Use middleware (order is important)
+app.UseCors(AllowSpecificOrigins); // Use CORS policy
 app.UseAuthentication();
 app.UseOcelot().Wait();
 

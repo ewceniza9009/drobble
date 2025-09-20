@@ -1,4 +1,5 @@
 ﻿// src/services/ProductCatalog/Drobble.ProductCatalog.Api/Controllers/ProductsController.cs
+using Drobble.ProductCatalog.Application.Features;
 using Drobble.ProductCatalog.Application.Features.Products.Commands;
 using Drobble.ProductCatalog.Application.Features.Products.Queries;
 using MediatR;
@@ -35,5 +36,14 @@ public class ProductsController : ControllerBase
         var product = await _mediator.Send(query);
 
         return product is not null ? Ok(product) : NotFound();
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(PaginatedResult<ProductDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetProducts([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var query = new GetProductsQuery(page, pageSize);
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 }

@@ -21,6 +21,8 @@ builder.Services.AddHttpClient<IProductCatalogService, ProductCatalogService>(cl
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductCatalogApi"]!);
 });
 
+builder.Services.AddHttpContextAccessor();
+
 // Register MediatR
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(AddItemToCartCommand).Assembly));

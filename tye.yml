@@ -25,8 +25,8 @@ services:
     - port: 5256
       protocol: http
 
-# - name: api-gateway
-#   project: src/gateways/Drobble.ApiGateway/Drobble.ApiGateway.csproj
-#   bindings:
-#     - port: 5015
-#       protocol: http
+- name: api-gateway
+  project: src/gateways/Drobble.ApiGateway/Drobble.ApiGateway.csproj
+  bindings:
+    - port: 5015
+      protocol: http

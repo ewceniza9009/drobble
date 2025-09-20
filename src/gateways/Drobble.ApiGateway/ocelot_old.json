@@ -26,19 +26,7 @@
       "UpstreamPathTemplate": "/api/auth/{action}",
       "UpstreamHttpMethod": [ "POST" ]
     },
-    // Shopping Cart (Now Public for Guests)
-    {
-      "DownstreamPathTemplate": "/api/v1/carts",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5256
-        }
-      ],
-      "UpstreamPathTemplate": "/api/cart",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
+    // Shopping Cart (Public GET, Secure POST)
     {
       "DownstreamPathTemplate": "/api/v1/carts/items",
       "DownstreamScheme": "http",
@@ -49,7 +37,12 @@
         }
       ],
       "UpstreamPathTemplate": "/api/cart/items",
-      "UpstreamHttpMethod": [ "POST" ]
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteIsAuthenticationRequired": false // Allows guest and authenticated users
     },
     // Order Management (Secure)
     {
