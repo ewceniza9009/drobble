@@ -16,6 +16,7 @@ public class Product : Entity<ObjectId>
     public List<ProductAttribute> Attributes { get; set; } = new();
     public List<string> ImageUrls { get; set; } = new();
     public bool IsActive { get; set; } = true;
+    public string? ImageUrl { get; set; } 
 }
 
 public class ProductAttribute

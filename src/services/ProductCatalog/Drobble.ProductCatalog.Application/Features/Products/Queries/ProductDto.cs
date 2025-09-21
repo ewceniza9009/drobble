@@ -1,5 +1,4 @@
-﻿// src/services/ProductCatalog/Drobble.ProductCatalog.Application/Features/Products/Queries/ProductDto.cs
-namespace Drobble.ProductCatalog.Application.Features.Products.Queries;
+﻿namespace Drobble.ProductCatalog.Application.Features.Products.Queries;
 
 public class ProductDto
 {
@@ -10,4 +9,5 @@ public class ProductDto
     public int Stock { get; set; }
     public string CategoryId { get; set; }
     public bool IsActive { get; set; }
+    public string? ImageUrl { get; set; } // Added this property
 }

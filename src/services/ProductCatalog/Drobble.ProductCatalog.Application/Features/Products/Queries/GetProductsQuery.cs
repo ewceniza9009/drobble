@@ -26,7 +26,8 @@ public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, Paginat
             Price = p.Price,
             Stock = p.Stock,
             CategoryId = p.CategoryId.ToString(),
-            IsActive = p.IsActive
+            IsActive = p.IsActive,
+            ImageUrl = p.ImageUrls.FirstOrDefault() // Map the first image
         }).ToList();
 
         return new PaginatedResult<ProductDto>

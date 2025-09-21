@@ -34,4 +34,13 @@ public class OrdersController : ControllerBase
 
         return order is not null ? Ok(order) : NotFound();
     }
+
+    [Authorize] // Ensure this endpoint is protected
+    [HttpGet("my-orders")]
+    public async Task<IActionResult> GetMyOrders()
+    {
+        var query = new GetMyOrdersQuery();
+        var orders = await _mediator.Send(query);
+        return Ok(orders);
+    }
 }

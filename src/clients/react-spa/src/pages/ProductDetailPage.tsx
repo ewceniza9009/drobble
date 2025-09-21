@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'; // Import useDispatch
 import type { AppDispatch } from '../store/store';
 import { addItemToCart } from '../store/cartSlice'; // Import our action
 import api from '../api/axios';
+import { toast } from 'react-hot-toast'
 
 interface Product {
   id: string;
@@ -22,7 +23,13 @@ const ProductDetailPage = () => {
 
     const handleAddToCart = () => {
         if (product) {
-            dispatch(addItemToCart({ productId: product.id, quantity: 1 }));
+            const promise = dispatch(addItemToCart({ productId: product.id, quantity: 1 })).unwrap();
+
+            toast.promise(promise, {
+                loading: 'Adding to cart...',
+                success: <b>Item added to cart!</b>,
+                error: <b>Could not add item.</b>,
+            });
         }
     };
 
