@@ -13,6 +13,18 @@
       "UpstreamPathTemplate": "/api/products/{everything}",
       "UpstreamHttpMethod": [ "GET" ]
     },
+    {
+      "DownstreamPathTemplate": "/api/v1/products/batch",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5220
+        }
+      ],
+      "UpstreamPathTemplate": "/api/products/batch",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
     // User Management (Public)
     {
       "DownstreamPathTemplate": "/api/v1/users/{action}",

@@ -4,6 +4,7 @@ using Drobble.ProductCatalog.Application.Features.Products.Commands;
 using Drobble.ProductCatalog.Application.Features.Products.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using System.Threading.Tasks;
 
 [ApiController]
@@ -45,5 +46,14 @@ public class ProductsController : ControllerBase
         var query = new GetProductsQuery(page, pageSize);
         var result = await _mediator.Send(query);
         return Ok(result);
+    }
+
+    [HttpPost("batch")]
+    [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetProductsByIds([FromBody] IEnumerable<string> ids)
+    {
+        var query = new GetProductsByIdsQuery(ids);
+        var products = await _mediator.Send(query);
+        return Ok(products);
     }
 }

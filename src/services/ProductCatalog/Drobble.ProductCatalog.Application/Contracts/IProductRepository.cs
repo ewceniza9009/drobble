@@ -10,4 +10,5 @@ public interface IProductRepository
     Task AddAsync(Product product, CancellationToken cancellationToken = default);
     // We will add other methods like UpdateAsync, GetAllAsync, etc. later
     Task<(IEnumerable<Product> Products, int Total)> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Product>> GetByIdsAsync(IEnumerable<ObjectId> ids, CancellationToken cancellationToken = default);
 }

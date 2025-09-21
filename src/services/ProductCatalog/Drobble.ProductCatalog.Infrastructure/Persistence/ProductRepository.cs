@@ -43,6 +43,13 @@ public class ProductRepository : IProductRepository
 
         return (products, (int)total);
     }
+
+    public async Task<IEnumerable<Product>> GetByIdsAsync(IEnumerable<ObjectId> ids, CancellationToken cancellationToken = default)
+    {
+        // Use the $in operator in MongoDB to efficiently fetch multiple documents
+        var filter = Builders<Product>.Filter.In(p => p.Id, ids);
+        return await _productsCollection.Find(filter).ToListAsync(cancellationToken);
+    }
 }
 
 // Helper class to bind appsettings.json to a C# object
