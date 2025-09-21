@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import type { RootState } from '../store/store';
 import type { AppDispatch } from '../store/store';
 import { removeItemFromCart } from '../store/cartSlice';
@@ -32,9 +33,17 @@ const CartPage = () => {
               className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded"
             >
               Remove
-            </button>
+            </button>             
           </div>
         ))}
+      </div>
+      <div className="mt-6 text-right">
+        <Link 
+          to="/checkout"
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Proceed to Checkout
+        </Link>
       </div>
     </div>
   );

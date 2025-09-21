@@ -8,6 +8,9 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage';
 import CartIcon from './components/CartIcon';
 import LoginPage from './pages/LoginPage';
+import CheckoutPage from './components/CheckoutPage';
+import ProtectedRoute from './components/ProtectedRoute';
+
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,6 +38,9 @@ function App() {
           <Route path="/products/:productId" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/checkout" element={<CheckoutPage />} />
+          </Route>
         </Routes>
       </main>
     </div>

@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import api from '../api/axios';
+import type { RootState } from './store';
 
 interface CartItem {
+  priceAtAdd: number;
   productId: string;
   quantity: number;
 }
@@ -49,6 +51,21 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
   return [];
 });
 
+export const placeOrder = createAsyncThunk(
+  'cart/placeOrder',
+  async (_, { getState }) => {
+    const { cart } = getState() as RootState;
+    const orderItems = cart.items.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: 0 // Price should be validated/fetched on the backend
+    }));
+
+    const response = await api.post('/orders', { items: orderItems, currency: 'USD' });
+    return response.data;
+  }
+);
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
@@ -75,7 +92,17 @@ const cartSlice = createSlice({
         state.status = 'succeeded';
         state.items = action.payload;
       })
-      .addCase(removeItemFromCart.rejected, (state) => { state.status = 'failed'; });
+      .addCase(removeItemFromCart.rejected, (state) => { state.status = 'failed'; })
+      .addCase(placeOrder.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(placeOrder.fulfilled, (state) => {
+        state.status = 'succeeded';
+        state.items = []; // Clear the cart on successful order
+      })
+      .addCase(placeOrder.rejected, (state) => {
+        state.status = 'failed';
+      });
   },
 });
 export default cartSlice.reducer;
