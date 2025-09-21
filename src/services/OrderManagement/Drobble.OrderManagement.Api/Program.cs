@@ -1,6 +1,8 @@
+// ---- File: src/services/OrderManagement/Api/Program.cs ----
 using Drobble.OrderManagement.Application.Contracts;
 using Drobble.OrderManagement.Application.Features.Orders.Commands;
 using Drobble.OrderManagement.Infrastructure.Persistence;
+using Drobble.OrderManagement.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -15,6 +17,13 @@ builder.Services.AddDbContext<OrderDbContext>(options =>
 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddHttpContextAccessor();
+
+// Register the inter-service client with HttpClientFactory
+builder.Services.AddHttpClient<IProductCatalogService, ProductCatalogService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductCatalogApi"]!);
+});
+
 
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommand).Assembly));
@@ -38,12 +47,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// *** UPDATE SWAGGER GEN START ***
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Order Management API", Version = "v1" });
 
-    // Define the Bearer Auth scheme
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -54,7 +61,6 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer"
     });
 
-    // Make sure swagger UI requires a Bearer token to be specified
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -70,7 +76,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-// *** UPDATE SWAGGER GEN END ***
 
 var app = builder.Build();
 
