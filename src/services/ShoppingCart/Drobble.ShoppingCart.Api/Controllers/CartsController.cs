@@ -1,6 +1,8 @@
-﻿using Drobble.ShoppingCart.Application.Features.Carts.Commands;
+﻿// ---- File: src/services/ShoppingCart/Api/Controllers/CartsController.cs ----
+using Drobble.ShoppingCart.Application.Features.Carts.Commands;
 using Drobble.ShoppingCart.Application.Features.Carts.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -19,7 +21,6 @@ public class CartsController : ControllerBase
         _mediator = mediator;
     }
 
-    // We only need a body for the product and quantity
     public record AddItemRequest(string ProductId, int Quantity);
 
     [HttpPost("items")]
@@ -28,7 +29,6 @@ public class CartsController : ControllerBase
         Guid? userId = null;
         string? sessionId = null;
 
-        // Check if the user is authenticated via JWT
         if (User.Identity?.IsAuthenticated == true)
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
@@ -37,16 +37,15 @@ public class CartsController : ControllerBase
                 userId = id;
             }
         }
-        else // The user is a guest
+        else
         {
             sessionId = Request.Cookies[SessionCookieName];
             if (string.IsNullOrEmpty(sessionId))
             {
-                // If no session cookie exists, create one
                 sessionId = Guid.NewGuid().ToString();
                 Response.Cookies.Append(SessionCookieName, sessionId, new CookieOptions
                 {
-                    HttpOnly = true, // Protects against XSS
+                    HttpOnly = true,
                     Expires = DateTime.UtcNow.AddDays(7)
                 });
             }
@@ -88,6 +87,14 @@ public class CartsController : ControllerBase
     public async Task<IActionResult> GetCart()
     {
         var cart = await _mediator.Send(new GetCartQuery());
-        return cart is not null ? Ok(cart) : Ok(null); // Return OK with null if no cart exists
+        return cart is not null ? Ok(cart) : Ok(null);
+    }
+
+    [HttpPost("merge")]
+    [Authorize] // This endpoint is only for authenticated users
+    public async Task<IActionResult> MergeCart()
+    {
+        var mergedCart = await _mediator.Send(new MergeCartCommand());
+        return Ok(mergedCart);
     }
 }

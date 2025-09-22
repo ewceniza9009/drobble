@@ -1,6 +1,8 @@
-﻿using Drobble.ShoppingCart.Application.Contracts;
+﻿// ---- File: src/services/ShoppingCart/Infrastructure/Persistence/CartRepository.cs ----
+using Drobble.ShoppingCart.Application.Contracts;
 using Drobble.ShoppingCart.Domain.Entities;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Threading;
@@ -44,5 +46,10 @@ public class CartRepository : ICartRepository
     public async Task UpdateAsync(Cart cart, CancellationToken cancellationToken = default)
     {
         await _cartsCollection.ReplaceOneAsync(c => c.Id == cart.Id, cart, cancellationToken: cancellationToken);
+    }
+
+    public async Task DeleteAsync(ObjectId cartId, CancellationToken cancellationToken = default)
+    {
+        await _cartsCollection.DeleteOneAsync(c => c.Id == cartId, cancellationToken);
     }
 }

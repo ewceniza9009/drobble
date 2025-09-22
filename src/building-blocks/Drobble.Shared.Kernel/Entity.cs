@@ -1,4 +1,4 @@
-// src/building-blocks/Drobble.Shared.Kernel/Entity.cs
+// ---- File: src/building-blocks/Drobble.Shared.Kernel/Entity.cs ----
 using System;
 
 namespace Drobble.Shared.Kernel;

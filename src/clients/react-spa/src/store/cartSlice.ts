@@ -20,12 +20,12 @@ const initialState: CartState = {
   status: 'idle',
 };
 
-// This is an async "thunk" that handles the API call
+// Async Thunks
 export const addItemToCart = createAsyncThunk(
   'cart/addItem',
   async (item: { productId: string; quantity: number }) => {
     const response = await api.post('/cart/items', item);
-    return response.data.items; // Assuming the API returns the updated list of items
+    return response.data.items;
   }
 );
 
@@ -39,17 +39,7 @@ export const removeItemFromCart = createAsyncThunk(
 
 export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
   const response = await api.get('/cart');
-
-  // DEBUG: Log the full response to see its structure
-  //console.log("Full API Response for /cart:", response.data); 
-
-  // A more robust way to handle the response
-  if (response.data && response.data.items) {
-    return response.data.items;
-  }
-
-  // If no data or no items property, return an empty array
-  return [];
+  return response.data?.items || [];
 });
 
 export const placeOrder = createAsyncThunk(
@@ -61,39 +51,48 @@ export const placeOrder = createAsyncThunk(
         quantity: item.quantity,
         price: 0 // Price is set on the backend
     }));
-
     const response = await api.post('/orders', { items: orderItems, currency: 'USD' });
-    return response.data; // Return the created order object
+    return response.data;
   }
 );
 
+export const mergeCart = createAsyncThunk('cart/mergeCart', async () => {
+    const response = await api.post('/cart/merge');
+    return response.data?.items || [];
+});
+
+// The Slice with corrected reducers
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Cases for fetching cart
+      // Cases for fetchCart
       .addCase(fetchCart.pending, (state) => { state.status = 'loading'; })
       .addCase(fetchCart.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
         state.status = 'succeeded';
         state.items = action.payload;
       })
       .addCase(fetchCart.rejected, (state) => { state.status = 'failed'; })
-      // Cases for adding items
+
+      // Cases for addItemToCart
       .addCase(addItemToCart.pending, (state) => { state.status = 'loading'; })
       .addCase(addItemToCart.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
         state.status = 'succeeded';
         state.items = action.payload;
       })
       .addCase(addItemToCart.rejected, (state) => { state.status = 'failed'; })
-      // Add cases for removing items
+
+      // Cases for removeItemFromCart
       .addCase(removeItemFromCart.pending, (state) => { state.status = 'loading'; })
       .addCase(removeItemFromCart.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
         state.status = 'succeeded';
         state.items = action.payload;
       })
       .addCase(removeItemFromCart.rejected, (state) => { state.status = 'failed'; })
+
+      // Cases for placeOrder
       .addCase(placeOrder.pending, (state) => {
         state.status = 'loading';
       })
@@ -101,9 +100,22 @@ const cartSlice = createSlice({
         state.status = 'succeeded';
         state.items = []; // Clear the cart on successful order
       })
-      .addCase(placeOrder.rejected, (state) => {
+      .addCase(placeOrder.rejected, (state) => { // Single, correct entry
+        state.status = 'failed';
+      })
+
+      // Cases for mergeCart
+      .addCase(mergeCart.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(mergeCart.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+        state.status = 'succeeded';
+        state.items = action.payload;
+      })
+      .addCase(mergeCart.rejected, (state) => {
         state.status = 'failed';
       });
   },
 });
+
 export default cartSlice.reducer;

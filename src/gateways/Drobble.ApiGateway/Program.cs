@@ -1,3 +1,4 @@
+// ---- File: src/gateways/Drobble.ApiGateway/Program.cs ----
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
@@ -14,11 +15,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: AllowSpecificOrigins,
         policy =>
         {
-            // Allow requests from our Vite frontend development server
-            policy.WithOrigins("http://localhost:5173")
+            // UPDATE THIS LINE: Add the new port your Vite app is running on.
+            policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
                   .AllowAnyHeader()
                   .AllowAnyMethod()
-                  .AllowCredentials(); 
+                  .AllowCredentials();
         });
 });
 

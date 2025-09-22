@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿// ---- File: src/services/ShoppingCart/Application/Features/Carts/Queries/GetCartQuery.cs ----
+using MediatR;
 using System;
 using Drobble.ShoppingCart.Application.Contracts;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using Drobble.ShoppingCart.Application.Mappings; // Add this using directive
 
 namespace Drobble.ShoppingCart.Application.Features.Carts.Queries;
 
@@ -41,21 +43,7 @@ public class GetCartQueryHandler : IRequestHandler<GetCartQuery, CartDto?>
             ? await _cartRepository.GetByUserIdAsync(userId.Value, cancellationToken)
             : (sessionId != null ? await _cartRepository.GetBySessionIdAsync(sessionId, cancellationToken) : null);
 
-        if (cart is null)
-        {
-            return null;
-        }
-
-        return new CartDto
-        {
-            Id = cart.Id.ToString(),
-            Total = cart.Total,
-            Items = cart.Items.Select(i => new CartItemDto
-            {
-                ProductId = i.ProductId.ToString(),
-                Quantity = i.Quantity,
-                PriceAtAdd = i.PriceAtAdd
-            }).ToList()
-        };
+        // Use the new extension method
+        return cart.ToDto();
     }
 }

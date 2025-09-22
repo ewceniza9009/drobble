@@ -1,9 +1,11 @@
-﻿using MediatR;
+﻿// ---- File: src/services/ShoppingCart/Application/Features/Carts/Commands/RemoveItemFromCartCommand.cs ----
+using MediatR;
 using System;
 using Drobble.ShoppingCart.Application.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Drobble.ShoppingCart.Application.Mappings; // Add this using directive
 using MongoDB.Bson;
 
 namespace Drobble.ShoppingCart.Application.Features.Carts.Commands;
@@ -40,17 +42,7 @@ public class RemoveItemFromCartCommandHandler : IRequestHandler<RemoveItemFromCa
             await _cartRepository.UpdateAsync(cart, cancellationToken);
         }
 
-        // Map and return the updated cart state
-        return new CartDto
-        {
-            Id = cart.Id.ToString(),
-            Total = cart.Total,
-            Items = cart.Items.Select(i => new CartItemDto
-            {
-                ProductId = i.ProductId.ToString(),
-                Quantity = i.Quantity,
-                PriceAtAdd = i.PriceAtAdd
-            }).ToList()
-        };
+        // Use the new extension method
+        return cart.ToDto()!;
     }
 }

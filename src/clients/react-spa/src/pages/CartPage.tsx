@@ -94,7 +94,7 @@ const CartPage = () => {
             </div>
           </div>
         ))}
-        <div className="flex justify-end font-bold text-xl pt-4 border-t">
+        <div className="flex justify-end font-bold text-xl pt-4">
           <span>Total: ${cartTotal.toFixed(2)}</span>
         </div>
       </div>

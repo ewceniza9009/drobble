@@ -1,9 +1,10 @@
 // ---- File: src/pages/LoginPage.tsx ----
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom'; // Import Link
+import { useNavigate, Link } from 'react-router-dom';
 import type { AppDispatch, RootState } from '../store/store';
 import { loginUser } from '../store/authSlice';
+import { mergeCart } from '../store/cartSlice'; // Import mergeCart
 import { toast } from 'react-hot-toast';
 
 const LoginPage = () => {
@@ -17,7 +18,9 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       await dispatch(loginUser({ username, password })).unwrap();
-      navigate('/'); // Redirect to homepage on successful login
+      // After successful login, dispatch mergeCart
+      await dispatch(mergeCart()).unwrap();
+      navigate('/'); 
     } catch (error) {
       toast.error("Invalid username or password.");
       console.error('Failed to login:', error);
