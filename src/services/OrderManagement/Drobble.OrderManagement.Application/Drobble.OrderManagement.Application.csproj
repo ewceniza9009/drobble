@@ -7,11 +7,13 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MassTransit.RabbitMQ" Version="8.5.2" />
 		<PackageReference Include="MediatR" Version="12.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\building-blocks\Drobble.Shared.EventBus\Drobble.Shared.EventBus.csproj" />
 	  <ProjectReference Include="..\Drobble.OrderManagement.Domain\Drobble.OrderManagement.Domain.csproj" />
 	</ItemGroup>
 

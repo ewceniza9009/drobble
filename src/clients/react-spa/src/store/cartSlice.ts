@@ -1,3 +1,4 @@
+// ---- File: src/store/cartSlice.ts ----
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import api from '../api/axios';
@@ -58,11 +59,11 @@ export const placeOrder = createAsyncThunk(
     const orderItems = cart.items.map(item => ({
         productId: item.productId,
         quantity: item.quantity,
-        price: 0 // Price should be validated/fetched on the backend
+        price: 0 // Price is set on the backend
     }));
 
     const response = await api.post('/orders', { items: orderItems, currency: 'USD' });
-    return response.data;
+    return response.data; // Return the created order object
   }
 );
 

@@ -1,4 +1,6 @@
+// ---- File: src/pages/ProfilePage.tsx ----
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom'; // Import Link
 import api from '../api/axios';
 
 interface Order {
@@ -16,7 +18,6 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        // The API path here matches the UpstreamPathTemplate in ocelot.json for this route
         const response = await api.get<Order[]>('/orders/my-orders'); 
         setOrders(response.data);
       } catch (error) {
@@ -38,14 +39,16 @@ const ProfilePage = () => {
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <div key={order.id} className="bg-white p-4 rounded-lg shadow">
-              <div className="flex justify-between items-center">
-                <p className="font-semibold">Order ID: {order.id.substring(0, 8)}...</p>
-                <p className="text-sm text-gray-600">{new Date(order.createdAt).toLocaleDateString()}</p>
+            <Link to={`/orders/${order.id}`} key={order.id} className="block hover:bg-gray-50 transition-colors">
+              <div className="bg-white p-4 rounded-lg shadow">
+                <div className="flex justify-between items-center">
+                  <p className="font-semibold">Order ID: {order.id.substring(0, 8)}...</p>
+                  <p className="text-sm text-gray-600">{new Date(order.createdAt).toLocaleDateString()}</p>
+                </div>
+                <p>Status: {order.status}</p>
+                <p>Total: ${order.totalAmount.toFixed(2)}</p>
               </div>
-              <p>Status: {order.status}</p>
-              <p>Total: ${order.totalAmount.toFixed(2)}</p>
-            </div>
+            </Link>
           ))}
         </div>
       )}

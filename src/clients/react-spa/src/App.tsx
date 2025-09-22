@@ -1,3 +1,4 @@
+// ---- File: src/App.tsx ----
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,6 +17,7 @@ const CartPage = lazy(() => import('./pages/CartPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const CheckoutPage = lazy(() => import('./components/CheckoutPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const OrderDetailPage = lazy(() => import('./pages/OrderDetailPage')); // Import new page
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -50,7 +52,7 @@ function App() {
               </>
             ) : (
               <Link to="/login" className="hover:underline">Login</Link>
-            )}            
+            )}              
           </div>
         </nav>
       </header>
@@ -65,6 +67,7 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/orders/:orderId" element={<OrderDetailPage />} /> {/* Add new route */}
             </Route>
           </Routes>
         </Suspense>

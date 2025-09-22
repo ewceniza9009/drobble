@@ -3,6 +3,7 @@ using Drobble.OrderManagement.Application.Contracts;
 using Drobble.OrderManagement.Application.Features.Orders.Commands;
 using Drobble.OrderManagement.Infrastructure.Persistence;
 using Drobble.OrderManagement.Infrastructure.Services;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,7 +19,6 @@ builder.Services.AddDbContext<OrderDbContext>(options =>
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddHttpContextAccessor();
 
-// Register the inter-service client with HttpClientFactory
 builder.Services.AddHttpClient<IProductCatalogService, ProductCatalogService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductCatalogApi"]!);
@@ -27,6 +27,16 @@ builder.Services.AddHttpClient<IProductCatalogService, ProductCatalogService>(cl
 
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommand).Assembly));
+
+// Configure MassTransit with RabbitMQ for publishing events
+builder.Services.AddMassTransit(busConfig => {
+    busConfig.UsingRabbitMq((context, cfg) => {
+        cfg.Host(builder.Configuration["RabbitMQ:Host"], "/", h => {
+            h.Username("guest");
+            h.Password("guest");
+        });
+    });
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

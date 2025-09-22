@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\building-blocks\Drobble.Shared.EventBus\Drobble.Shared.EventBus.csproj" />
     <ProjectReference Include="..\Drobble.Payment.Domain\Drobble.Payment.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.5.2" />
     <PackageReference Include="MediatR" Version="12.2.0" />
   </ItemGroup>
 
