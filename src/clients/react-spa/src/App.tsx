@@ -15,10 +15,10 @@ const HomePage = lazy(() => import('./pages/HomePage'));
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
-const RegisterPage = lazy(() => import('./pages/RegisterPage')); // Import new page
-const CheckoutPage = lazy(() => import('./components/CheckoutPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage')); // Update the import path
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-const OrderDetailPage = lazy(() => import('./pages/OrderDetailPage'));
+const OrderDetailPage = lazy(() => import('./pages/OrderDetailPage'))
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();

@@ -1,55 +1,132 @@
-// ---- File: src/components/CheckoutPage.tsx ----
+// ---- File: src/pages/CheckoutPage.tsx ----
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import type { RootState, AppDispatch } from '../store/store';
 import { placeOrder } from '../store/cartSlice';
 import { toast } from 'react-hot-toast';
+import api from '../api/axios';
+import { FaShoppingCart } from 'react-icons/fa';
+
+// Interfaces for the enriched data we will fetch
+interface ProductDetail {
+  id: string;
+  name: string;
+  imageUrl: string;
+  price: number;
+}
+
+interface EnrichedCartItem {
+  productId: string;
+  quantity: number;
+  name: string;
+  price: number;
+  imageUrl: string;
+}
 
 const CheckoutPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { items, status } = useSelector((state: RootState) => state.cart);
-  const total = items.reduce((sum, item) => sum + (item.priceAtAdd * item.quantity), 0);
+  const { items: cartItems, status } = useSelector((state: RootState) => state.cart);
+
+  const [enrichedItems, setEnrichedItems] = useState<EnrichedCartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Redirect if the cart is empty after initial load
+    if (!isLoading && enrichedItems.length === 0) {
+      navigate('/cart');
+    }
+  }, [isLoading, enrichedItems, navigate]);
+
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      if (cartItems.length === 0) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const productIds = cartItems.map(item => item.productId);
+        const response = await api.post<ProductDetail[]>('/products/batch', productIds);
+        const productDetailsMap = new Map(response.data.map(p => [p.id, p]));
+
+        const newEnrichedItems = cartItems.map(item => {
+          const details = productDetailsMap.get(item.productId);
+          return {
+            ...item,
+            name: details?.name || 'Product Not Found',
+            price: details?.price || 0, // Use the current price from the backend
+            imageUrl: details?.imageUrl || '',
+          };
+        });
+
+        setEnrichedItems(newEnrichedItems);
+      } catch (error) {
+        console.error("Failed to fetch product details for checkout", error);
+        toast.error("Could not load product details. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProductDetails();
+  }, [cartItems]);
+  
+  const cartTotal = enrichedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   const handlePlaceOrder = async () => {
-    if (items.length === 0) {
-        toast.error("Your cart is empty.");
-        return;
-    }
-
     try {
-      // .unwrap() will return the payload or throw an error
       const createdOrder = await dispatch(placeOrder()).unwrap();
       toast.success('Order placed successfully!');
-      navigate(`/orders/${createdOrder.id}`); // Redirect to the new order detail page
+      navigate(`/orders/${createdOrder.id}`);
     } catch (error) {
       toast.error('Failed to place order.');
       console.error(error);
     }
   };
 
+  if (isLoading) {
+    return <div className="text-center p-8">Loading Checkout...</div>;
+  }
+  
   return (
-    <div>
+    <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-        {items.map(item => (
-          <div key={item.productId} className="flex justify-between py-2">
-            <span>Product ID: {item.productId.substring(0, 8)}... (x{item.quantity})</span>
-            <span>${(item.priceAtAdd * item.quantity).toFixed(2)}</span>
-          </div>
-        ))}
-        <hr className="my-4" />
-        <div className="flex justify-between font-bold text-lg">
-          <span>Total</span>
-          <span>${total.toFixed(2)}</span>
+      <div className="bg-white p-8 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-semibold mb-6 border-b pb-4 flex items-center">
+            <FaShoppingCart className="mr-3 text-gray-500" /> Order Summary
+        </h2>
+        
+        <div className="space-y-4 mb-6">
+          {enrichedItems.map(item => (
+            <div key={item.productId} className="flex items-center justify-between py-2 border-b">
+              <div className="flex items-center">
+                <img src={item.imageUrl || 'https://placehold.co/100x100/png?text=...'} alt={item.name} className="w-16 h-16 object-cover rounded-md mr-4" />
+                <div>
+                  <p className="font-semibold">{item.name}</p>
+                  <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                </div>
+              </div>
+              <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+            </div>
+          ))}
         </div>
+        
+        <div className="space-y-2 py-4 border-t">
+            <div className="flex justify-between font-semibold text-lg">
+              <span>Total</span>
+              <span>${cartTotal.toFixed(2)}</span>
+            </div>
+        </div>
+
         <button
           onClick={handlePlaceOrder}
-          disabled={status === 'loading'}
-          className="mt-6 w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400"
+          disabled={status === 'loading' || enrichedItems.length === 0}
+          className="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-all text-lg shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          {status === 'loading' ? 'Placing Order...' : 'Place Order'}
+          {status === 'loading' ? 'Processing...' : `Place Order ($${cartTotal.toFixed(2)})`}
         </button>
       </div>
     </div>
