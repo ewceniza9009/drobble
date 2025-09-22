@@ -1,4 +1,5 @@
-﻿// src/services/ProductCatalog/Drobble.ProductCatalog.Infrastructure/Persistence/ProductRepository.cs
+﻿// ---- File: src/services/ProductCatalog/Infrastructure/Persistence/ProductRepository.cs ----
+// src/services/ProductCatalog/Drobble.ProductCatalog.Infrastructure/Persistence/ProductRepository.cs
 using Drobble.ProductCatalog.Application.Contracts;
 using Drobble.ProductCatalog.Domain.Entities;
 using Microsoft.Extensions.Options;
@@ -46,9 +47,13 @@ public class ProductRepository : IProductRepository
 
     public async Task<IEnumerable<Product>> GetByIdsAsync(IEnumerable<ObjectId> ids, CancellationToken cancellationToken = default)
     {
-        // Use the $in operator in MongoDB to efficiently fetch multiple documents
         var filter = Builders<Product>.Filter.In(p => p.Id, ids);
         return await _productsCollection.Find(filter).ToListAsync(cancellationToken);
+    }
+
+    public async Task UpdateAsync(Product product, CancellationToken cancellationToken = default)
+    {
+        await _productsCollection.ReplaceOneAsync(p => p.Id == product.Id, product, cancellationToken: cancellationToken);
     }
 }
 

@@ -1,22 +1,34 @@
-// src/services/ProductCatalog/Drobble.ProductCatalog.Api/Program.cs
+// ---- File: src/services/ProductCatalog/Api/Program.cs ----
+using Drobble.ProductCatalog.Application.Consumers;
 using Drobble.ProductCatalog.Application.Contracts;
 using Drobble.ProductCatalog.Application.Features.Products.Commands;
 using Drobble.ProductCatalog.Infrastructure.Persistence;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // --- 1. Add services to the container ---
 
-// Configure MongoDB settings from appsettings.json
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
-
-// Register the repository for Dependency Injection
-// Scoped: A new instance is created for each web request
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-// Register MediatR and tell it to scan the Application assembly for handlers
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CreateProductCommand).Assembly));
+
+// Configure MassTransit with RabbitMQ for consuming events
+builder.Services.AddMassTransit(busConfig => {
+    busConfig.AddConsumer<OrderCreatedConsumer>();
+
+    busConfig.UsingRabbitMq((context, cfg) => {
+        cfg.Host(builder.Configuration["RabbitMQ:Host"], "/", h => {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

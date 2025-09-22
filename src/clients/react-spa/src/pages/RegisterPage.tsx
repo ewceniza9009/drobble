@@ -1,32 +1,34 @@
-// ---- File: src/pages/LoginPage.tsx ----
+// ---- File: src/pages/RegisterPage.tsx ----
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom'; // Import Link
+import { useNavigate, Link } from 'react-router-dom';
 import type { AppDispatch, RootState } from '../store/store';
-import { loginUser } from '../store/authSlice';
+import { registerUser } from '../store/authSlice';
 import { toast } from 'react-hot-toast';
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { status } = useSelector((state: RootState) => state.auth);
+  const { status, error } = useSelector((state: RootState) => state.auth);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await dispatch(loginUser({ username, password })).unwrap();
-      navigate('/'); // Redirect to homepage on successful login
-    } catch (error) {
-      toast.error("Invalid username or password.");
-      console.error('Failed to login:', error);
+      await dispatch(registerUser({ username, email, password })).unwrap();
+      toast.success('Registration successful! Please log in.');
+      navigate('/login');
+    } catch (err: any) {
+      toast.error(err || 'An unknown error occurred.');
+      console.error('Failed to register:', err);
     }
   };
 
   return (
     <div className="max-w-md mx-auto bg-white p-8 border rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Create an Account</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="username">Username</label>
@@ -35,6 +37,17 @@ const LoginPage = () => {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
@@ -51,18 +64,18 @@ const LoginPage = () => {
           />
         </div>
         <button 
-            type="submit" 
-            disabled={status === 'loading'}
-            className="w-full p-3 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
+          type="submit" 
+          disabled={status === 'loading'}
+          className="w-full p-3 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
         >
-          {status === 'loading' ? 'Logging in...' : 'Login'}
+          {status === 'loading' ? 'Registering...' : 'Register'}
         </button>
       </form>
       <p className="text-center mt-4">
-        Don't have an account? <Link to="/register" className="text-blue-500 hover:underline">Sign up</Link>
+        Already have an account? <Link to="/login" className="text-blue-500 hover:underline">Log in</Link>
       </p>
     </div>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

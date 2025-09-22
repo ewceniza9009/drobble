@@ -1,3 +1,4 @@
+// ---- File: src/store/authSlice.ts ----
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import api from '../api/axios';
@@ -27,6 +28,20 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// New thunk for user registration
+export const registerUser = createAsyncThunk(
+    'auth/register',
+    async (credentials: { username: string; email: string; password: string }, { rejectWithValue }) => {
+        try {
+            const response = await api.post('/auth/register', credentials);
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.response.data?.Error || 'Registration failed');
+        }
+    }
+);
+
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -47,6 +62,18 @@ const authSlice = createSlice({
         state.token = action.payload;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
+      // Add cases for registration
+      .addCase(registerUser.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state) => {
+        state.status = 'succeeded';
+      })
+      .addCase(registerUser.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
       });
