@@ -1,1 +1,469 @@
-# Auto-created file: README.md
+# Drobble E-Commerce Platform: Enhanced Technical Specifications
+
+The system maintains a microservices architecture for scalability, security, and maintainability. Below, we detail each component, including data models, API contracts, component hierarchies, Docker setups, event-driven communication, and new additions.
+
+## Backend Specifications: ASP.NET Core Microservices
+
+The backend comprises independent ASP.NET Core Web API projects (targeting .NET 8 or 9+ for improved performance and AOT compilation support), implemented as microservices using minimal APIs for lightweight endpoints or controllers for complex logic. Each service adheres to clean architecture (Presentation, Application, Domain, Infrastructure) and utilizes dependency injection for repositories, services, and business logic. Services incorporate ASP.NET Core’s built-in logging (via Serilog for structured logs) and health checks (/health endpoint returning JSON with status details).
+
+### General Backend Guidelines
+
+- **Project Structure**: Clean architecture layers:
+  - **Presentation**: API controllers/minimal APIs, input validation.
+  - **Application**: Use cases, CQRS patterns (MediatR for command/query separation), business logic.
+  - **Domain**: Entities, value objects, domain events.
+  - **Infrastructure**: Repositories (EF Core or MongoDB.Driver), external integrations.
+- **Communication**:
+  - Synchronous: HTTP/REST using HttpClientFactory with Polly for retries, circuit breaking, and timeouts (e.g., exponential backoff).
+  - Asynchronous: RabbitMQ for pub/sub events; consider gRPC for high-performance inter-service calls in future iterations.
+- **Error Handling**: Centralized middleware for exceptions, returning standardized ProblemDetails JSON (RFC 7807 compliant, e.g., { "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1", "title": "Bad Request", "status": 400, "detail": "Invalid input" }). Include trace IDs for correlation.
+- **Testing**:
+  - Unit: xUnit + Moq/NSubstitute.
+  - Integration: TestContainers for spinning up DBs/RabbitMQ; end-to-end with SpecFlow for behavior-driven tests.
+  - Chaos: Introduce fault injection using Chaos Monkey or similar in staging.
+- **Configuration**: appsettings.json overlaid with environment variables; use Azure App Configuration or Consul for dynamic config in production.
+- **Versioning**: URL path (e.g., /api/v1/products); support API evolution with backward-compatible changes.
+- **Security**:
+  - HTTPS enforcement, JWT (with RS256 for asymmetric signing), OWASP compliance (e.g., SQL injection prevention via parameterized queries).
+  - Rate limiting (AspNetCore.RateLimit with Redis backend), IP whitelisting for admin APIs.
+  - Secrets: Never hardcode; use Kubernetes Secrets or HashiCorp Vault.
+  - Compliance: GDPR/CCPA via data minimization, consent tracking in user profiles.
+- **Logging**: Serilog with sinks (console, file, Seq/ELK stack); structured logging with {SourceContext}, {TraceId}.
+- **Observability**: Integrate OpenTelemetry for traces/metrics/logs; export to Jaeger/Prometheus/Grafana.
+- **API Documentation**: Auto-generate with Swashbuckle.AspNetCore (Swagger UI at /swagger); include OpenAPI schemas for all endpoints.
+- **Performance**: Use output caching (ResponseCaching middleware) for read-heavy endpoints; profile with dotnet-trace.
+
+### 1. Product Catalog Service
+
+**Purpose**: Manages product data, categories, inventory, and supports dynamic attributes.
+
+**Database**: MongoDB (v7+ for sharding support); enable change streams for real-time updates.
+
+**Collections** (with indexes for performance):
+- **Products**: { _id: ObjectId, Name: string (indexed), Description: string, Price: decimal (indexed), Stock: int, CategoryId: ObjectId (indexed), Attributes: [{ Key: string, Value: any }], Images: string[], IsActive: bool (default: true), CreatedAt: DateTime, UpdatedAt: DateTime }. Compound index on Name+Price.
+- **Categories**: { _id: ObjectId, Name: string (unique), ParentId: ObjectId, Description: string, Slug: string (for SEO-friendly URLs) }.
+- **Inventory**: { _id: ObjectId, ProductId: ObjectId (unique), Quantity: int, Reserved: int (for carts), LastUpdated: DateTime }. TTL index on LastUpdated if needed.
+
+**Dependencies**: MongoDB.Driver (v2.28+), FluentValidation.
+
+**API Endpoints** (under /api/v1; all with Swagger annotations):
+- GET /products?category={id}&minPrice={value}&maxPrice={value}&sort={price_asc|name_desc}&page={1}&size={20}: Paginated/filtered/sorted list. Returns { Items: array, Total: int, Page: int, FiltersApplied: object }.
+- GET /products/{id}: Details; 404 if not found or inactive.
+- POST /products: Admin-only; body validation with FluentValidation (e.g., Price > 0).
+- PUT /products/{id}: Partial updates (e.g., stock); optimistic concurrency with ETag.
+- DELETE /products/{id}: Soft delete (set IsActive=false); publish ProductDeleted event.
+- GET /categories: Hierarchical tree (recursive CTE or materialization); include slug for frontend routing.
+- GET /products/{id}/inventory: Dedicated endpoint for stock checks (cached).
+
+**Events Published**: ProductCreated, ProductUpdated, ProductDeleted (to Search and Inventory sync).
+
+**Security**: JWT for writes; public reads with CORS restrictions. Input sanitization to prevent NoSQL injection.
+
+### 2. User Management Service
+
+**Purpose**: Authentication, authorization, profiles, roles; add multi-factor authentication (MFA) support.
+
+**Database**: PostgreSQL (v16+ for JSONB enhancements).
+
+**Tables** (EF Core code-first migrations):
+- **Users**: Id (PK, Guid), Username (unique index), Email (unique index), PasswordHash (BCrypt), Role (enum: User, Admin, Vendor), CreatedAt (DateTime), LastLogin (DateTime), IsMfaEnabled: bool.
+- **Profiles**: UserId (FK, unique), FullName, Address (JSONB for structured data), Phone, AvatarUrl, Preferences: JSONB (e.g., language).
+- **RefreshTokens**: Id (PK), UserId (FK), Token (hashed), Expires (DateTime), Revoked: bool.
+- **AuditLogs**: Id (PK), UserId (FK), Action (string), Timestamp (DateTime), Details: JSONB.
+
+**Dependencies**: Microsoft.AspNetCore.Identity.EntityFrameworkCore (v8+), BCrypt.Net-Next, Microsoft.EntityFrameworkCore.PostgreSql, Microsoft.IdentityModel.Tokens, Twilio for MFA SMS.
+
+**API Endpoints** (under /api/v1/auth):
+- POST /register: { Username, Email, Password, MfaPhone? }. Password policy: 12+ chars, complexity. Send verification email via SendGrid/Mailgun.
+- POST /login: { Username, Password, MfaCode? }. Returns JWT (short-lived, 15min) + refresh token (long-lived, 7d).
+- POST /refresh: Validates refresh token; rotate on use.
+- POST /mfa/enable: Setup MFA (TOTP or SMS).
+- GET /profile: JWT-required; include consent flags for GDPR.
+- PUT /profile: Updates; audit changes.
+- POST /forgot-password: Token-based reset flow.
+
+**Security**: Rate limiting (e.g., 5 attempts/5min on login), CAPTCHA on register, JWT with refresh rotation. Store consents in Profiles.
+
+**Events Published**: UserRegistered, UserLoggedIn (for analytics), UserProfileUpdated.
+
+### 3. Shopping Cart Service
+
+**Purpose**: Session or user-based carts; add wishlists as extension.
+
+**Database**: MongoDB; TTL indexes for guest carts (expire after 7d).
+
+**Collections**:
+- **Carts**: { _id: ObjectId, UserId: Guid? (indexed), SessionId: string? (indexed), Items: [{ ProductId: ObjectId, Quantity: int, PriceAtAdd: decimal, AddedAt: DateTime }], Total: decimal (computed), CreatedAt: DateTime, ExpiresAt: DateTime }.
+- **Wishlists**: { _id: ObjectId, UserId: Guid, ProductIds: ObjectId[] } (new addition for feature parity).
+
+**API Endpoints** (under /api/v1):
+- GET /carts/{id} (id=userId or sessionId): Retrieve; auto-merge if user logs in.
+- POST /carts/{id}/items: Add; validate stock via synchronous call to Catalog (with fallback).
+- PUT /carts/{id}/items/{productId}: Update; prevent negative quantities.
+- DELETE /carts/{id}/items/{productId}: Remove.
+- POST /carts/merge: Merge guest to authenticated.
+- POST /wishlists/{userId}/add: Add to wishlist (JWT-required).
+
+**Security**: Session cookies for guests (HttpOnly, Secure); JWT for user-linked.
+
+### 4. Order Management Service
+
+**Purpose**: Order lifecycle; add refund/cancellation workflows.
+
+**Database**: PostgreSQL; use transactions for atomicity.
+
+**Tables**:
+- **Orders**: Id (PK, Guid), UserId (FK), Status (enum), TotalAmount: decimal, CreatedAt: DateTime, UpdatedAt: DateTime, Currency: string (ISO 4217).
+- **OrderItems**: Id (PK), OrderId (FK), ProductId (ObjectId), Quantity: int, Price: decimal, Discounts: decimal.
+- **Shipping**: OrderId (FK, unique), Address: JSONB, Method: enum (Standard, Express), TrackingNumber: string, EstimatedDelivery: DateTime.
+- **Refunds**: Id (PK), OrderId (FK), Amount: decimal, Reason: string, Status: enum.
+
+**Dependencies**: Microsoft.EntityFrameworkCore (v8+).
+
+**API Endpoints** (under /api/v1):
+- POST /orders: From cart; transactionally reserve inventory, create order.
+- GET /orders/{id}: Details; include tracking.
+- GET /users/{userId}/orders?status={filter}&page={1}&size={10}: Paginated.
+- PUT /orders/{id}/status: Admin; trigger events.
+- POST /orders/{id}/refund: Initiate refund (integrate with Payment).
+
+**Events Subscribed**: PaymentSucceeded (update to Paid), InventoryUpdated (check stock).
+**Events Published**: OrderStatusChanged, RefundRequested.
+
+**Security**: JWT; role-based access control (RBAC) via claims.
+
+### 5. Payment Service
+
+**Purpose**: Gateway integrations; support multiple providers (Stripe, PayPal, Apple Pay).
+
+**Database**: PostgreSQL; log transactions immutably.
+
+**Tables**: Transactions: Id (PK), OrderId (FK), Amount: decimal, Currency: string, Status (enum), Gateway: enum (Stripe, PayPal), Response: JSONB, CreatedAt: DateTime.
+
+**Dependencies**: Stripe.NET (v45+), PayPalCheckoutSdk.
+
+**API Endpoints** (under /api/v1):
+- POST /payments/{orderId}: Create session; return client secret/URL.
+- POST /payments/webhook: Validate signatures; handle async callbacks.
+- GET /payments/methods: List available (for frontend).
+
+**Security**: PCI DSS via tokenization; webhooks with signature verification. No sensitive data storage.
+
+**Events Published**: PaymentSucceeded, PaymentFailed.
+
+### 6. Search & Discovery Service
+
+**Purpose**: Full-text search, recommendations; add AI-powered personalization.
+
+**Database**: Elasticsearch (v8+); or OpenSearch for open-source alternative.
+
+**Indices**:
+- **Products**: Fields with analyzers (e.g., ngram for partial matches).
+- **Recommendations**: User vectors for collaborative filtering.
+
+**Dependencies**: Elastic.Clients.Elasticsearch (v8+), ML.NET for recommendations.
+
+**API Endpoints** (under /api/v1):
+- GET /search?q={query}&filters={json}&sort={relevance|price}&page={1}: With facets (e.g., category counts).
+- GET /recommendations/{userId}?type={personal|similar}: Use ML models (train offline).
+- POST /search/suggest: Autocomplete.
+
+**Events Subscribed**: Product* events for re-indexing.
+
+**Enhancements**: Integrate vector search for image-based recommendations (using embeddings from a model like CLIP).
+
+### 7. Reviews & Ratings Service
+
+**Purpose**: Feedback; add moderation queue.
+
+**Database**: MongoDB.
+
+**Collections**: Reviews: { _id: ObjectId, ProductId: ObjectId (indexed), UserId: Guid, Rating: int, Comment: string, Images: string[], VerifiedPurchase: bool, CreatedAt: DateTime, ModerationStatus: enum (Pending, Approved, Rejected) }.
+
+**API Endpoints** (under /api/v1):
+- POST /reviews: Submit; flag for moderation if suspicious (e.g., via sentiment analysis).
+- GET /products/{id}/reviews?sort={date_desc|rating_asc}&page={1}: Filtered.
+- GET /products/{id}/average-rating: { Average: float, Count: int, Distribution: {1: n, 2: n, ...} }.
+- PUT /reviews/{id}/moderate: Admin-only.
+
+**Security**: JWT; prevent spam with CAPTCHA on submit.
+
+## API Gateway (Ocelot)
+
+**Purpose**: Central entry point; add request aggregation.
+
+**Configuration**: ocelot.json for routes, authentication, caching (Redis with sliding expiration).
+
+**Dependencies**: Ocelot (v23+), Ocelot.Provider.Polly, StackExchange.Redis.
+
+**Enhancements**: GraphQL federation for complex queries; rate limiting per user/IP.
+
+## Frontend Specifications: ReactJS SPA
+
+The frontend is a React 19+ SPA using Vite for fast builds, Tailwind CSS v3+ for styling, TypeScript 5+, and TanStack Query (formerly React Query) for data fetching/caching. Structure: src/components (reusable), src/pages (routed views), src/api (clients), src/store (state), src/hooks (custom logic).
+
+### General Frontend Guidelines
+
+- **Routing**: React Router v6+; code-splitting with lazy().
+- **State Management**: Redux Toolkit v2+ for global state; slices for auth, cart. Use RTK Query for API endpoints with auto-caching/invalidation.
+- **Data Fetching**: Axios v1+ with interceptors (add JWT, handle 401/403). Optimistic updates for cart.
+- **UI**: Tailwind with custom plugins; shadcn/ui for components if needed (headless).
+- **Testing**: Jest + RTL; Cypress for E2E; coverage >80%.
+- **Performance**: Memoization (useMemo/useCallback), virtualization (react-window for lists), image lazy-loading/webp.
+- **Accessibility**: WCAG 2.1 AA; axe-core for audits, ARIA, focus management.
+- **Internationalization**: i18next with react-i18next; detect browser locale.
+- **PWA Support** (new): Manifest.json, service workers via Vite PWA plugin; offline caching for carts.
+- **SEO**: Server-side rendering (SSR) with Next.js migration path; meta tags via React Helmet.
+- **Security**: Content-Security-Policy (CSP), XSS prevention via sanitized inputs.
+
+### Component Hierarchy
+
+**Core Components** (src/components/ui):
+- Button: Props { variant, size, disabled, loading }; spinner for async.
+- Input: With validation (error messages via React Hook Form).
+- Card: Responsive, hover effects.
+- Modal: Accessible, trap focus.
+
+**Feature Components** (src/components/features):
+- ProductCard: Clickable, with quick-add to cart.
+- ProductList: Infinite scroll option (react-intersection-observer).
+- ShoppingCartItem: Quantity stepper, subtotal.
+- CheckoutForm: Multi-step wizard; payment integration (Stripe Elements).
+- SearchBar: Debounced input, suggestions dropdown.
+
+**Page Components** (src/pages):
+- HomePage: Carousel for features, personalized recommendations.
+- ProductDetailPage: Tabs (description, reviews, related); zoomable images.
+- CartPage: Summary, promo codes.
+- CheckoutPage: Guest checkout option.
+- ProfilePage: Tabs for orders, wishlist, settings (MFA toggle).
+- Login/Register: Social logins (OAuth via Google/Apple).
+
+### State Management with Redux Toolkit
+
+**Slices**:
+- authSlice: Persist token with redux-persist; auto-logout on expire.
+- cartSlice: Sync with backend on changes; guest persistence in localStorage.
+- productsSlice: Caching with expiration.
+
+**RTK Query**: Define api.ts with endpoints; tags for invalidation (e.g., invalidate 'Cart' on addItem).
+
+**Persistence**: Encrypt sensitive data in storage.
+
+### Backend Integration
+
+**API Client**: Base Axios instance; refresh token interceptor.
+**Error Handling**: Global error boundary (React ErrorBoundary); toasts with sonner.
+**Auth Flow**: Protected routes; silent refresh.
+
+### Build and Deployment
+
+**Vite Config**: Plugins for React, Tailwind, ESLint, Prettier, VitePWA.
+**Deployment**: Vercel/Netlify for hosting; API proxy in dev.
+**Docker for Frontend** (new): Containerize for consistent builds.
+
+Sample Dockerfile:
+```
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package*.json .
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+## Docker Configuration
+
+Containerize all services (including frontend for edge deployment). Use multi-stage builds; support arm64/amd64 for multi-arch.
+
+### General Docker Guidelines
+
+- **Base Images**: dotnet/sdk:9.0-preview (if stable), node:20 for frontend.
+- **Env Vars**: .env files; secrets via --secret in builds.
+- **Health Checks**: CURL to /health; include readiness/liveness probes.
+- **Security**: Run as non-root (USER 1001); scan with Trivy/Snyk.
+- **Optimization**: Layering (copy csproj first for restore caching); slim images.
+
+**Enhanced Sample Dockerfile** (Generic):
+```
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["ServiceName.csproj", "."]
+RUN dotnet restore
+COPY . .
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/publish .
+USER appuser
+ENV ASPNETCORE_URLS=http://+:80
+EXPOSE 80
+ENTRYPOINT ["dotnet", "ServiceName.dll"]
+HEALTHCHECK CMD curl --fail http://localhost/health || exit 1
+```
+
+**Service-Specific** (e.g., User Management): Add ENV for JWT, DB; use multi-arch (buildx).
+
+### Docker Compose for Local Development
+
+Enhanced with volumes for persistence, networks for isolation.
+
+```
+version: '3.9'
+services:
+  user-management:
+    build: ./UserManagementService
+    ports:
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Postgres=Host=postgres-db;Database=users;Username=postgres;Password=${POSTGRES_PASSWORD:-devpass}
+      - JWT__Key=${JWT_KEY:-dev-secret-key}
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - backend
+
+  postgres-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpass}
+      POSTGRES_DB: users
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - backend
+
+  # Add other services similarly
+  api-gateway:
+    build: ./ApiGateway
+    ports:
+      - "8080:80"
+    depends_on:
+      - user-management
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres-data:
+```
+
+### Production Deployment
+
+- **Kubernetes**: Use Helm v3+ charts; Deployments with replicas=3, HPA for autoscaling (CPU>70%), PDB for zero-downtime.
+- **Secrets**: Kubernetes Secrets from YAML or external (Sealed Secrets).
+- **CI/CD**: GitHub Actions/Jenkins; build/push images, deploy via ArgoCD.
+- **Monitoring**: Prometheus operator, Grafana dashboards; alert on high latency/errors.
+
+## RabbitMQ Integration
+
+Use RabbitMQ 3.13+ for clustering; topic exchange with AVRO/JSON schemas for events (new: use Confluent Schema Registry for validation).
+
+### RabbitMQ Guidelines
+
+- **Exchange**: drobble.events (topic); keys like "order.created.v1".
+- **Queues**: Durable, auto-delete false; DLQ with x-dead-letter-exchange.
+- **Reliability**: Publisher confirms, consumer acks; idempotency with message IDs.
+- **Monitoring**: Management UI; integrate with Prometheus exporter.
+- **Security**: TLS 1.3, vhosts per env, credentials via secrets.
+- **Scaling**: Cluster mode; use consistent hashing for partitioning.
+
+**Dependencies**: MassTransit v8+, MassTransit.RabbitMQ.
+
+**Configuration** (enhanced):
+```
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<OrderCreatedConsumer>();
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(builder.Configuration["RabbitMQ:Host"], h =>
+        {
+            h.Username(builder.Configuration["RabbitMQ:Username"]);
+            h.Password(builder.Configuration["RabbitMQ:Password"]);
+            h.UseSsl(s => s.Protocol = SslProtocols.Tls13);
+        });
+        cfg.ReceiveEndpoint("payment-queue", e =>
+        {
+            e.ConfigureConsumer<OrderCreatedConsumer>(context);
+            e.UseMessageRetry(r => r.Interval(5, TimeSpan.FromSeconds(10)));
+        });
+    });
+});
+```
+
+**Publishing** (with schema):
+Use records with DataContract for serialization.
+
+**Consuming**: Ensure idempotency (check processed via DB).
+
+## Key Configurations and Imports
+
+### Common NuGet Packages (pinned versions where critical)
+
+- Microsoft.AspNetCore.Authentication.JwtBearer (~8.0)
+- FluentValidation.AspNetCore (~11.0)
+- Serilog.AspNetCore (~8.0)
+- Polly (~8.0)
+- Ocelot (~23.0)
+- Swashbuckle.AspNetCore (~6.0)
+- OpenTelemetry.Exporter.Prometheus (~0.8)
+
+### Service-Specific
+
+**User Management**:
+- NuGet: As original + OtpNet for TOTP MFA.
+- Imports: As original + using OtpNet;
+- Config: Add MFA in JWT claims.
+
+**Product Catalog**:
+- Config: Add change stream watcher for events.
+
+**Logging**: Enhanced with enrichers (e.g., from HTTP context).
+
+**CORS**: Restrict to specific origins in prod (e.g., https://drobble.com).
+
+This enhanced specification provides a robust, future-proof blueprint for Drobble, incorporating industry best practices for 2025 and beyond. Implementation should prioritize iterative development with MVPs for core services.
