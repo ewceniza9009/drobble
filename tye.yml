@@ -1,4 +1,4 @@
-# tye.yml
+# ---- File: tye.yml ----
 name: drobble
 services:
 - name: product-catalog
@@ -29,6 +29,12 @@ services:
   project: src/services/SearchDiscovery/Drobble.SearchDiscovery.Api/Drobble.SearchDiscovery.Api.csproj
   bindings:
     - port: 5209
+      protocol: http
+
+- name: reviews-ratings
+  project: src/services/ReviewsRatings/Drobble.ReviewsRatings.Api/Drobble.ReviewsRatings.Api.csproj
+  bindings:
+    - port: 5086
       protocol: http
 
 - name: api-gateway

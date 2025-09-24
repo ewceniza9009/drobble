@@ -1,5 +1,6 @@
 {
   "Routes": [
+    // Product Catalog
     {
       "UpstreamPathTemplate": "/api/products",
       "UpstreamHttpMethod": [ "GET", "POST" ],
@@ -131,6 +132,47 @@
           "Port": 5209
         } // Default port for SearchDiscovery.Api
       ]
+    },
+    // Reviews
+    {
+      "UpstreamPathTemplate": "/api/reviews",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5086
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/reviews",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/reviews/product/{productId}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5086
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/reviews/product/{productId}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/reviews/product/{productId}/average-rating",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5086
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/reviews/product/{productId}/average-rating"
     }
   ],
   "GlobalConfiguration": {
