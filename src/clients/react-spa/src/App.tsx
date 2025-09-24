@@ -9,6 +9,7 @@ import { logout } from './store/authSlice';
 import CartIcon from './components/CartIcon';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
+import SearchBar from './components/SearchBar'; // Import the new SearchBar
 
 // Lazy load page components for code-splitting
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -16,9 +17,10 @@ const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
-const CheckoutPage = lazy(() => import('./pages/CheckoutPage')); // Update the import path
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-const OrderDetailPage = lazy(() => import('./pages/OrderDetailPage'))
+const OrderDetailPage = lazy(() => import('./pages/OrderDetailPage'));
+const SearchPage = lazy(() => import('./pages/SearchPage')); // Import the new SearchPage
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -38,8 +40,11 @@ function App() {
     <div className="bg-gray-100 min-h-screen">
       <Toaster position="bottom-center" />
       <header className="bg-white shadow-md sticky top-0 z-50">
-        <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <nav className="container mx-auto px-4 py-4 flex justify-between items-center gap-4">
           <Link to="/" className="text-2xl font-bold text-gray-800 hover:text-blue-600 transition-colors">Drobble Store</Link>
+          <div className="flex-grow flex justify-center">
+            <SearchBar />
+          </div>
           <div className="flex items-center space-x-6">
             <CartIcon />
             {token ? (
@@ -64,7 +69,8 @@ function App() {
             <Route path="/products/:productId" element={<ProductDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} /> {/* Add new route */}
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/search" element={<SearchPage />} /> {/* Add new search route */}
 
             <Route element={<ProtectedRoute />}>
               <Route path="/checkout" element={<CheckoutPage />} />

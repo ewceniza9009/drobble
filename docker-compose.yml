@@ -61,7 +61,7 @@ services:
 
   # Elasticsearch for the Search & Discovery Service
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2 # Use a specific version
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.1 # Use a specific version
     container_name: drobble-elasticsearch
     environment:
       - discovery.type=single-node

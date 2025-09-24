@@ -16,6 +16,13 @@ interface Order {
   items: { productId: string; quantity: number; price: number }[];
 }
 
+interface SearchResult {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+}
 
 export const apiSlice = createApi({
   reducerPath: 'api',
@@ -43,7 +50,10 @@ export const apiSlice = createApi({
         query: (orderId) => `/orders/${orderId}`,
         providesTags: (result, error, id) => [{ type: 'Order', id }],
     }),
+     searchProducts: builder.query<SearchResult[], string>({
+      query: (searchTerm) => `/search?q=${encodeURIComponent(searchTerm)}`,
+    }),
   }),
 });
 
-export const { useGetProductsQuery, useGetProductByIdQuery, useGetOrderByIdQuery } = apiSlice;
+export const { useGetProductsQuery, useGetProductByIdQuery, useGetOrderByIdQuery, useSearchProductsQuery } = apiSlice;

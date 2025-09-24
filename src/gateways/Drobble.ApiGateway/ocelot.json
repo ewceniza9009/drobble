@@ -1,8 +1,8 @@
 {
   "Routes": [
-    // Product Catalog (Public)
     {
-      "DownstreamPathTemplate": "/api/v1/products/{everything}",
+      "UpstreamPathTemplate": "/api/products",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -10,11 +10,11 @@
           "Port": 5220
         }
       ],
-      "UpstreamPathTemplate": "/api/products/{everything}",
-      "UpstreamHttpMethod": [ "GET" ]
+      "DownstreamPathTemplate": "/api/v1/products"
     },
     {
-      "DownstreamPathTemplate": "/api/v1/products/batch",
+      "UpstreamPathTemplate": "/api/products/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -22,8 +22,19 @@
           "Port": 5220
         }
       ],
+      "DownstreamPathTemplate": "/api/v1/products/{id}"
+    },
+    {
       "UpstreamPathTemplate": "/api/products/batch",
-      "UpstreamHttpMethod": [ "POST" ]
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5220
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/products/batch"
     },
     // User Management (Public)
     {
@@ -107,6 +118,19 @@
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       }
+    },
+    // Search Discovery
+    {
+      "UpstreamPathTemplate": "/api/search",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/v1/search",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5209
+        } // Default port for SearchDiscovery.Api
+      ]
     }
   ],
   "GlobalConfiguration": {

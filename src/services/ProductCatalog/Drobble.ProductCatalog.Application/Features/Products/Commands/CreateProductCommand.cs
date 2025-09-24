@@ -10,4 +10,5 @@ public record CreateProductCommand(
     string Description,
     decimal Price,
     int Stock,
-    string CategoryId) : IRequest<ObjectId>; // This command will return the new product's ID
+    string CategoryId, 
+    string ImageUrl) : IRequest<ObjectId>; // This command will return the new product's ID

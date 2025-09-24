@@ -25,6 +25,12 @@ services:
     - port: 5256
       protocol: http
 
+- name: search-discovery
+  project: src/services/SearchDiscovery/Drobble.SearchDiscovery.Api/Drobble.SearchDiscovery.Api.csproj
+  bindings:
+    - port: 5209
+      protocol: http
+
 - name: api-gateway
   project: src/gateways/Drobble.ApiGateway/Drobble.ApiGateway.csproj
   bindings:
