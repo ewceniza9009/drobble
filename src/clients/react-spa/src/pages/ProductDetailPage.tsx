@@ -5,6 +5,7 @@ import type { AppDispatch } from '../store/store';
 import { addItemToCart } from '../store/cartSlice';
 import api from '../api/axios';
 import { toast } from 'react-hot-toast';
+import { formatCurrency } from '../utils/formatting';
 
 interface Product {
   id: string;
@@ -71,7 +72,7 @@ const ProductDetailPage = () => {
         <div>
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
           <p className="text-lg text-gray-700 mb-4">{product.description}</p>
-          <p className="text-2xl font-semibold text-green-600 mb-6">${product.price.toFixed(2)}</p>
+          <p className="text-2xl font-semibold text-green-600 mb-6">{formatCurrency(product.price)}</p>
           <button
             onClick={handleAddToCart}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105"

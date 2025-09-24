@@ -7,6 +7,7 @@ import { placeOrder } from '../store/cartSlice';
 import { toast } from 'react-hot-toast';
 import api from '../api/axios';
 import { FaShoppingCart } from 'react-icons/fa';
+import { formatCurrency } from '../utils/formatting';
 
 // Interfaces for the enriched data we will fetch
 interface ProductDetail {
@@ -109,7 +110,7 @@ const CheckoutPage = () => {
                   <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                 </div>
               </div>
-              <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+              <p className="font-semibold">{formatCurrency(item.price * item.quantity)}</p>
             </div>
           ))}
         </div>
@@ -117,7 +118,7 @@ const CheckoutPage = () => {
         <div className="space-y-2 py-4 border-t">
             <div className="flex justify-between font-semibold text-lg">
               <span>Total</span>
-              <span>${cartTotal.toFixed(2)}</span>
+              <span>{formatCurrency(cartTotal)}</span>
             </div>
         </div>
 
@@ -126,7 +127,7 @@ const CheckoutPage = () => {
           disabled={status === 'loading' || enrichedItems.length === 0}
           className="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-all text-lg shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          {status === 'loading' ? 'Processing...' : `Place Order ($${cartTotal.toFixed(2)})`}
+          {status === 'loading' ? 'Processing...' : `Place Order (${formatCurrency(cartTotal)})`}
         </button>
       </div>
     </div>

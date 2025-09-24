@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useGetOrderByIdQuery } from '../store/apiSlice';
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
+import { formatCurrency } from '../utils/formatting';
 
 // Interfaces for enriched data
 interface ProductDetail {
@@ -73,7 +74,7 @@ const OrderDetailPage = () => {
         <p><strong>Order ID:</strong> {order.id}</p>
         <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
         <p><strong>Status:</strong> <span className="font-semibold text-green-600">{order.status}</span></p>
-        <p><strong>Order Total:</strong> <span className="font-bold text-xl">${order.totalAmount.toFixed(2)}</span></p>
+        <p><strong>Order Total:</strong> <span className="font-bold text-xl">{formatCurrency(order.totalAmount)}</span></p>
       </div>
 
       <h2 className="text-2xl font-semibold mb-4">Items Ordered</h2>
@@ -85,7 +86,7 @@ const OrderDetailPage = () => {
               <p className="font-semibold">{item.name}</p>
               <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
             </div>
-            <p className="font-semibold w-24 text-right">${(item.price * item.quantity).toFixed(2)}</p>
+            <p className="font-semibold w-24 text-right">{formatCurrency(item.price * item.quantity)}</p>
           </div>
         ))}
       </div>

@@ -5,6 +5,7 @@ import { removeItemFromCart } from '../store/cartSlice';
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { FaTrash } from 'react-icons/fa';
+import { formatCurrency } from '../utils/formatting';
 
 interface ProductDetail {
   id: string;
@@ -83,7 +84,7 @@ const CartPage = () => {
               <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
             </div>
             <div className="flex items-center space-x-4">
-              <p className="font-semibold w-24 text-right">${(item.price * item.quantity).toFixed(2)}</p>
+              <p className="font-semibold w-24 text-right">{formatCurrency(item.price * item.quantity)}</p>
               <button
                 onClick={() => handleRemove(item.productId)}
                 className="text-gray-500 hover:text-red-600 transition-colors"
@@ -95,7 +96,7 @@ const CartPage = () => {
           </div>
         ))}
         <div className="flex justify-end font-bold text-xl pt-4">
-          <span>Total: ${cartTotal.toFixed(2)}</span>
+          <span>Total: {formatCurrency(cartTotal)}</span>
         </div>
       </div>
 
