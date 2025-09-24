@@ -39,12 +39,22 @@ function App() {
   return (
     <div className="bg-gray-100 min-h-screen">
       <Toaster position="bottom-center" />
-      <header className="bg-white shadow-md sticky top-0 z-50">
-        <nav className="container mx-auto px-4 py-4 flex justify-between items-center gap-4">
-          <Link to="/" className="text-2xl font-bold text-gray-800 hover:text-blue-600 transition-colors">Drobble Store</Link>
-          <div className="flex-grow flex justify-center">
+       <header className="bg-white shadow-md sticky top-0 z-50">
+        <nav className="container mx-auto px-4 py-3 flex justify-between items-center flex-wrap gap-y-4">
+          
+          {/* Logo (Always on the far left) */}
+          <div className="flex-shrink-0">
+            <Link to="/" className="text-2xl font-bold text-gray-800 hover:text-blue-600 transition-colors">
+              Drobble Store
+            </Link>
+          </div>
+
+          {/* Search Bar (Wraps to a new line on mobile, grows to fill space on desktop) */}
+          <div className="w-full md:w-auto md:flex-grow md:mx-8 order-last md:order-none">
             <SearchBar />
           </div>
+
+          {/* Icons (Always on the far right) */}
           <div className="flex items-center space-x-6">
             <CartIcon />
             {token ? (
@@ -58,8 +68,9 @@ function App() {
               </>
             ) : (
               <Link to="/login" className="hover:underline">Login</Link>
-            )}              
+            )}
           </div>
+
         </nav>
       </header>
       <main className="container mx-auto px-4 py-8">
