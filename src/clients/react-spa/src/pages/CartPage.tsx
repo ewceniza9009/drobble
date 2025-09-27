@@ -4,7 +4,7 @@ import type { RootState, AppDispatch } from '../store/store';
 import { removeItemFromCart } from '../store/cartSlice';
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaShoppingCart } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatting';
 
 interface ProductDetail {
@@ -69,44 +69,72 @@ const CartPage = () => {
 
   const cartTotal = enrichedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  if (isLoading) return <p>Loading cart...</p>;
-  if (enrichedItems.length === 0) return <p>Your cart is empty.</p>;
+  if (isLoading) return <p className="py-10 text-center">Loading cart...</p>;
+  
+  if (enrichedItems.length === 0) return (
+    <div className="text-center bg-white p-12 rounded-xl shadow-lg border border-slate-200">
+        <FaShoppingCart className="mx-auto text-5xl text-slate-400 mb-4" />
+        <h2 className="text-xl font-semibold text-slate-700">Your Cart is Empty</h2>
+        <p className="text-slate-500 mt-2">Looks like you haven't added anything to your cart yet.</p>
+        <Link to="/" className="mt-6 inline-block bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 transition">
+            Start Shopping
+        </Link>
+    </div>
+  );
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Your Shopping Cart</h1>
-      <div className="space-y-4 bg-white p-6 rounded-lg shadow-md">
-        {enrichedItems.map((item) => (
-          <div key={item.productId} className="flex items-center py-4 border-b last:border-b-0">
-            <img src={item.imageUrl || 'https://placehold.co/100x100/png?text=...'} alt={item.name} className="w-20 h-20 object-cover rounded-md mr-4" />
-            <div className="flex-grow">
-              <p className="font-semibold">{item.name}</p>
-              <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+      <h1 className="text-3xl font-bold mb-6 text-slate-800">Shopping Cart</h1>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-4">
+          {enrichedItems.map((item) => (
+            <div key={item.productId} className="flex items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+              <img src={item.imageUrl || 'https://placehold.co/100x100/png?text=...'} alt={item.name} className="w-20 h-20 object-cover rounded-md mr-4" />
+              <div className="flex-grow">
+                <p className="font-semibold text-slate-800">{item.name}</p>
+                <p className="text-sm text-slate-500">Quantity: {item.quantity}</p>
+                <p className="text-sm font-semibold text-blue-600">{formatCurrency(item.price)}</p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <p className="font-semibold w-24 text-right text-slate-800">{formatCurrency(item.price * item.quantity)}</p>
+                <button
+                  onClick={() => handleRemove(item.productId)}
+                  className="text-slate-400 hover:text-red-600 transition-colors"
+                  title="Remove item"
+                >
+                  <FaTrash />
+                </button>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <p className="font-semibold w-24 text-right">{formatCurrency(item.price * item.quantity)}</p>
-              <button
-                onClick={() => handleRemove(item.productId)}
-                className="text-gray-500 hover:text-red-600 transition-colors"
-                title="Remove item"
-              >
-                <FaTrash />
-              </button>
-            </div>
-          </div>
-        ))}
-        <div className="flex justify-end font-bold text-xl pt-4">
-          <span>Total: {formatCurrency(cartTotal)}</span>
+          ))}
         </div>
-      </div>
+        
+        <div className="lg:col-span-1">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-slate-200 sticky top-28">
+            <h2 className="text-xl font-bold mb-4 border-b pb-3 text-slate-800">Order Summary</h2>
+            <div className="space-y-2">
+                <div className="flex justify-between text-slate-600">
+                    <span>Subtotal</span>
+                    <span>{formatCurrency(cartTotal)}</span>
+                </div>
+                <div className="flex justify-between text-slate-600">
+                    <span>Shipping</span>
+                    <span>FREE</span>
+                </div>
+            </div>
+            <div className="flex justify-between font-bold text-xl pt-4 mt-4 border-t">
+              <span>Total</span>
+              <span>{formatCurrency(cartTotal)}</span>
+            </div>
+            <Link
+              to="/checkout"
+              className="mt-6 w-full block text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition"
+            >
+              Proceed to Checkout
+            </Link>
+          </div>
+        </div>
 
-      <div className="mt-6 flex justify-end">
-        <Link
-          to="/checkout"
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Proceed to Checkout
-        </Link>
       </div>
     </div>
   );

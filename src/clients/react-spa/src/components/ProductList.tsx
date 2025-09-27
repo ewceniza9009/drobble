@@ -20,44 +20,46 @@ const ProductList = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
-  if (isLoading) return <p className="text-center">Loading products...</p>;
-  if (error) return <p className="text-center text-red-500">Failed to fetch products.</p>;
+  if (isLoading) return <p className="text-center py-10">Loading products...</p>;
+  if (error) return <p className="text-center text-red-500 py-10">Failed to fetch products.</p>;
 
   return (
     <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map((product) => (
-          <Link key={product.id} to={`/products/${product.id}`} className="group">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden transform group-hover:scale-105 group-hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-              <img
-                src={product.imageUrl || 'https://placehold.co/600x400/png?text=No+Image'}
-                alt={product.name}
-                className="w-full h-48 object-cover"
-                loading="lazy"
-              />
+          <Link key={product.id} to={`/products/${product.id}`} className="group block">
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg h-full flex flex-col border border-slate-200">
+              <div className="overflow-hidden">
+                 <img
+                    src={product.imageUrl || 'https://placehold.co/600x400/png?text=No+Image'}
+                    alt={product.name}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+              </div>
               <div className="p-4 flex flex-col flex-grow">
-                <h2 className="text-lg font-semibold text-gray-800 truncate">{product.name}</h2>
-                <p className="text-sm text-gray-600 mt-1 flex-grow">{product.description.substring(0, 100)}...</p>
-                <p className="text-xl font-bold text-green-600 mt-4">{formatCurrency(product.price)}</p>
+                <h2 className="text-base font-semibold text-slate-800 truncate">{product.name}</h2>
+                <div className="flex-grow" />
+                <p className="text-lg font-bold text-blue-600 mt-2">{formatCurrency(product.price)}</p>
               </div>
             </div>
           </Link>
         ))}
       </div>
 
-      <div className="flex justify-center items-center mt-8 space-x-4">
+      <div className="flex justify-center items-center mt-10 space-x-4">
         <button
           onClick={handlePrevPage}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-white border border-slate-300 text-sm font-medium rounded-md shadow-sm hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Previous
         </button>
-        <span>Page {currentPage} of {totalPages}</span>
+        <span className="text-sm text-slate-600">Page {currentPage} of {totalPages}</span>
         <button
           onClick={handleNextPage}
           disabled={currentPage === totalPages || totalPages === 0}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-white border border-slate-300 text-sm font-medium rounded-md shadow-sm hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Next
         </button>

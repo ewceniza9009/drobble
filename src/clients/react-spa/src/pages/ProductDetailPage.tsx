@@ -1,4 +1,3 @@
-// ---- File: src/pages/ProductDetailPage.tsx ----
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-hot-toast';
@@ -8,6 +7,7 @@ import { useGetProductByIdQuery } from '../store/apiSlice';
 import { formatCurrency } from '../utils/formatting';
 import ReviewList from '../components/reviews/ReviewList';
 import ReviewForm from '../components/reviews/ReviewForm';
+import { FaShoppingCart } from 'react-icons/fa';
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,40 +25,46 @@ const ProductDetailPage = () => {
     }
   };
 
-  if (isLoading) return <p className="text-center">Loading product...</p>;
-  if (error) return <p className="text-center text-red-500">Failed to fetch product.</p>;
-  if (!product) return <p className="text-center">Product not found.</p>;
+  if (isLoading) return <p className="text-center py-10">Loading product...</p>;
+  if (error) return <p className="text-center text-red-500 py-10">Failed to fetch product.</p>;
+  if (!product) return <p className="text-center py-10">Product not found.</p>;
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-xl p-6">
+      <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-slate-200">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
+          <div className="rounded-lg overflow-hidden">
             <img
               src={product.imageUrl || 'https://placehold.co/600x400/png?text=No+Image'}
               alt={product.name}
-              className="w-full h-auto rounded-lg shadow-md object-cover"
+              className="w-full h-auto object-cover"
             />
           </div>
-          <div>
-            <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-            <p className="text-lg text-gray-700 mb-4">{product.description}</p>
-            <p className="text-2xl font-semibold text-green-600 mb-6">{formatCurrency(product.price)}</p>
+          <div className="flex flex-col justify-center">
+            <h1 className="text-3xl lg:text-4xl font-bold text-slate-800 mb-3">{product.name}</h1>
+            <p className="text-slate-600 mb-5 leading-relaxed">{product.description}</p>
+            <p className="text-4xl font-extrabold text-blue-600 mb-6">{formatCurrency(product.price)}</p>
             <button
               onClick={handleAddToCart}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg"
+              className="inline-flex items-center justify-center px-8 py-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition-colors shadow-md text-lg"
             >
+              <FaShoppingCart className="mr-3" />
               Add to Cart
             </button>
           </div>
         </div>
       </div>
 
-      {/* --- NEW REVIEWS SECTION --- */}
-      <div className="mt-12 bg-white rounded-lg shadow-xl p-6">
-          <h2 className="text-2xl font-bold mb-6 border-b pb-4">Reviews</h2>
-          <ReviewList productId={product.id} />
-          <ReviewForm productId={product.id} />
+      <div className="mt-12 bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-slate-200">
+          <h2 className="text-2xl font-bold mb-6 border-b border-slate-200 pb-4 text-slate-800">Customer Reviews</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+                <ReviewList productId={product.id} />
+            </div>
+            <div>
+                <ReviewForm productId={product.id} />
+            </div>
+          </div>
       </div>
     </>
   );

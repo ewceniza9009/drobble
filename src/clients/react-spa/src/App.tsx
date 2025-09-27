@@ -57,28 +57,28 @@ function App() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-slate-50 min-h-screen">
       <Toaster position="bottom-center" />
-      <header className="bg-white shadow-md sticky top-0 z-50">
-        <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-gray-800">Drobble Store</Link>
+      <header className="bg-white/80 backdrop-blur-lg border-b border-slate-200 sticky top-0 z-50">
+        <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <Link to="/" className="text-2xl font-bold text-slate-800 hover:text-blue-600 transition-colors">Drobble</Link>
           <div className="flex-grow mx-8 hidden md:block"><SearchBar /></div>
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-5">
             <CartIcon />
             {token ? (
               <>
-                {userRole === 'Admin' && <Link to="/admin" title="Admin Panel"><FaCog size="1.2em" /></Link>}
-                {userRole === 'Vendor' && <Link to="/vendor/products" title="Vendor Panel"><FaCog size="1.2em" /></Link>}
-                <Link to="/profile" title="My Account"><FaUser size="1.2em" /></Link>
-                <button onClick={handleLogout} title="Logout"><FaSignOutAlt size="1.2em" /></button>
+                {userRole === 'Admin' && <Link to="/admin" title="Admin Panel" className="text-slate-600 hover:text-blue-600 transition-colors"><FaCog size="1.2em" /></Link>}
+                {userRole === 'Vendor' && <Link to="/vendor" title="Vendor Panel" className="text-slate-600 hover:text-blue-600 transition-colors"><FaCog size="1.2em" /></Link>}
+                <Link to="/profile" title="My Account" className="text-slate-600 hover:text-blue-600 transition-colors"><FaUser size="1.2em" /></Link>
+                <button onClick={handleLogout} title="Logout" className="text-slate-600 hover:text-blue-600 transition-colors"><FaSignOutAlt size="1.2em" /></button>
               </>
             ) : (
-              <Link to="/login">Login</Link>
+              <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Login</Link>
             )}
           </div>
         </nav>
       </header>
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Suspense fallback={<div className="text-center p-8 text-xl">Loading...</div>}>
           <Routes>
             {/* --- Public Routes --- */}
@@ -89,7 +89,7 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/search" element={<SearchPage />} />
 
-            {/* --- Authenticated User Routes (All roles can access these) --- */}
+            {/* --- Authenticated User Routes --- */}
             <Route element={<ProtectedRoute allowedRoles={['User', 'Vendor', 'Admin']} />}>
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/profile" element={<ProfilePage />} />
@@ -99,7 +99,6 @@ function App() {
             {/* --- Admin Only Routes --- */}
             <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
               <Route path="/admin" element={<AdminLayout />}>
-                {/* THIS IS THE CHANGE: Redirect /admin to /admin/users */}
                 <Route index element={<Navigate to="users" replace />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="products" element={<AdminProducts />} />
@@ -108,9 +107,12 @@ function App() {
               </Route>
             </Route>
 
-            {/* --- Vendor Routes (Admins can also access) --- */}
+            {/* --- Vendor Routes --- */}
             <Route element={<ProtectedRoute allowedRoles={['Vendor', 'Admin']} />}>
-                <Route path="/vendor/products" element={<VendorProducts />} />
+              <Route path="/vendor">
+                <Route index element={<Navigate to="products" replace />} />
+                <Route path="products" element={<VendorProducts />} />
+              </Route>
             </Route>
           </Routes>
         </Suspense>

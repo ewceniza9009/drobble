@@ -1,4 +1,3 @@
-// ---- File: src/pages/RegisterPage.tsx ----
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
@@ -12,7 +11,7 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { status, error } = useSelector((state: RootState) => state.auth);
+  const { status } = useSelector((state: RootState) => state.auth);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,52 +26,52 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 border rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Create an Account</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="username">Username</label>
+    <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border border-slate-200">
+      <h2 className="text-2xl font-bold mb-6 text-center text-slate-800">Create an Account</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-semibold text-slate-600 mb-1" htmlFor="username">Username</label>
           <input
             id="username"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 bg-slate-100 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             required
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="email">Email</label>
+        <div>
+          <label className="block text-sm font-semibold text-slate-600 mb-1" htmlFor="email">Email</label>
           <input
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 bg-slate-100 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             required
           />
         </div>
-        <div className="mb-6">
-          <label className="block text-gray-700 mb-2" htmlFor="password">Password</label>
+        <div>
+          <label className="block text-sm font-semibold text-slate-600 mb-1" htmlFor="password">Password</label>
           <input
             id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 bg-slate-100 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             required
           />
         </div>
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={status === 'loading'}
-          className="w-full p-3 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
+          className="w-full p-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 disabled:bg-slate-400 transition-colors"
         >
-          {status === 'loading' ? 'Registering...' : 'Register'}
+          {status === 'loading' ? 'Registering...' : 'Create Account'}
         </button>
       </form>
-      <p className="text-center mt-4">
-        Already have an account? <Link to="/login" className="text-blue-500 hover:underline">Log in</Link>
+      <p className="text-center text-sm text-slate-600 mt-6">
+        Already have an account? <Link to="/login" className="font-semibold text-blue-600 hover:underline">Log in</Link>
       </p>
     </div>
   );
