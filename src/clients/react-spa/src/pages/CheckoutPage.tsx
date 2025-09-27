@@ -74,29 +74,29 @@ const CheckoutPage = () => {
 
     fetchProductDetails();
   }, [cartItems]);
-
+  
   const cartTotal = enrichedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  // --- THIS IS THE CORRECTED FUNCTION ---
   const handlePlaceOrder = async () => {
     try {
       const createdOrder = await dispatch(placeOrder()).unwrap();
-      
-      // Log the actual response from the backend to help with debugging.
-      // Check your browser's developer console to see this output.
-      console.log('Backend response after creating order:', createdOrder);
 
-      // Safely check for the order ID. Also checks for 'orderId' as a fallback.
-      const orderId = createdOrder?.id;
+      // --- DEBUGGING AND FIX ---
+      // Log the exact object returned by the server.
+      console.log("DEBUG: Server response from creating order:", createdOrder);
+
+      // THE FIX: Check for both camelCase 'id' and PascalCase 'Id'.
+      const orderId = createdOrder?.id || createdOrder?.Id;
 
       if (orderId) {
         toast.success('Order placed successfully!');
         navigate(`/orders/${orderId}`);
       } else {
-        // If no ID is found, the API response is not what we expect.
-        toast.error('Failed to create order: Invalid response from server.');
-        console.error('Error: The server response for the new order did not contain an "id".', createdOrder);
+        // This will now trigger if neither 'id' nor 'Id' is found.
+        toast.error('Failed to create order: ID was not found in the server response.');
+        console.error("CRITICAL ERROR: The server's response object did not contain an 'id' or 'Id' property.", createdOrder);
       }
+      
     } catch (error) {
       toast.error('Failed to place order.');
       console.error(error);
@@ -106,7 +106,7 @@ const CheckoutPage = () => {
   if (isLoading) {
     return <div className="text-center p-8">Loading Checkout...</div>;
   }
-
+  
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
@@ -114,7 +114,7 @@ const CheckoutPage = () => {
         <h2 className="text-2xl font-semibold mb-6 border-b pb-4 flex items-center">
             <FaShoppingCart className="mr-3 text-gray-500" /> Order Summary
         </h2>
-
+        
         <div className="space-y-4 mb-6">
           {enrichedItems.map(item => (
             <div key={item.productId} className="flex items-center justify-between py-2 border-b">
@@ -129,7 +129,7 @@ const CheckoutPage = () => {
             </div>
           ))}
         </div>
-
+        
         <div className="space-y-2 py-4 border-t">
             <div className="flex justify-between font-semibold text-lg">
               <span>Total</span>

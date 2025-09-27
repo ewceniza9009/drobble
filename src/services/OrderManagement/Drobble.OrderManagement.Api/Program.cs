@@ -1,5 +1,4 @@
 ﻿// ---- File: src/services/OrderManagement/Drobble.OrderManagement.Api/Program.cs ----
-
 using Drobble.OrderManagement.Application.Contracts;
 using Drobble.OrderManagement.Application.Features.Orders.Commands;
 using Drobble.OrderManagement.Infrastructure.Persistence;
