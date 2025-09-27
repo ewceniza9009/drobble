@@ -15,6 +15,8 @@ using System.Security.Claims; // ADDED for ClaimTypes
 // Ensure this is at the very top to prevent default mapping confusion globally
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
+MongoDbPersistence.Configure();
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
