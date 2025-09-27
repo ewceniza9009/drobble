@@ -4,13 +4,13 @@ import type { RootState } from "./store";
 
 // --- INTERFACES ---
 interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  stock: number;
-  categoryId: string;
-  imageUrl: string;
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  categoryId: string;
+  imageUrl: string;
 }
 interface PaginatedResponse<T> { items: T[]; total: number; }
 interface Order { id:string; totalAmount: number; status: string; createdAt: string; items: { productId: string; quantity: number; price: number }[]; }
@@ -19,124 +19,149 @@ interface ProductUpdateArg { id: string; name: string; description: string; pric
 interface ProductCreateArg { name: string; description: string; price: number; stock: number; categoryId: string; imageUrl: string; }
 interface SearchProduct { id: string; name: string; description: string; price: number; imageUrl: string; }
 
-// --- ADDED INTERFACES FOR REVIEWS ---
+// --- INTERFACES FOR REVIEWS ---
 interface Review {
-  id: string;
-  productId: string;
-  userId: string;
-  rating: number;
-  comment: string;
-  createdAt: string;
+  id: string;
+  productId: string;
+  userId: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
 }
 interface CreateReviewArg {
-  productId: string;
-  rating: number;
-  comment: string;
+  productId: string;
+  rating: number;
+  comment: string;
 }
-// --- END OF ADDED INTERFACES ---
+// --- ADDED INTERFACES FOR MODERATION ---
+interface PendingReviewDto extends Review {
+    // We can add more fields like productName if the API provides them
+}
+interface ModerateReviewArg {
+    reviewId: string;
+    approve: boolean;
+    role: 'admin' | 'vendor'; // To construct the correct URL
+}
 
 
 export const apiSlice = createApi({
-  reducerPath: "api",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5015/api", // Ocelot Gateway
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      if (token) {
-        headers.set("authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
-  tagTypes: ['Product', 'Order', 'Review', 'AdminUser'],
-  endpoints: (builder) => ({
+  reducerPath: "api",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:5015/api", // Ocelot Gateway
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).auth.token;
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ['Product', 'Order', 'Review', 'AdminUser', 'PendingReview'], // Add 'PendingReview' tag
+  endpoints: (builder) => ({
 
-    // --- PUBLIC & USER ENDPOINTS ---
-    getProducts: builder.query<PaginatedResponse<Product>, { page: number; pageSize: number }>({
-      query: ({ page, pageSize }) => `/products?page=${page}&pageSize=${pageSize}`,
-      providesTags: (result) => result ? [...result.items.map(({ id }) => ({ type: 'Product' as const, id })), { type: 'Product', id: 'LIST' }] : [{ type: 'Product', id: 'LIST' }],
-    }),
-    getProductById: builder.query<Product, string>({
-      query: (productId) => `/products/${productId}`,
-      providesTags: (_result, _error, id) => [{ type: 'Product', id }],
-    }),
-    getOrderById: builder.query<Order, string>({
-      query: (orderId) => `/orders/${orderId}`,
-      providesTags: (_result, _error, id) => [{ type: 'Order', id }],
-    }),
-    
-    searchProducts: builder.query<SearchProduct[], string>({
-      query: (queryText) => `/search?q=${queryText}`,
-      providesTags: (_result) => [{ type: 'Product', id: 'SEARCH' }],
-    }),
+    // --- PUBLIC & USER ENDPOINTS ---
+    getProducts: builder.query<PaginatedResponse<Product>, { page: number; pageSize: number }>({
+      query: ({ page, pageSize }) => `/products?page=${page}&pageSize=${pageSize}`,
+      providesTags: (result) => result ? [...result.items.map(({ id }) => ({ type: 'Product' as const, id })), { type: 'Product', id: 'LIST' }] : [{ type: 'Product', id: 'LIST' }],
+    }),
+    getProductById: builder.query<Product, string>({
+      query: (productId) => `/products/${productId}`,
+      providesTags: (_result, _error, id) => [{ type: 'Product', id }],
+    }),
+    getOrderById: builder.query<Order, string>({
+      query: (orderId) => `/orders/${orderId}`,
+      providesTags: (_result, _error, id) => [{ type: 'Order', id }],
+    }),
+    
+    searchProducts: builder.query<SearchProduct[], string>({
+      query: (queryText) => `/search?q=${queryText}`,
+      providesTags: (_result) => [{ type: 'Product', id: 'SEARCH' }],
+    }),
 
-    // --- ADDED REVIEW ENDPOINTS ---
-    getReviewsByProduct: builder.query<PaginatedResponse<Review>, { productId: string }>({
-        query: ({ productId }) => `/reviews/product/${productId}`,
-        providesTags: ['Review'],
+    getReviewsByProduct: builder.query<PaginatedResponse<Review>, { productId: string }>({
+        query: ({ productId }) => `/reviews/product/${productId}`,
+        providesTags: ['Review'],
+    }),
+    createReview: builder.mutation<Review, CreateReviewArg>({
+        query: (reviewData) => ({
+            url: '/reviews',
+            method: 'POST',
+            body: reviewData,
+        }),
+        invalidatesTags: ['Review'],
+    }),
+
+    // --- ADMIN ENDPOINTS ---
+    getAdminUsers: builder.query<AdminUserDto[], void>({
+      query: () => 'admin/users',
+      providesTags: ['AdminUser'],
+    }),
+    updateUserStatus: builder.mutation<void, { userId: string; isActive: boolean; role: string }>({
+      query: ({ userId, ...body }) => ({
+        url: `admin/users/${userId}`,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['AdminUser'],
+    }),
+    createAdminProduct: builder.mutation<void, ProductCreateArg>({
+        query: (product) => ({
+            url: 'admin/products',
+            method: 'POST',
+            body: product,
+        }),
+        invalidatesTags: [{ type: 'Product', id: 'LIST' }],
+    }),
+    
+    updateAdminProduct: builder.mutation<void, ProductUpdateArg>({
+      query: (product) => ({
+          url: `admin/products/${product.id}`,
+          method: 'PUT',
+          body: product,
+      }),
+      invalidatesTags: (_result, _error, arg) => [{ type: 'Product', id: arg.id }, { type: 'Product', id: 'LIST' }],
+    }),
+    // --- ADDED ADMIN MODERATION ENDPOINTS ---
+    getAdminPendingReviews: builder.query<PaginatedResponse<PendingReviewDto>, void>({
+        query: () => 'admin/reviews/pending',
+        providesTags: ['PendingReview'],
     }),
-    createReview: builder.mutation<Review, CreateReviewArg>({
-        query: (reviewData) => ({
-            url: '/reviews',
-            method: 'POST',
-            body: reviewData,
+    moderateReview: builder.mutation<void, ModerateReviewArg>({
+        query: ({ reviewId, approve, role }) => ({
+            url: `${role}/reviews/${reviewId}/moderate`,
+            method: 'PUT',
+            body: { reviewId, approve },
         }),
-        invalidatesTags: ['Review'], // Invalidate the list to refetch
+        invalidatesTags: ['PendingReview'],
     }),
-    // --- END OF ADDED REVIEW ENDPOINTS ---
 
-    // --- ADMIN ENDPOINTS ---
-    getAdminUsers: builder.query<AdminUserDto[], void>({
-      query: () => 'admin/users',
-      providesTags: ['AdminUser'],
+    // --- VENDOR ENDPOINTS ---
+    getVendorProducts: builder.query<PaginatedResponse<Product>, { page?: number; pageSize?: number }>({
+      query: ({ page = 1, pageSize = 10 }) => `vendor/products?page=${page}&pageSize=${pageSize}`,
+      providesTags: (result) => result ? [...result.items.map(({ id }) => ({ type: 'Product' as const, id })), { type: 'Product', id: 'VENDOR_LIST' }] : [{ type: 'Product', id: 'VENDOR_LIST' }],
+    }),
+    // --- ADDED VENDOR MODERATION ENDPOINT ---
+    getVendorPendingReviews: builder.query<PaginatedResponse<PendingReviewDto>, void>({
+        query: () => 'vendor/reviews/pending',
+        providesTags: ['PendingReview'],
     }),
-    updateUserStatus: builder.mutation<void, { userId: string; isActive: boolean; role: string }>({
-      query: ({ userId, ...body }) => ({
-        url: `admin/users/${userId}`,
-        method: 'PUT',
-        body,
-      }),
-      invalidatesTags: ['AdminUser'],
-    }),
-    createAdminProduct: builder.mutation<void, ProductCreateArg>({
-        query: (product) => ({
-            url: 'admin/products',
-            method: 'POST',
-            body: product,
-        }),
-        invalidatesTags: [{ type: 'Product', id: 'LIST' }],
-    }),
-    
-    // THIS IS THE CORRECTED MUTATION
-    updateAdminProduct: builder.mutation<void, ProductUpdateArg>({
-      query: (product) => ({
-          url: `admin/products/${product.id}`,
-          method: 'PUT',
-          body: product,
-      }),
-      invalidatesTags: (_result, _error, arg) => [{ type: 'Product', id: arg.id }, { type: 'Product', id: 'LIST' }],
-    }),
-    
-    // --- VENDOR ENDPOINTS ---
-    getVendorProducts: builder.query<PaginatedResponse<Product>, { page?: number; pageSize?: number }>({
-      query: ({ page = 1, pageSize = 10 }) => `vendor/products?page=${page}&pageSize=${pageSize}`,
-      providesTags: (result) => result ? [...result.items.map(({ id }) => ({ type: 'Product' as const, id })), { type: 'Product', id: 'VENDOR_LIST' }] : [{ type: 'Product', id: 'VENDOR_LIST' }],
-    }),
-  }),
+  }),
 });
 
 export const {
-  useGetProductsQuery,
-  useGetProductByIdQuery,
-  useGetOrderByIdQuery,
-  useGetAdminUsersQuery,
-  useUpdateUserStatusMutation,
-  useCreateAdminProductMutation,
-  useUpdateAdminProductMutation,
-  useGetVendorProductsQuery,
-  useSearchProductsQuery,
-  // --- EXPORT THE NEWLY CREATED HOOKS ---
-  useGetReviewsByProductQuery,
-  useCreateReviewMutation,
-  // --- END OF EXPORTS ---
+  useGetProductsQuery,
+  useGetProductByIdQuery,
+  useGetOrderByIdQuery,
+  useGetAdminUsersQuery,
+  useUpdateUserStatusMutation,
+  useCreateAdminProductMutation,
+  useUpdateAdminProductMutation,
+  useGetVendorProductsQuery,
+  useSearchProductsQuery,
+  useGetReviewsByProductQuery,
+  useCreateReviewMutation,
+  // --- EXPORT THE NEWLY CREATED HOOKS ---
+  useGetAdminPendingReviewsQuery,
+  useGetVendorPendingReviewsQuery,
+  useModerateReviewMutation,
 } = apiSlice;

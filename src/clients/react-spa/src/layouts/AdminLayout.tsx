@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { FaUsers, FaBox } from 'react-icons/fa';
+import { FaComments } from 'react-icons/fa6';
 
 const AdminLayout = () => {
   const activeLinkStyle = {
@@ -31,7 +32,14 @@ const AdminLayout = () => {
               <FaBox className="mr-3" />
               <span>Product Management</span>
             </NavLink>
-            {/* Add links to other admin pages here */}
+            <NavLink
+              to="/admin/reviews"
+              style={({ isActive }) => (isActive ? activeLinkStyle : undefined)}
+              className="flex items-center px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
+            >
+              <FaComments className="mr-3" />
+              <span>Review Moderation</span>
+            </NavLink>
           </nav>
         </div>
       </aside>

@@ -11,6 +11,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
 import SearchBar from './components/SearchBar';
 import AdminLayout from './layouts/AdminLayout';
+import AdminReviews from './pages/admin/AdminReviews';
+import VendorLayout from './layouts/VendorLayout';
+import VendorReviews from './pages/vendor/VendorReviews';
 
 // Lazy load all page components
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -97,23 +100,25 @@ function App() {
             </Route>
             
             {/* --- Admin Only Routes --- */}
-            <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<Navigate to="users" replace />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="products" element={<AdminProducts />} />
-                <Route path="products/new" element={<AdminProductEdit />} />
-                <Route path="products/edit/:productId" element={<AdminProductEdit />} />
-              </Route>
-            </Route>
+            <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Navigate to="users" replace />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="reviews" element={<AdminReviews />} />
+                <Route path="products/new" element={<AdminProductEdit />} />
+                <Route path="products/edit/:productId" element={<AdminProductEdit />} />
+              </Route>
+            </Route>
 
-            {/* --- Vendor Routes --- */}
-            <Route element={<ProtectedRoute allowedRoles={['Vendor', 'Admin']} />}>
-              <Route path="/vendor">
-                <Route index element={<Navigate to="products" replace />} />
-                <Route path="products" element={<VendorProducts />} />
-              </Route>
-            </Route>
+            {/* --- Vendor Routes --- */}
+            <Route element={<ProtectedRoute allowedRoles={['Vendor', 'Admin']} />}>
+              <Route path="/vendor" element={<VendorLayout />}>
+                <Route index element={<Navigate to="products" replace />} />
+                <Route path="products" element={<VendorProducts />} />
+                <Route path="reviews" element={<VendorReviews />} />
+              </Route>
+            </Route>
           </Routes>
         </Suspense>
       </main>

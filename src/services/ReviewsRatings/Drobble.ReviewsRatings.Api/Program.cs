@@ -3,6 +3,7 @@
 using Drobble.ReviewsRatings.Application.Contracts;
 using Drobble.ReviewsRatings.Application.Features.Reviews.Commands;
 using Drobble.ReviewsRatings.Infrastructure.Persistence;
+using Drobble.ReviewsRatings.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -19,26 +20,31 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 builder.Services.AddSingleton<IReviewRepository, ReviewRepository>();
 builder.Services.AddHttpContextAccessor();
+
+// Register the HttpClient for the ProductCatalogService
+builder.Services.AddHttpClient<IProductCatalogService, ProductCatalogService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductCatalogApi"]!);
+});
+
 builder.Services.AddMediatR(cfg =>
-  cfg.RegisterServicesFromAssembly(typeof(CreateReviewCommand).Assembly));
+ cfg.RegisterServicesFromAssembly(typeof(CreateReviewCommand).Assembly));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-  .AddJwtBearer(options =>
-  {
-      options.TokenValidationParameters = new TokenValidationParameters
-      {
-          ValidateIssuer = true,
-          ValidateAudience = true,
-          ValidateLifetime = true,
-          ValidateIssuerSigningKey = true,
-          ValidIssuer = builder.Configuration["Jwt:Issuer"],
-          ValidAudience = builder.Configuration["Jwt:Audience"],
-          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
-
-          // FIX: Explicitly use the ClaimTypes.Role constant for role mapping
-          RoleClaimType = ClaimTypes.Role
-      };
-  });
+ .AddJwtBearer(options =>
+ {
+     options.TokenValidationParameters = new TokenValidationParameters
+     {
+         ValidateIssuer = true,
+         ValidateAudience = true,
+         ValidateLifetime = true,
+         ValidateIssuerSigningKey = true,
+         ValidIssuer = builder.Configuration["Jwt:Issuer"],
+         ValidAudience = builder.Configuration["Jwt:Audience"],
+         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+         RoleClaimType = ClaimTypes.Role
+     };
+ });
 
 builder.Services.AddAuthorization(options =>
 {
@@ -60,12 +66,12 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer"
     });
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
+ {
   {
-    {
-      new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
-      new string[]{}
-    }
-  });
+   new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
+   new string[]{}
+  }
+ });
 });
 
 var app = builder.Build();

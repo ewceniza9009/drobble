@@ -30,8 +30,9 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
             Price = product.Price,
             Stock = product.Stock,
             CategoryId = product.CategoryId.ToString(),
-            IsActive = product.IsActive,
-            ImageUrl = product.ImageUrls.FirstOrDefault() // Map the first image
+            VendorId = product.VendorId, // Map the VendorId
+            IsActive = product.IsActive,
+            ImageUrl = product.ImageUrls.FirstOrDefault()
         };
     }
 }
