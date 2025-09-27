@@ -51,7 +51,7 @@ export const placeOrder = createAsyncThunk(
         quantity: item.quantity,
         price: 0 // Price is set on the backend
     }));
-    const response = await api.post('/orders', { items: orderItems, currency: 'USD' });
+    const response = await api.post('/orders', { items: orderItems, currency: 'PHP' });
     return response.data;
   }
 );

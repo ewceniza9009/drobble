@@ -2,7 +2,7 @@
 // than creating it every time the function is called.
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
-  currency: 'USD',
+  currency: 'PHP',
 });
 
 export const formatCurrency = (amount: number) => {
