@@ -14,6 +14,7 @@ import AdminLayout from './layouts/AdminLayout';
 import AdminReviews from './pages/admin/AdminReviews';
 import VendorLayout from './layouts/VendorLayout';
 import VendorReviews from './pages/vendor/VendorReviews';
+import Footer from './components/Footer';
 
 // Lazy load all page components
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -60,7 +61,7 @@ function App() {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="flex flex-col min-h-screen bg-slate-50">
       <Toaster position="bottom-center" />
       <header className="bg-white/80 backdrop-blur-lg border-b border-slate-200 sticky top-0 z-50">
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
@@ -81,7 +82,7 @@ function App() {
           </div>
         </nav>
       </header>
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Suspense fallback={<div className="text-center p-8 text-xl">Loading...</div>}>
           <Routes>
             {/* --- Public Routes --- */}
@@ -100,28 +101,29 @@ function App() {
             </Route>
             
             {/* --- Admin Only Routes --- */}
-            <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<Navigate to="users" replace />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="products" element={<AdminProducts />} />
-                <Route path="reviews" element={<AdminReviews />} />
-                <Route path="products/new" element={<AdminProductEdit />} />
-                <Route path="products/edit/:productId" element={<AdminProductEdit />} />
-              </Route>
-            </Route>
+            <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Navigate to="users" replace />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="reviews" element={<AdminReviews />} />
+                <Route path="products/new" element={<AdminProductEdit />} />
+                <Route path="products/edit/:productId" element={<AdminProductEdit />} />
+              </Route>
+            </Route>
 
-            {/* --- Vendor Routes --- */}
-            <Route element={<ProtectedRoute allowedRoles={['Vendor', 'Admin']} />}>
-              <Route path="/vendor" element={<VendorLayout />}>
-                <Route index element={<Navigate to="products" replace />} />
-                <Route path="products" element={<VendorProducts />} />
+            {/* --- Vendor Routes --- */}
+            <Route element={<ProtectedRoute allowedRoles={['Vendor', 'Admin']} />}>
+              <Route path="/vendor" element={<VendorLayout />}>
+                <Route index element={<Navigate to="products" replace />} />
+                <Route path="products" element={<VendorProducts />} />
                 <Route path="reviews" element={<VendorReviews />} />
-              </Route>
-            </Route>
+              </Route>
+            </Route>
           </Routes>
         </Suspense>
       </main>
+      <Footer />
     </div>
   );
 }

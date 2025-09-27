@@ -5,3 +5,35 @@
 body {
     @apply bg-slate-50 font-sans antialiased text-slate-700;
 }
+
+/* These styles ensure the slick-dots and slick-prev/next buttons 
+   are styled and have a high enough z-index to be clicked. */
+
+/* Ensures the arrows are clickable and visible */
+.slick-prev,
+.slick-next {
+    z-index: 10; /* Bring arrows to the front */
+}
+
+/* Adjusts the position of the arrows slightly outside the main content area */
+.slick-prev {
+    left: -20px; /* Adjust as needed */
+    color: #4a5568 !important;
+}
+
+.slick-next {
+    right: -20px; /* Adjust as needed */
+    color: #4a5568 !important;
+}
+
+/* Fixes the height and width of the dots container */
+.slick-dots li button:before {
+    font-size: 10px; /* Adjust size of dots */
+    color: #4a5568; /* Set dot color (e.g., slate-600) */
+}
+
+/* Important: If the cards are still cut off, ensure the main container allows overflow */
+.carousel-container {
+    overflow: hidden; /* Keep this if you want to contain the content */
+    padding: 0 40px; /* Add padding to make space for the arrows */
+}

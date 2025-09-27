@@ -1,5 +1,4 @@
 ﻿// ---- File: src/services/ProductCatalog/Infrastructure/Persistence/ProductRepository.cs ----
-// src/services/ProductCatalog/Drobble.ProductCatalog.Infrastructure/Persistence/ProductRepository.cs
 using Drobble.ProductCatalog.Application.Contracts;
 using Drobble.ProductCatalog.Domain.Entities;
 using Microsoft.Extensions.Options;
@@ -31,16 +30,33 @@ public class ProductRepository : IProductRepository
         await _productsCollection.InsertOneAsync(product, null, cancellationToken);
     }
 
-    public async Task<(IEnumerable<Product> Products, int Total)> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken = default)
+    // FIX: Implemented the full filtering logic for all new parameters.
+    public async Task<(IEnumerable<Product> Products, int Total)> GetAllAsync(int page, int pageSize, bool? isFeatured, string? categoryId, string? excludeId, CancellationToken cancellationToken = default)
     {
-        var filter = Builders<Product>.Filter.Eq(p => p.IsActive, true);
+        var builder = Builders<Product>.Filter;
+        var filter = builder.Eq(p => p.IsActive, true);
+
+        if (isFeatured.HasValue)
+        {
+            filter &= builder.Eq(p => p.IsFeatured, isFeatured.Value);
+        }
+
+        if (!string.IsNullOrEmpty(categoryId) && ObjectId.TryParse(categoryId, out var catId))
+        {
+            filter &= builder.Eq(p => p.CategoryId, catId);
+        }
+
+        if (!string.IsNullOrEmpty(excludeId) && ObjectId.TryParse(excludeId, out var exId))
+        {
+            filter &= builder.Ne(p => p.Id, exId); // Ne = Not Equal
+        }
 
         var total = await _productsCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
 
         var products = await _productsCollection.Find(filter)
-            .Skip((page - 1) * pageSize)
-            .Limit(pageSize)
-            .ToListAsync(cancellationToken);
+          .Skip((page - 1) * pageSize)
+          .Limit(pageSize)
+          .ToListAsync(cancellationToken);
 
         return (products, (int)total);
     }
@@ -63,10 +79,10 @@ public class ProductRepository : IProductRepository
         var total = await _productsCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
 
         var products = await _productsCollection.Find(filter)
-            .SortByDescending(p => p.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Limit(pageSize)
-            .ToListAsync(cancellationToken);
+          .SortByDescending(p => p.CreatedAt)
+          .Skip((page - 1) * pageSize)
+          .Limit(pageSize)
+          .ToListAsync(cancellationToken);
 
         return (products, (int)total);
     }

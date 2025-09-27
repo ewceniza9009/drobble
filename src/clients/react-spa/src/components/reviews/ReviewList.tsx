@@ -7,7 +7,15 @@ const ReviewList = ({ productId }: { productId: string }) => {
 
   if (isLoading) return <p>Loading reviews...</p>;
   if (error || !data) return <p>Could not load reviews.</p>;
-  if (data.items.length === 0) return <p className="text-slate-500 text-sm">No reviews yet. Be the first!</p>;
+    if (data.items.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full border-2 border-dashed border-slate-200 rounded-lg">
+        <p className="text-slate-500 text-sm text-center">
+          No reviews yet. Be the first!
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

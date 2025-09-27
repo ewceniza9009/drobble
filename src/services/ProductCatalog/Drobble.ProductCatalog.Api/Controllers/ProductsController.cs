@@ -1,4 +1,5 @@
-﻿using Drobble.ProductCatalog.Application.Features.Commands;
+﻿// ---- File: src/services/ProductCatalog/Drobble.ProductCatalog.Api/Controllers/ProductsController.cs ----
+using Drobble.ProductCatalog.Application.Features.Commands;
 using Drobble.ProductCatalog.Application.Features.Products.Commands;
 using Drobble.ProductCatalog.Application.Features.Products.Queries;
 using MediatR;
@@ -12,25 +13,34 @@ public class ProductsController : ControllerBase
     private readonly ILogger<ProductsController> _logger;
     private readonly IMediator _mediator;
 
-    public ProductsController(ILogger<ProductsController> logger, IMediator mediator) 
+    public ProductsController(ILogger<ProductsController> logger, IMediator mediator)
     {
         _mediator = mediator;
         _logger = logger;
     }
 
-    // --- PUBLIC ENDPOINTS ---
-    [HttpGet("{id}")]
+    // --- PUBLIC ENDPOINTS ---
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetProductById(string id)
     {
         var product = await _mediator.Send(new GetProductByIdQuery(id));
         return product is not null ? Ok(product) : NotFound();
     }
-    [HttpGet]
-    public async Task<IActionResult> GetProducts([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+
+    // FIX: Added 'categoryId' and 'exclude' parameters to handle more complex filtering.
+    [HttpGet]
+    public async Task<IActionResult> GetProducts(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] bool? isFeatured = null,
+        [FromQuery] string? categoryId = null,
+        [FromQuery] string? exclude = null)
     {
-        var result = await _mediator.Send(new GetProductsQuery(page, pageSize));
+        // Pass all parameters to the MediatR query
+        var result = await _mediator.Send(new GetProductsQuery(page, pageSize, isFeatured, categoryId, exclude));
         return Ok(result);
     }
+
     [HttpPost("batch")]
     public async Task<IActionResult> GetProductsByIds([FromBody] IEnumerable<string> ids)
     {
@@ -38,8 +48,8 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 
-    // --- ADMIN ENDPOINTS ---
-    [HttpPost("admin")]
+    // --- ADMIN ENDPOINTS ---
+    [HttpPost("admin")]
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> CreateProduct([FromBody] CreateProductCommand command)
     {
@@ -59,8 +69,8 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 
-    // --- VENDOR ENDPOINTS ---
-    [HttpGet("vendor")]
+    // --- VENDOR ENDPOINTS ---
+    [HttpGet("vendor")]
     [Authorize(Policy = "VendorOnly")]
     public async Task<IActionResult> GetVendorProducts([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {

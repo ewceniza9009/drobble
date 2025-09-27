@@ -8,6 +8,7 @@ import { formatCurrency } from '../utils/formatting';
 import ReviewList from '../components/reviews/ReviewList';
 import ReviewForm from '../components/reviews/ReviewForm';
 import { FaShoppingCart } from 'react-icons/fa';
+import RelatedProducts from '../components/RelatedProducts';
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -66,6 +67,9 @@ const ProductDetailPage = () => {
             </div>
           </div>
       </div>
+
+       <RelatedProducts categoryId={product.categoryId} currentProductId={product.id} />
+    
     </>
   );
 };
