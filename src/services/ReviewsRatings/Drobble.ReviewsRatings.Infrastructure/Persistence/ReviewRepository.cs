@@ -46,9 +46,16 @@ public class ReviewRepository : IReviewRepository
         return (reviews, totalCount);
     }
 
-    public async Task<(IEnumerable<Review> Reviews, long TotalCount)> GetPendingReviewsAsync(int page, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<(IEnumerable<Review> Reviews, long TotalCount)> GetPendingReviewsAsync(int page, int pageSize, Guid? vendorId, CancellationToken cancellationToken = default)
     {
-        var filter = Builders<Review>.Filter.Eq(r => r.ModerationStatus, ModerationStatus.Pending);
+        var builder = Builders<Review>.Filter;
+        var filter = builder.Eq(r => r.ModerationStatus, ModerationStatus.Pending);
+
+        // If a vendorId is provided, add it to the filter
+        if (vendorId.HasValue)
+        {
+            filter &= builder.Eq(r => r.VendorId, vendorId.Value);
+        }
 
         var totalCount = await _reviewsCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
 

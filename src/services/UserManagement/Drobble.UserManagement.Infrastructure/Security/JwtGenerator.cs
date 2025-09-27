@@ -26,7 +26,7 @@ public class JwtGenerator : IJwtGenerator
         {
             new(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
             new(JwtRegisteredClaimNames.UniqueName, user.Username),
-            new(ClaimTypes.Role, user.Role.ToString())
+            new("role", user.Role.ToString())
         };
 
         var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);

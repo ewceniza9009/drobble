@@ -1,6 +1,100 @@
 {
   "Routes": [
-    // Product Catalog
+    // --- ADMIN ROUTES ---
+    {
+      "UpstreamPathTemplate": "/api/admin/users/{everything}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5297
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/users/admin/{everything}",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+    {
+      "UpstreamPathTemplate": "/api/admin/products/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5220
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/products/admin/{everything}",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+    {
+      "UpstreamPathTemplate": "/api/admin/orders/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5059
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/orders/admin/{everything}",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+    {
+      "UpstreamPathTemplate": "/api/admin/reviews/{everything}",
+      "UpstreamHttpMethod": [ "GET", "PUT" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5086
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/reviews/admin/{everything}",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+    // --- VENDOR ROUTES ---
+    {
+      "UpstreamPathTemplate": "/api/vendor/products/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5220
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/products/vendor/{everything}",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+    {
+      "UpstreamPathTemplate": "/api/vendor/orders/{everything}",
+      "UpstreamHttpMethod": [ "GET", "PUT" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5059
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/orders/vendor/{everything}",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+    {
+      "UpstreamPathTemplate": "/api/vendor/reviews/{everything}",
+      "UpstreamHttpMethod": [ "GET", "PUT" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5086
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/reviews/vendor/{everything}",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+
+    // --- ALL ORIGINAL PUBLIC & SECURE ROUTES ---
     {
       "UpstreamPathTemplate": "/api/products",
       "UpstreamHttpMethod": [ "GET", "POST" ],
@@ -15,7 +109,7 @@
     },
     {
       "UpstreamPathTemplate": "/api/products/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT" ],
+      "UpstreamHttpMethod": [ "GET" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -37,9 +131,9 @@
       ],
       "DownstreamPathTemplate": "/api/v1/products/batch"
     },
-    // User Management (Public)
     {
-      "DownstreamPathTemplate": "/api/v1/users/{action}",
+      "UpstreamPathTemplate": "/api/auth/{action}",
+      "UpstreamHttpMethod": [ "POST" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -47,24 +141,11 @@
           "Port": 5297
         }
       ],
-      "UpstreamPathTemplate": "/api/auth/{action}",
-      "UpstreamHttpMethod": [ "POST" ]
+      "DownstreamPathTemplate": "/api/v1/users/{action}"
     },
-    // Shopping Cart
     {
-      "DownstreamPathTemplate": "/api/v1/carts",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5256
-        }
-      ],
       "UpstreamPathTemplate": "/api/cart",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/v1/carts/items/{productId}",
+      "UpstreamHttpMethod": [ "GET" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -72,11 +153,11 @@
           "Port": 5256
         }
       ],
+      "DownstreamPathTemplate": "/api/v1/carts"
+    },
+    {
       "UpstreamPathTemplate": "/api/cart/items/{productId}",
-      "UpstreamHttpMethod": [ "DELETE" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/v1/carts/items",
+      "UpstreamHttpMethod": [ "DELETE" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -84,11 +165,11 @@
           "Port": 5256
         }
       ],
+      "DownstreamPathTemplate": "/api/v1/carts/items/{productId}"
+    },
+    {
       "UpstreamPathTemplate": "/api/cart/items",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/v1/carts/merge",
+      "UpstreamHttpMethod": [ "POST" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -96,16 +177,24 @@
           "Port": 5256
         }
       ],
+      "DownstreamPathTemplate": "/api/v1/carts/items"
+    },
+    {
       "UpstreamPathTemplate": "/api/cart/merge",
       "UpstreamHttpMethod": [ "POST" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5256
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/carts/merge",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
     },
-    // Order Management (Secure)
     {
-      "DownstreamPathTemplate": "/api/v1/orders/{everything}",
+      "UpstreamPathTemplate": "/api/orders/{everything}",
+      "UpstreamHttpMethod": [ "POST", "GET" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -113,27 +202,21 @@
           "Port": 5059
         }
       ],
-      "UpstreamPathTemplate": "/api/orders/{everything}",
-      "UpstreamHttpMethod": [ "POST", "GET" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
+      "DownstreamPathTemplate": "/api/v1/orders/{everything}",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
     },
-    // Search Discovery
     {
       "UpstreamPathTemplate": "/api/search",
       "UpstreamHttpMethod": [ "GET" ],
       "DownstreamScheme": "http",
-      "DownstreamPathTemplate": "/api/v1/search",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 5209
-        } // Default port for SearchDiscovery.Api
-      ]
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/search"
     },
-    // Reviews
     {
       "UpstreamPathTemplate": "/api/reviews",
       "UpstreamHttpMethod": [ "POST" ],
@@ -145,10 +228,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/v1/reviews",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
     },
     {
       "UpstreamPathTemplate": "/api/reviews/product/{productId}",

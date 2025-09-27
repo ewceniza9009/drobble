@@ -32,6 +32,11 @@ public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, string>
             throw new Exception("Invalid username or password.");
         }
 
+        if (!user.IsActive)
+        {
+            throw new Exception("This account has been disabled.");
+        }
+
         return _jwtGenerator.GenerateToken(user);
     }
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import { FaChevronRight, FaBoxOpen } from 'react-icons/fa';
+import { formatCurrency } from '../utils/formatting';
 
 interface Order {
   id: string;
@@ -76,7 +77,7 @@ const ProfilePage = () => {
                 <div className="flex justify-between items-center mt-4">
                     <div>
                         <p className="text-sm text-gray-500">Total</p>
-                        <p className="text-xl font-bold">${order.totalAmount.toFixed(2)}</p>
+                        <p className="text-xl font-bold">{formatCurrency(order.totalAmount)}</p>
                     </div>
                     <div className="flex items-center space-x-4">
                         <StatusBadge status={order.status} />

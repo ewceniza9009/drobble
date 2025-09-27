@@ -39,4 +39,29 @@ public class OrderRepository : IOrderRepository
             .OrderByDescending(o => o.CreatedAt)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<IEnumerable<Order>> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        return await _context.Orders
+            .Include(o => o.OrderItems)
+            .OrderByDescending(o => o.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task UpdateAsync(Order order, CancellationToken cancellationToken = default)
+    {
+        _context.Orders.Update(order);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Order>> GetOrdersByProductIdsAsync(IEnumerable<string> productIds, CancellationToken cancellationToken = default)
+    {
+        return await _context.Orders
+            .Include(o => o.OrderItems)
+            .Where(o => o.OrderItems.Any(oi => productIds.Contains(oi.ProductId)))
+            .OrderByDescending(o => o.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
 }

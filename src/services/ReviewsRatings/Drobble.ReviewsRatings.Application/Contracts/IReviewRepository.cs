@@ -44,7 +44,7 @@ public interface IReviewRepository
     /// <param name="pageSize">The number of items per page.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A tuple containing the list of pending reviews and the total count.</returns>
-    Task<(IEnumerable<Review> Reviews, long TotalCount)> GetPendingReviewsAsync(int page, int pageSize, CancellationToken cancellationToken = default);
+    Task<(IEnumerable<Review> Reviews, long TotalCount)> GetPendingReviewsAsync(int page, int pageSize, Guid? vendorId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates an existing review in the data store, typically for moderation.

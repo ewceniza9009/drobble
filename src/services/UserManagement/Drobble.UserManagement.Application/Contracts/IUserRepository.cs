@@ -9,5 +9,8 @@ public interface IUserRepository
     Task<bool> IsUsernameTakenAsync(string username, CancellationToken cancellationToken = default);
     Task<bool> IsEmailTakenAsync(string email, CancellationToken cancellationToken = default);
     Task AddAsync(User user, CancellationToken cancellationToken = default);
-    Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default); // Add this line
+    Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
+    Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default); // New
+    Task UpdateAsync(User user, CancellationToken cancellationToken = default); // New
+    Task<IEnumerable<User>> GetAllAsync(int page, int pageSize, string? search, UserRole? role, bool? isActive, CancellationToken cancellationToken = default); // New
 }

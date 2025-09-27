@@ -1,11 +1,15 @@
 ﻿using Drobble.UserManagement.Application.Features.Users.Commands;
 using Drobble.UserManagement.Application.Features.Users.Queries;
+using Drobble.UserManagement.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/users")]
 public class UsersController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -16,40 +20,43 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
     {
-        try
-        {
-            var userId = await _mediator.Send(command);
-            return CreatedAtAction(nameof(Register), new { id = userId }, new { UserId = userId });
-        }
-        catch (Exception ex)
-        {
-            // In a real app, you'd have more specific exception handling
-            return BadRequest(new { Error = ex.Message });
-        }
+        var userId = await _mediator.Send(command);
+        return CreatedAtAction(nameof(Register), new { id = userId }, new { UserId = userId });
     }
 
     [HttpPost("login")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] LoginUserQuery query)
     {
-        try
-        {
-            //{
-            //    "username": "gemini_user",
-            //    "password": "SecurePassword123!"
-            //}
+        var token = await _mediator.Send(query);
+        return Ok(new { Token = token });
+    }
 
-            var token = await _mediator.Send(query);
-            return Ok(new { Token = token });
-        }
-        catch (Exception ex)
-        {
-            return Unauthorized(new { Error = ex.Message });
-        }
+    // --- ADMIN ENDPOINTS ---
+    [HttpGet("admin")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? search = null, [FromQuery] UserRole? role = null, [FromQuery] bool? isActive = null)
+    {
+        var query = new GetUsersQuery(page, pageSize, search, role, isActive);
+        var users = await _mediator.Send(query);
+        return Ok(users);
+    }
+
+    [HttpPut("admin/{id}")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> UpdateUserStatus(Guid id, [FromBody] UpdateUserStatusCommand command)
+    {
+        if (id != command.UserId) return BadRequest();
+        await _mediator.Send(command);
+        return NoContent();
+    }
+
+    [HttpGet("whoami")]
+    [Authorize] // Note: This only requires a valid login, not a specific role.
+    public IActionResult WhoAmI()
+    {
+        var claims = User.Claims.Select(c => new { c.Type, c.Value });
+        return Ok(claims);
     }
 }

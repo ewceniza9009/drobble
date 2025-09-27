@@ -55,6 +55,31 @@ public class ProductRepository : IProductRepository
     {
         await _productsCollection.ReplaceOneAsync(p => p.Id == product.Id, product, cancellationToken: cancellationToken);
     }
+
+    public async Task<(IEnumerable<Product> Products, int Total)> GetByVendorIdAsync(Guid vendorId, int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Product>.Filter.Eq(p => p.VendorId, vendorId);
+
+        var total = await _productsCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
+
+        var products = await _productsCollection.Find(filter)
+            .SortByDescending(p => p.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Limit(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (products, (int)total);
+    }
+
+    public async Task<IEnumerable<string>> GetIdsByVendorIdAsync(Guid vendorId, CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Product>.Filter.Eq(p => p.VendorId, vendorId);
+        var projection = Builders<Product>.Projection.Include(p => p.Id);
+
+        var cursor = await _productsCollection.Find(filter).Project(projection).ToCursorAsync(cancellationToken);
+
+        return cursor.ToEnumerable().Select(doc => doc["_id"].AsObjectId.ToString());
+    }
 }
 
 // Helper class to bind appsettings.json to a C# object

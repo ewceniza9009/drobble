@@ -11,5 +11,7 @@ public interface IProductRepository
     Task AddAsync(Product product, CancellationToken cancellationToken = default);
     Task<(IEnumerable<Product> Products, int Total)> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken = default);
     Task<IEnumerable<Product>> GetByIdsAsync(IEnumerable<ObjectId> ids, CancellationToken cancellationToken = default);
-    Task UpdateAsync(Product product, CancellationToken cancellationToken = default); // Add this method
+    Task UpdateAsync(Product product, CancellationToken cancellationToken = default); 
+    Task<(IEnumerable<Product> Products, int Total)> GetByVendorIdAsync(Guid vendorId, int page, int pageSize, CancellationToken cancellationToken = default);
+    Task<IEnumerable<string>> GetIdsByVendorIdAsync(Guid vendorId, CancellationToken cancellationToken = default);
 }
