@@ -15,15 +15,9 @@ public class OrdersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand command)
     {
-        // 1. This correctly creates the order and returns the new Guid.
         var orderId = await _mediator.Send(command);
-
-        // 2. THE FIX: Use the new 'orderId' to fetch the full order details.
-        //    This creates a complete order object to return to the client.
         var newOrderDto = await _mediator.Send(new GetOrderByIdQuery(orderId));
 
-        // 3. Return a 201 Created status with the full newOrderDto in the response body.
-        //    This object contains the 'id' property that the frontend needs.
         return CreatedAtAction(nameof(GetOrderById), new { id = orderId }, newOrderDto);
     }
     [HttpGet("{id:guid}")]
