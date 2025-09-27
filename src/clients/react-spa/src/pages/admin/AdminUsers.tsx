@@ -199,7 +199,7 @@ const AdminUsers = () => {
                     <div className="flex items-center space-x-2">
                       {getRoleIcon(parseInt(user.role))}
                       <span className={`px-3 py-1 text-xs font-medium rounded-full ring-1 ring-inset ${getRoleColor(parseInt(user.role))}`}>
-                        {parseInt(user.role) === 1 ? 'Admin' : parseInt(user.role) === 2 ? 'Moderator' : 'User'}
+                        {parseInt(user.role) === 1 ? 'Vendor' : parseInt(user.role) === 2 ? 'Admin' : 'User'}
                       </span>
                     </div>
                   </td>

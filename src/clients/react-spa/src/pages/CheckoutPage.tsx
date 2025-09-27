@@ -119,14 +119,14 @@ const CheckoutPage = () => {
             <h3 className="text-lg font-semibold mb-4">Express checkout</h3>
             <div className="space-y-3">
               <button className="w-full bg-black text-white py-3 rounded-lg font-medium flex items-center justify-center space-x-2">
-                <span>shop Pay</span>
+                <span>Maya</span>
               </button>
               <button className="w-full bg-yellow-400 text-black py-3 rounded-lg font-medium flex items-center justify-center space-x-2">
                 <FaPaypal className="" />
                 <span>PayPal</span>
               </button>
               <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium">
-                Pay
+                GCash
               </button>
             </div>
             

@@ -1,4 +1,4 @@
-import { FaCheck, FaTimes, FaCommentSlash, FaComments, FaExclamationTriangle, FaUser, FaBox, FaCalendar } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaCommentSlash, FaComments, FaExclamationTriangle, FaUser, FaCalendar } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { useGetAdminPendingReviewsQuery, useModerateReviewMutation } from '../../store/apiSlice';
 import StarRating from '../../components/reviews/StarRating';
@@ -152,13 +152,6 @@ const AdminReviews = () => {
 
                     <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                       <p className="text-gray-700 italic text-lg leading-relaxed">"{review.comment}"</p>
-                    </div>
-
-                    <div className="flex items-center space-x-4 mt-4 text-sm text-gray-600">
-                      <div className="flex items-center">
-                        <FaBox className="mr-2" />
-                        <span>Product ID: {review.productId}</span>
-                      </div>
                     </div>
                   </div>
 
