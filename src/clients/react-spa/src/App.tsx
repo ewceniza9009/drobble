@@ -1,4 +1,4 @@
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FaUser, FaSignOutAlt, FaCog } from 'react-icons/fa';
@@ -67,7 +67,7 @@ function App() {
             <CartIcon />
             {token ? (
               <>
-                {userRole === 'Admin' && <Link to="/admin/products" title="Admin Panel"><FaCog size="1.2em" /></Link>}
+                {userRole === 'Admin' && <Link to="/admin" title="Admin Panel"><FaCog size="1.2em" /></Link>}
                 {userRole === 'Vendor' && <Link to="/vendor/products" title="Vendor Panel"><FaCog size="1.2em" /></Link>}
                 <Link to="/profile" title="My Account"><FaUser size="1.2em" /></Link>
                 <button onClick={handleLogout} title="Logout"><FaSignOutAlt size="1.2em" /></button>
@@ -99,7 +99,8 @@ function App() {
             {/* --- Admin Only Routes --- */}
             <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
               <Route path="/admin" element={<AdminLayout />}>
-                {/* These routes will now appear inside the AdminLayout's <Outlet> */}
+                {/* THIS IS THE CHANGE: Redirect /admin to /admin/users */}
+                <Route index element={<Navigate to="users" replace />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="products/new" element={<AdminProductEdit />} />
