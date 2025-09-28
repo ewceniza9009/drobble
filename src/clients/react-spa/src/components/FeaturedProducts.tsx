@@ -2,6 +2,7 @@
 import { useGetFeaturedProductsQuery } from '../store/apiSlice';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatCurrency } from '../utils/formatting';
 
 const FeaturedProducts = () => {
     const { data: products = [], isLoading, error } = useGetFeaturedProductsQuery();
@@ -59,7 +60,7 @@ const FeaturedProducts = () => {
                             className="lg:col-span-2 cursor-pointer group"
                             onClick={() => handleProductClick(currentProduct.id)}
                         >
-                            <div className="bg-gray-50 rounded-lg p-6 border-2 border-blue-200">
+                            <div className="bg-gray-50 rounded-lg p-12 border-2 border-blue-200">
                                 <div className="text-center mb-4">
                                     <span className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
                                         ⭐ Featured Product
@@ -70,7 +71,7 @@ const FeaturedProducts = () => {
                                 <div className="flex flex-col md:flex-row gap-6 items-center">
                                     {/* Product Image with Hover Effect */}
                                     <div className="flex-1 w-full">
-                                        <div className="rounded-lg overflow-hidden bg-white p-4 shadow-md group-hover:shadow-xl transition-all duration-300">
+                                        <div className="rounded-lg overflow-hidden bg-white shadow-md group-hover:shadow-xl transition-all duration-300">
                                             <div className="relative w-full h-64 overflow-hidden rounded-lg">
                                                 <img
                                                     src={currentProduct.imageUrl || 'https://placehold.co/600x400/png?text=Product+Image'}
@@ -98,7 +99,7 @@ const FeaturedProducts = () => {
                                         
                                         <div className="flex items-center justify-between mb-4">
                                             <span className="text-3xl font-bold text-blue-600">
-                                                ${currentProduct.price}
+                                                {formatCurrency(currentProduct.price)}
                                             </span>
                                             <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                                                 In Stock
@@ -109,16 +110,6 @@ const FeaturedProducts = () => {
                                             {'★'.repeat(5)}
                                             <span className="text-gray-600 text-sm">(127 reviews)</span>
                                         </div>
-                                        
-                                        <button 
-                                            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 shadow-md transform group-hover:scale-105 transition-transform duration-200"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                // Add to cart logic here
-                                            }}
-                                        >
-                                            Add to Cart
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -144,7 +135,7 @@ const FeaturedProducts = () => {
                                                 className={`
                                                     cursor-pointer transition-all duration-300 rounded-lg p-3 border-2 bg-white group
                                                     ${isActive 
-                                                        ? 'border-blue-500 bg-blue-50 shadow-md transform scale-105' 
+                                                        ? 'border-blue-200 bg-blue-50 shadow-md transform scale-105' 
                                                         : 'border-gray-200 hover:border-blue-300 hover:shadow-sm hover:scale-105'
                                                     }
                                                 `}
@@ -170,7 +161,7 @@ const FeaturedProducts = () => {
                                                             {product.name}
                                                         </h4>
                                                         <p className="text-sm font-bold text-blue-600">
-                                                            ${product.price}
+                                                            {formatCurrency(product.price)}
                                                         </p>
                                                         <div className="flex items-center justify-center space-x-1 mt-1">
                                                             <span className="text-xs text-yellow-400">★</span>
