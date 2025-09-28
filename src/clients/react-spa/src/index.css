@@ -6,34 +6,58 @@ body {
     @apply bg-slate-50 font-sans antialiased text-slate-700;
 }
 
-/* These styles ensure the slick-dots and slick-prev/next buttons 
-   are styled and have a high enough z-index to be clicked. */
-
-/* Ensures the arrows are clickable and visible */
-.slick-prev,
-.slick-next {
-    z-index: 10; /* Bring arrows to the front */
+/* Slick carousel customizations for better mobile experience */
+.slick-slide {
+  display: flex !important;
+  justify-content: center;
 }
 
-/* Adjusts the position of the arrows slightly outside the main content area */
-.slick-prev {
-    left: -20px; /* Adjust as needed */
-    color: #4a5568 !important;
+.slick-list {
+  margin: 0 -8px;
 }
 
-.slick-next {
-    right: -20px; /* Adjust as needed */
-    color: #4a5568 !important;
+.slick-slide > div {
+  margin: 0 8px;
+  width: calc(100% - 16px);
 }
 
-/* Fixes the height and width of the dots container */
+/* Improve touch scrolling on mobile */
+.slick-slider {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -khtml-user-select: none;
+  -ms-touch-action: pan-y;
+  touch-action: pan-y;
+}
+
+/* Responsive dot sizing */
 .slick-dots li button:before {
-    font-size: 10px; /* Adjust size of dots */
-    color: #4a5568; /* Set dot color (e.g., slate-600) */
+  font-size: 10px;
 }
 
-/* Important: If the cards are still cut off, ensure the main container allows overflow */
-.carousel-container {
-    overflow: hidden; /* Keep this if you want to contain the content */
-    padding: 0 40px; /* Add padding to make space for the arrows */
+@media (min-width: 768px) {
+  .slick-dots li button:before {
+    font-size: 12px;
+  }
+}
+
+/* Custom dot colors to match your theme */
+.slick-dots li.slick-active button:before {
+  color: #4f46e5; /* Indigo color */
+}
+
+.slick-dots li button:before {
+  color: #9ca3af; /* Gray color */
+}
+
+/* Arrow customization */
+.slick-prev:before, .slick-next:before {
+  color: #4f46e5; /* Indigo color */
+}
+
+.slick-prev:hover:before, .slick-next:hover:before {
+  color: #3730a3; /* Darker indigo on hover */
 }
