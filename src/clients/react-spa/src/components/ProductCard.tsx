@@ -1,11 +1,17 @@
-import { Link } from 'react-router-dom';
-import { formatCurrency } from '../utils/formatting';
-import { useState } from 'react';
-import { FaShoppingCart, FaHeart, FaEye, FaStar, FaTruck } from 'react-icons/fa';
-import { useDispatch, useSelector } from 'react-redux';
-import { addItemToCart } from '../store/cartSlice';
-import type { AppDispatch, RootState } from '../store/store';
-import { toast } from 'react-hot-toast';
+import { Link } from "react-router-dom";
+import { formatCurrency } from "../utils/formatting";
+import { useState } from "react";
+import {
+  FaShoppingCart,
+  FaHeart,
+  FaEye,
+  FaStar,
+  FaTruck,
+} from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { addItemToCart } from "../store/cartSlice";
+import type { AppDispatch, RootState } from "../store/store";
+import { toast } from "react-hot-toast";
 
 interface Product {
   id: string;
@@ -38,15 +44,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!token) {
-      toast.error('Please login to add items to cart');
+      toast.error("Please login to add items to cart");
       return;
     }
 
-    const promise = dispatch(addItemToCart({ productId: product.id, quantity: 1 })).unwrap();
+    const promise = dispatch(
+      addItemToCart({ productId: product.id, quantity: 1 })
+    ).unwrap();
     toast.promise(promise, {
-      loading: 'Adding to cart...',
+      loading: "Adding to cart...",
       success: <b>Added to cart!</b>,
       error: <b>Failed to add item</b>,
     });
@@ -55,14 +63,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const handleAddToWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!token) {
-      toast.error('Please login to add items to wishlist');
+      toast.error("Please login to add items to wishlist");
       return;
     }
 
     setIsWishlisted(!isWishlisted);
-    toast.success(!isWishlisted ? 'Added to wishlist!' : 'Removed from wishlist');
+    toast.success(
+      !isWishlisted ? "Added to wishlist!" : "Removed from wishlist"
+    );
   };
 
   const averageRating = product.rating || 4.5;
@@ -70,7 +80,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const isOutOfStock = (product.stock || 0) === 0;
 
   return (
-    <div 
+    <div
       className="group relative bg-white rounded-xl shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-200 overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -98,22 +108,22 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <button
         onClick={handleAddToWishlist}
         className={`absolute top-3 right-3 z-10 p-2 rounded-full shadow-lg transition-all duration-300 ${
-          isWishlisted 
-            ? 'bg-red-500 text-white' 
-            : 'bg-white text-gray-600 hover:bg-red-500 hover:text-white'
+          isWishlisted
+            ? "bg-red-500 text-white"
+            : "bg-white text-gray-600 hover:bg-red-500 hover:text-white"
         }`}
-        aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+        aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
       >
-        <FaHeart className={`text-sm ${isWishlisted ? 'fill-current' : ''}`} />
+        <FaHeart className={`text-sm ${isWishlisted ? "fill-current" : ""}`} />
       </button>
 
       {/* Product Image */}
-      <Link to={`/products/${product.id}`} className="block relative overflow-hidden">
-        <div className="relative aspect-square bg-gray-100">
+      <div className="relative aspect-square bg-gray-100">
+        <Link to={`/products/${product.id}`} className="block absolute inset-0">
           <img
             src={
               imageError || !product.imageUrl
-                ? 'https://placehold.co/600x600/png?text=Product+Image'
+                ? "https://placehold.co/600x600/png?text=Product+Image"
                 : product.imageUrl
             }
             alt={product.name}
@@ -121,29 +131,32 @@ const ProductCard = ({ product }: ProductCardProps) => {
             loading="lazy"
             onError={handleImageError}
           />
-          
-          {/* Overlay Actions */}
-          <div className={`absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center space-x-2 ${
-            isHovered ? 'opacity-100' : 'opacity-0'
-          }`}>
-            <button 
-              onClick={handleAddToCart}
-              disabled={isOutOfStock || !token}
-              className="bg-white text-gray-900 p-3 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-blue-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="Add to cart"
-            >
-              <FaShoppingCart />
-            </button>
-            <Link 
-              to={`/products/${product.id}`}
-              className="bg-white text-gray-900 p-3 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-gray-900 hover:text-white delay-75"
-              aria-label="View product details"
-            >
-              <FaEye />
-            </Link>
-          </div>
+        </Link>
+
+        {/* Overlay Actions */}
+        <div
+          className={`absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center space-x-2 ${
+            isHovered ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <button
+            onClick={handleAddToCart}
+            disabled={isOutOfStock || !token}
+            className="bg-white text-gray-900 p-3 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-blue-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Add to cart"
+          >
+            <FaShoppingCart />
+          </button>
+          <Link
+            to={`/products/${product.id}`}
+            className="bg-white text-gray-900 p-3 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-gray-900 hover:text-white delay-75"
+            aria-label="View product details"
+            onClick={(e) => e.stopPropagation()} // Prevent outer Link click
+          >
+            <FaEye />
+          </Link>
         </div>
-      </Link>
+      </div>
 
       {/* Product Info */}
       <div className="p-4">
@@ -156,8 +169,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   key={star}
                   className={`text-sm ${
                     star <= Math.floor(averageRating)
-                      ? 'text-yellow-400 fill-current'
-                      : 'text-gray-300'
+                      ? "text-yellow-400 fill-current"
+                      : "text-gray-300"
                   }`}
                 />
               ))}
@@ -212,7 +225,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
       {/* Quick View on Mobile */}
       <div className="lg:hidden border-t border-gray-100">
-        <Link 
+        <Link
           to={`/products/${product.id}`}
           className="block text-center py-2 text-sm text-gray-600 hover:text-blue-600 transition-colors"
         >

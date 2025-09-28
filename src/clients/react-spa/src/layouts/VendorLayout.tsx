@@ -38,7 +38,8 @@ const VendorLayout = () => {
             {/* Sidebar Navigation */}
             <aside
                 className={`
-                    fixed lg:static inset-y-0 left-0 z-50
+                    fixed lg:sticky lg:top-24 lg:max-h-[calc(100vh-96px)] lg:overflow-y-auto
+                    inset-y-0 left-0 z-50 lg:z-30 /* <-- APPLIED THE FIX HERE */
                     w-64 flex-shrink-0 bg-white border-r border-gray-200
                     transform transition-transform duration-300 ease-in-out
                     lg:translate-x-0
@@ -57,7 +58,8 @@ const VendorLayout = () => {
                     </button>
                 </div>
 
-                <div className="p-4 sticky top-24">
+                {/* <-- REMOVED 'sticky top-24' FROM THE DIV BELOW --> */}
+                <div className="p-4">
                     <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 px-2 hidden lg:block">
                         Vendor Menu
                     </h2>
