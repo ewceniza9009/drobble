@@ -3,7 +3,8 @@ using MediatR;
 
 namespace Drobble.OrderManagement.Application.Features.Orders.Queries;
 
-public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, IEnumerable<OrderDto>>
+// Change the return type to the new PaginatedResult
+public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, PaginatedResult<OrderDto>>
 {
     private readonly IOrderRepository _orderRepository;
 
@@ -12,12 +13,13 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, IEnum
         _orderRepository = orderRepository;
     }
 
-    public async Task<IEnumerable<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
     {
-        var orders = await _orderRepository.GetAllAsync(request.Page, request.PageSize, cancellationToken);
+        // Get both the orders and the total count from the repository
+        var (orders, totalCount) = await _orderRepository.GetAllAsync(request.Page, request.PageSize, cancellationToken);
 
         // Map the domain entities to DTOs
-        return orders.Select(order => new OrderDto
+        var orderDtos = orders.Select(order => new OrderDto
         {
             Id = order.Id,
             UserId = order.UserId,
@@ -32,5 +34,14 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, IEnum
                 Price = oi.Price
             }).ToList()
         });
+
+        // Return the new paginated result object
+        return new PaginatedResult<OrderDto>
+        {
+            Items = orderDtos,
+            Total = totalCount,
+            Page = request.Page,
+            PageSize = request.PageSize
+        };
     }
 }

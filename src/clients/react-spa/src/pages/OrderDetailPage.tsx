@@ -1,9 +1,11 @@
-import { useParams } from 'react-router-dom';
-import { useGetOrderByIdQuery } from '../store/apiSlice';
+// ---- File: src/pages/OrderDetailPage.tsx ----
+import { useParams, useNavigate } from 'react-router-dom';
+import { useGetOrderByIdQuery, useCancelOrderMutation } from '../store/apiSlice';
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { formatCurrency } from '../utils/formatting';
-import { FaBox, FaCalendar, FaReceipt, FaShoppingBag, FaTruck } from 'react-icons/fa';
+import { FaBox, FaCalendar, FaReceipt, FaShoppingBag, FaTruck, FaTimes } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
 
 // Interfaces for enriched data
 interface ProductDetail {
@@ -62,10 +64,28 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 const OrderDetailPage = () => {
   const { orderId } = useParams<{ orderId: string }>();
+  const navigate = useNavigate();
   const { data: order, error, isLoading } = useGetOrderByIdQuery(orderId!, { skip: !orderId });
+  const [cancelOrder, { isLoading: isCancelling }] = useCancelOrderMutation();
 
   const [enrichedItems, setEnrichedItems] = useState<EnrichedOrderItem[]>([]);
   const [isFetchingDetails, setIsFetchingDetails] = useState(true);
+
+  const handleCancelOrder = async () => {
+    if (!order) return;
+    
+    if (window.confirm("Are you sure you want to cancel this order? This action cannot be undone.")) {
+        const promise = cancelOrder(order.id).unwrap();
+        toast.promise(promise, {
+            loading: 'Cancelling order...',
+            success: () => {
+                navigate('/profile');
+                return 'Order cancelled successfully.';
+            },
+            error: 'Failed to cancel order.',
+        });
+    }
+  };
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -133,7 +153,19 @@ const OrderDetailPage = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Order Details</h1>
             <p className="text-gray-600">Order #<span className="font-mono font-semibold">{order.id}</span></p>
           </div>
-          <StatusBadge status={order.status} />
+          <div className="flex items-center space-x-4 mt-4 lg:mt-0">
+            {order.status === 'Pending' && (
+                <button
+                    onClick={handleCancelOrder}
+                    disabled={isCancelling}
+                    className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 disabled:bg-gray-400 flex items-center"
+                >
+                    <FaTimes className="mr-2" />
+                    {isCancelling ? 'Cancelling...' : 'Cancel Order'}
+                </button>
+            )}
+            <StatusBadge status={order.status} />
+          </div>
         </div>
       </div>
 

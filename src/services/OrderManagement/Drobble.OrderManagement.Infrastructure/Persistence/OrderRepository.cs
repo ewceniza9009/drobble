@@ -1,5 +1,4 @@
-﻿// src/services/OrderManagement/Drobble.OrderManagement.Infrastructure/Persistence/OrderRepository.cs
-using Drobble.OrderManagement.Application.Contracts;
+﻿using Drobble.OrderManagement.Application.Contracts;
 using Drobble.OrderManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -25,7 +24,6 @@ public class OrderRepository : IOrderRepository
 
     public async Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        // Use .Include() to load related data (the order's items)
         return await _context.Orders
             .Include(o => o.OrderItems)
             .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
@@ -40,14 +38,18 @@ public class OrderRepository : IOrderRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Order>> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<(IEnumerable<Order> Orders, int TotalCount)> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        return await _context.Orders
+        var totalCount = await _context.Orders.CountAsync(cancellationToken);
+
+        var orders = await _context.Orders
             .Include(o => o.OrderItems)
             .OrderByDescending(o => o.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
+
+        return (orders, totalCount);
     }
 
     public async Task UpdateAsync(Order order, CancellationToken cancellationToken = default)

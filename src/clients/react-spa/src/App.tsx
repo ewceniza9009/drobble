@@ -31,6 +31,7 @@ const SearchPage = lazy(() => import('./pages/SearchPage'));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminProducts = lazy(() => import('./pages/admin/AdminProducts'));
 const AdminProductEdit = lazy(() => import('./pages/admin/AdminProductEdit'));
+const AdminOrders = lazy(() => import('./pages/admin/AdminOrders'));
 
 // Lazy load Vendor pages
 const VendorProducts = lazy(() => import('./pages/vendor/VendorProducts'));
@@ -108,6 +109,7 @@ function App() {
                 <Route index element={<Navigate to="users" replace />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="products" element={<AdminProducts />} />
+                <Route path="orders" element={<AdminOrders />} />
                 <Route path="reviews" element={<AdminReviews />} />
                 <Route path="products/new" element={<AdminProductEdit />} />
                 <Route path="products/edit/:productId" element={<AdminProductEdit />} />

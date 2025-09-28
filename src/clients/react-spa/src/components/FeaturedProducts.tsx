@@ -70,7 +70,6 @@ const FeaturedProducts = () => {
                             <div 
                                 onClick={() => handleProductClick(currentProduct.id)}
                                 className="bg-gray-50 rounded-xl p-12 border-2 border-blue-200 relative overflow-hidden"
-                                key={`featured-${currentProduct.id}`}
                             >
                                 <div className="text-center mb-6">
                                     <span className="inline-block bg-green-600 text-white px-5 py-2 rounded-full text-sm font-semibold mb-4 animate-bounce-in">

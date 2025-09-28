@@ -1,5 +1,6 @@
+// ---- File: src/layouts/AdminLayout.tsx ----
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaUsers, FaBox, FaBars, FaTimes } from 'react-icons/fa';
+import { FaUsers, FaBox, FaBars, FaTimes, FaShoppingBag } from 'react-icons/fa';
 import { FaComments } from 'react-icons/fa6';
 import { useState } from 'react';
 
@@ -40,7 +41,7 @@ const AdminLayout = () => {
       <aside
         className={`
           fixed lg:sticky lg:top-24 lg:max-h-[calc(100vh-96px)] lg:overflow-y-auto 
-          inset-y-0 left-0 z-50 lg:z-30 /* <-- FINAL FIX APPLIED HERE */
+          inset-y-0 left-0 z-50 lg:z-30
           w-64 flex-shrink-0 bg-white border-r border-gray-200
           transform transition-transform duration-300 ease-in-out
           lg:translate-x-0
@@ -81,6 +82,15 @@ const AdminLayout = () => {
             >
               <FaBox className="mr-3" />
               <span>Product Management</span>
+            </NavLink>
+            <NavLink
+              to="/admin/orders"
+              style={({ isActive }) => (isActive ? activeLinkStyle : undefined)}
+              className="flex items-center px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
+              onClick={closeSidebar}
+            >
+              <FaShoppingBag className="mr-3" />
+              <span>Order Management</span>
             </NavLink>
             <NavLink
               to="/admin/reviews"
