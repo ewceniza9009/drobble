@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useGetProductByIdQuery, useCreateAdminProductMutation, useUpdateAdminProductMutation } from '../../store/apiSlice';
 import { FaSave, FaArrowLeft, FaImage, FaTag, FaBox, FaDollarSign, FaWarehouse, FaFileAlt, FaLayerGroup } from 'react-icons/fa';
+import { formatCurrency } from '../../utils/formatting';
 
 const AdminProductEdit = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -322,7 +323,7 @@ const AdminProductEdit = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Price:</span>
-                  <span className="font-medium text-gray-800">${price.toFixed(2)}</span>
+                  <span className="font-medium text-gray-800">{formatCurrency(price)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Stock:</span>
