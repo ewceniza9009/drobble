@@ -29,6 +29,15 @@ export const addItemToCart = createAsyncThunk(
   }
 );
 
+export const updateItemQuantity = createAsyncThunk(
+  'cart/updateItemQuantity',
+  async ({ productId, quantity }: { productId: string; quantity: number }) => {
+    const response = await api.put(`/cart/items/${productId}`, { quantity });
+    return response.data.items;
+  }
+);
+
+
 export const removeItemFromCart = createAsyncThunk(
   'cart/removeItem',
   async (productId: string) => {
@@ -83,6 +92,15 @@ const cartSlice = createSlice({
         state.items = action.payload;
       })
       .addCase(addItemToCart.rejected, (state) => { state.status = 'failed'; })
+
+      //Cases for updateItemQuantity
+      .addCase(updateItemQuantity.pending, (state) => { state.status = 'loading'; })
+      .addCase(updateItemQuantity.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+          state.status = 'succeeded';
+          state.items = action.payload;
+      })
+      .addCase(updateItemQuantity.rejected, (state) => { state.status = 'failed'; })
+
 
       // Cases for removeItemFromCart
       .addCase(removeItemFromCart.pending, (state) => { state.status = 'loading'; })

@@ -1,7 +1,8 @@
+// ---- File: src/pages/CartPage.tsx ----
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import type { RootState, AppDispatch } from '../store/store';
-import { removeItemFromCart } from '../store/cartSlice';
+import { removeItemFromCart, updateItemQuantity } from '../store/cartSlice';
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { FaTrash, FaShoppingCart, FaPlus, FaMinus, FaArrowLeft, FaTruck, FaShieldAlt, FaCreditCard } from 'react-icons/fa';
@@ -26,7 +27,7 @@ interface EnrichedCartItem {
 
 const CartPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { items: cartItems } = useSelector((state: RootState) => state.cart);
+  const { items: cartItems, status } = useSelector((state: RootState) => state.cart);
   const [enrichedItems, setEnrichedItems] = useState<EnrichedCartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -70,9 +71,8 @@ const CartPage = () => {
     dispatch(removeItemFromCart(productId));
   };
 
-  const handleQuantityChange = (_productId: string, newQuantity: number) => {
-    if (newQuantity < 1) return;
-    // dispatch(updateItemQuantity({ productId, quantity: newQuantity }));
+  const handleQuantityChange = (productId: string, newQuantity: number) => {
+    dispatch(updateItemQuantity({ productId, quantity: newQuantity }));
   };
 
   const cartTotal = enrichedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -172,7 +172,7 @@ const CartPage = () => {
                         <button
                           onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
                           className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
-                          disabled={item.quantity <= 1}
+                          disabled={status === 'loading'}
                         >
                           <FaMinus className="text-sm text-gray-600" />
                         </button>
@@ -180,6 +180,7 @@ const CartPage = () => {
                         <button
                           onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
                           className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                          disabled={status === 'loading'}
                         >
                           <FaPlus className="text-sm text-gray-600" />
                         </button>

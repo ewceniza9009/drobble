@@ -22,6 +22,7 @@ public class CartsController : ControllerBase
     }
 
     public record AddItemRequest(string ProductId, int Quantity);
+    public record UpdateQuantityRequest(int Quantity); 
 
     [HttpPost("items")]
     public async Task<IActionResult> AddItemToCart([FromBody] AddItemRequest request)
@@ -52,6 +53,33 @@ public class CartsController : ControllerBase
         }
 
         var command = new AddItemToCartCommand(request.ProductId, request.Quantity, userId, sessionId);
+        var cartDto = await _mediator.Send(command);
+
+        return Ok(cartDto);
+    }
+
+    // --- NEW ENDPOINT ---
+    [HttpPut("items/{productId}")]
+    public async Task<IActionResult> UpdateItemQuantity(string productId, [FromBody] UpdateQuantityRequest request)
+    {
+        Guid? userId = null;
+        string? sessionId = Request.Cookies[SessionCookieName];
+
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var id))
+            {
+                userId = id;
+            }
+        }
+
+        if (userId is null && sessionId is null)
+        {
+            return BadRequest("No active cart session found.");
+        }
+
+        var command = new UpdateItemQuantityCommand(productId, request.Quantity, userId, sessionId);
         var cartDto = await _mediator.Send(command);
 
         return Ok(cartDto);

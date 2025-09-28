@@ -157,7 +157,7 @@
     },
     {
       "UpstreamPathTemplate": "/api/cart/items/{productId}",
-      "UpstreamHttpMethod": [ "DELETE" ],
+      "UpstreamHttpMethod": [ "DELETE", "PUT" ],
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
