@@ -82,7 +82,7 @@ const CartPage = () => {
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="text-center p-12 bg-white rounded-xl shadow-lg border border-gray-200">
         <div className="animate-pulse">
-          <FaShoppingCart className="mx-auto text-5xl text-blue-400 mb-4" />
+          <FaShoppingCart className="mx-auto text-5xl text-green-400 mb-4" />
           <p className="text-lg">Loading your cart...</p>
         </div>
       </div>
@@ -92,7 +92,7 @@ const CartPage = () => {
   if (enrichedItems.length === 0) return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="text-center bg-white p-12 rounded-xl shadow-lg border border-gray-200">
-        <FaShoppingCart className="mx-auto text-6xl text-blue-400 mb-6" />
+        <FaShoppingCart className="mx-auto text-6xl text-green-400 mb-6" />
         <h2 className="text-2xl font-bold mb-4">Your Cart is Empty</h2>
         <p className="text-gray-600 mb-8 max-w-md mx-auto">
           Looks like you haven't added anything to your cart yet. Start exploring our collection!
@@ -100,14 +100,14 @@ const CartPage = () => {
         <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
           <Link 
             to="/" 
-            className="inline-flex items-center bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-all shadow-md"
+            className="inline-flex items-center bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition-all shadow-md"
           >
             <FaArrowLeft className="mr-2" />
             Continue Shopping
           </Link>
           <Link 
             to="/products" 
-            className="inline-flex items-center border border-blue-600 font-bold py-3 px-6 rounded-lg hover:bg-blue-50 transition-all"
+            className="inline-flex items-center border border-blue-600 font-bold py-3 px-6 rounded-lg hover:bg-green-50 transition-all"
           >
             Browse Products
           </Link>
@@ -125,7 +125,7 @@ const CartPage = () => {
         </div>
         <Link 
           to="/" 
-          className="flex items-center hover:text-blue-700 font-medium"
+          className="flex items-center hover:text-green-700 font-medium"
         >
           <FaArrowLeft className="mr-2" />
           Continue Shopping
@@ -139,7 +139,7 @@ const CartPage = () => {
           <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">Your Items</h2>
-              <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+              <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                 {itemCount} {itemCount === 1 ? 'item' : 'items'}
               </span>
             </div>
@@ -250,13 +250,13 @@ const CartPage = () => {
             </div>
             
             <div className="flex justify-between font-bold text-xl pt-4 mt-4 border-t border-gray-200">
-              <span className="text-blue-600">Total</span>
-              <span className="text-blue-600">{formatCurrency(cartTotal)}</span>
+              <span className="text-green-600">Total</span>
+              <span className="text-green-600">{formatCurrency(cartTotal)}</span>
             </div>
 
             <Link
               to="/checkout"
-              className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg transition-all text-lg shadow-md flex items-center justify-center space-x-2"
+              className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-lg transition-all text-lg shadow-md flex items-center justify-center space-x-2"
             >
               <FaCreditCard />
               <span>Proceed to Checkout</span>

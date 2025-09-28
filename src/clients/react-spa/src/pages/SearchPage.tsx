@@ -74,7 +74,7 @@ const SearchPage = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-800 mb-2">
                 Search Results for:{" "}
-                <span className="text-blue-600">"{query}"</span>
+                <span className="text-green-600">"{query}"</span>
               </h1>
               <p className="text-gray-600">
                 We searched high and low but couldn't find what you're looking
@@ -109,7 +109,7 @@ const SearchPage = () => {
                 <Link
                   key={index}
                   to={`/search?q=${encodeURIComponent(search)}`}
-                  className="bg-gray-100 text-gray-700 px-4 py-2 rounded-full hover:bg-blue-100 hover:text-blue-600 transition-colors"
+                  className="bg-gray-100 text-gray-700 px-4 py-2 rounded-full hover:bg-green-100 hover:text-green-600 transition-colors"
                 >
                   {search}
                 </Link>
@@ -121,7 +121,7 @@ const SearchPage = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/products"
-              className="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="inline-flex items-center bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-medium"
             >
               <FaShoppingBag className="mr-2" />
               Browse All Products
@@ -146,11 +146,11 @@ const SearchPage = () => {
           <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">
               Search Results for:{" "}
-              <span className="text-blue-600">"{query}"</span>
+              <span className="text-green-600">"{query}"</span>
             </h1>
             <p className="text-gray-600">
               Found{" "}
-              <span className="font-semibold text-blue-600">
+              <span className="font-semibold text-green-600">
                 {results.length}
               </span>
               {results.length === 1 ? " product" : " products"} matching your
@@ -192,7 +192,7 @@ const SearchPage = () => {
 
             {/* Product Info */}
             <div className="p-4">
-              <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight">
+              <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors leading-tight">
                 {product.name}
               </h3>
 
@@ -215,7 +215,7 @@ const SearchPage = () => {
 
               {/* Price */}
               <div className="flex items-center justify-between">
-                <span className="text-xl font-bold text-blue-600">
+                <span className="text-xl font-bold text-green-600">
                   {formatCurrency(product.price)}
                 </span>
                 <div className="flex items-center text-xs text-green-600">
@@ -232,8 +232,8 @@ const SearchPage = () => {
       </div>
 
       {/* Related Searches */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+      <div className="bg-green-50 border border-blue-200 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center">
           <FaSearch className="mr-2" />
           Related Searches
         </h3>
@@ -242,7 +242,7 @@ const SearchPage = () => {
             <Link
               key={index}
               to={`/search?q=${encodeURIComponent(search)}`}
-              className="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors border border-blue-200"
+              className="bg-white text-green-600 px-4 py-2 rounded-lg hover:bg-green-100 transition-colors border border-blue-200"
             >
               {search}
             </Link>

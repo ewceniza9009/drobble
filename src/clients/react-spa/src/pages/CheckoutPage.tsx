@@ -125,7 +125,7 @@ const CheckoutPage = () => {
                 <FaPaypal className="" />
                 <span>PayPal</span>
               </button>
-              <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium">
+              <button className="w-full bg-green-600 text-white py-3 rounded-lg font-medium">
                 GCash
               </button>
             </div>
@@ -250,7 +250,7 @@ const CheckoutPage = () => {
             </div>
             <div className="flex justify-between font-bold text-lg  border-t border-gray-200 pt-3">
               <span>Total</span>
-              <span  className="text-blue-600">{formatCurrency(cartTotal)}</span>
+              <span  className="text-green-600">{formatCurrency(cartTotal)}</span>
             </div>
           </div>
 
@@ -264,7 +264,7 @@ const CheckoutPage = () => {
           <button
             onClick={handlePlaceOrder}
             disabled={status === 'loading' || enrichedItems.length === 0}
-            className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg transition-all text-lg shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-lg transition-all text-lg shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
           >
             <FaCreditCard />
             <span>{status === 'loading' ? 'Processing...' : `Place Order (${formatCurrency(cartTotal)})`}</span>

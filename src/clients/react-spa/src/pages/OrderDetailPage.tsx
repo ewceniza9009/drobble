@@ -29,7 +29,7 @@ const StatusBadge = ({ status }: { status: string }) => {
       icon: <FaCalendar className="mr-1" />
     },
     Paid: {
-      class: 'bg-blue-100 text-blue-800 ring-1 ring-inset ring-blue-200',
+      class: 'bg-green-100 text-green-800 ring-1 ring-inset ring-blue-200',
       icon: <FaReceipt className="mr-1" />
     },
     Shipped: {
@@ -204,7 +204,7 @@ const OrderDetailPage = () => {
             
             <div className="flex justify-between font-bold text-xl pt-4 mt-4 border-t border-gray-200">
               <span className="text-gray-800">Total</span>
-              <span className="text-blue-600">{formatCurrency(order.totalAmount)}</span>
+              <span className="text-green-600">{formatCurrency(order.totalAmount)}</span>
             </div>
 
             {/* Order Information */}

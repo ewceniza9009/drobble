@@ -65,13 +65,13 @@ const RegisterPage = () => {
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="w-full p-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 disabled:bg-slate-400 transition-colors"
+          className="w-full p-3 bg-green-600 text-white font-bold rounded-md hover:bg-green-700 disabled:bg-slate-400 transition-colors"
         >
           {status === 'loading' ? 'Registering...' : 'Create Account'}
         </button>
       </form>
       <p className="text-center text-sm text-slate-600 mt-6">
-        Already have an account? <Link to="/login" className="font-semibold text-blue-600 hover:underline">Log in</Link>
+        Already have an account? <Link to="/login" className="font-semibold text-green-600 hover:underline">Log in</Link>
       </p>
     </div>
   );

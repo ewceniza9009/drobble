@@ -43,7 +43,7 @@ const ReviewForm = ({ productId }: { productId: string }) => {
           <div className="flex space-x-2">
             <a 
               href="/login" 
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
             >
               Sign In
             </a>
@@ -128,7 +128,7 @@ const ReviewForm = ({ productId }: { productId: string }) => {
           <button
             type="submit"
             disabled={isLoading || rating === 0 || comment.trim().length < 10}
-            className="inline-flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium text-sm"
+            className="inline-flex items-center justify-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium text-sm"
           >
             <FaPaperPlane />
             <span>{isLoading ? 'Submitting...' : 'Submit Review'}</span>
@@ -137,9 +137,9 @@ const ReviewForm = ({ productId }: { productId: string }) => {
       </form>
 
       {/* Review Guidelines */}
-      <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-        <h4 className="text-xs font-semibold text-blue-800 mb-1">Review Tips</h4>
-        <ul className="text-xs text-blue-700 space-y-1">
+      <div className="mt-4 p-3 bg-green-50 rounded-lg border border-blue-200">
+        <h4 className="text-xs font-semibold text-green-800 mb-1">Review Tips</h4>
+        <ul className="text-xs text-green-700 space-y-1">
           <li>• Share specific details about your experience</li>
           <li>• Be honest and constructive</li>
           <li>• Avoid personal or sensitive information</li>

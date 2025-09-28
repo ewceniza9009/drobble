@@ -17,7 +17,7 @@ const VendorProducts = () => {
         {/* We can assume a '/vendor/products/new' route would exist */}
         <Link 
           to="#" 
-          className="inline-flex items-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors shadow"
+          className="inline-flex items-center bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors shadow"
         >
           <FaPlus className="mr-2" />
           Add New Product

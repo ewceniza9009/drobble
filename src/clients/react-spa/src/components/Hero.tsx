@@ -12,7 +12,7 @@ const Hero = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
             
             {/* Optional: Add a subtle decorative shape/blob (using a pseudo-element or another div) */}
-            <div className="absolute -top-10 -left-10 w-48 h-48 bg-blue-500 opacity-10 rounded-full mix-blend-screen filter blur-3xl animate-blob"></div>
+            <div className="absolute -top-10 -left-10 w-48 h-48 bg-green-500 opacity-10 rounded-full mix-blend-screen filter blur-3xl animate-blob"></div>
             <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-green-500 opacity-10 rounded-full mix-blend-screen filter blur-3xl animate-blob animation-delay-2000"></div>
 
 

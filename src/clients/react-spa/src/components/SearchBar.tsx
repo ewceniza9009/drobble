@@ -26,7 +26,7 @@ const SearchBar = () => {
       />
       <button 
         type="submit" 
-        className="absolute top-0 right-0 h-full px-4 text-gray-500 hover:text-blue-600"
+        className="absolute top-0 right-0 h-full px-4 text-gray-500 hover:text-green-600"
         aria-label="Search"
       >
         <FaSearch />

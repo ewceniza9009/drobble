@@ -38,7 +38,7 @@ const AdminProducts = () => {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center">
           <div className="flex items-center space-x-4">
             <div className="bg-white p-3 rounded-lg shadow-sm">
-              <FaBox className="text-3xl text-blue-600" />
+              <FaBox className="text-3xl text-green-600" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-800">Product Management</h1>
@@ -47,7 +47,7 @@ const AdminProducts = () => {
           </div>
           <Link 
             to="/admin/products/new" 
-            className="mt-4 lg:mt-0 flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all font-medium"
+            className="mt-4 lg:mt-0 flex items-center space-x-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all font-medium"
           >
             <FaPlus />
             <span>Add New Product</span>
@@ -61,10 +61,10 @@ const AdminProducts = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Products</p>
-              <p className="text-2xl font-bold text-blue-600">{totalProducts}</p>
+              <p className="text-2xl font-bold text-green-600">{totalProducts}</p>
             </div>
-            <div className="bg-blue-100 p-3 rounded-lg">
-              <FaBox className="text-xl text-blue-600" />
+            <div className="bg-green-100 p-3 rounded-lg">
+              <FaBox className="text-xl text-green-600" />
             </div>
           </div>
         </div>
@@ -204,14 +204,14 @@ const AdminProducts = () => {
                     <div className="flex items-center justify-end space-x-2">
                       <Link 
                         to={`/products/${product.id}`}
-                        className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                        className="p-2 text-gray-400 hover:text-green-600 transition-colors"
                         title="View Product"
                       >
                         <FaEye />
                       </Link>
                       <Link 
                         to={`/admin/products/edit/${product.id}`}
-                        className="flex items-center space-x-1 px-3 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all font-medium"
+                        className="flex items-center space-x-1 px-3 py-2 bg-green-50 text-green-600 border border-blue-200 rounded-lg hover:bg-green-100 transition-all font-medium"
                         title="Edit Product"
                       >
                         <FaEdit className="text-sm" />
@@ -245,10 +245,10 @@ const AdminProducts = () => {
 
       {/* Quick Actions */}
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-blue-800 mb-3">Quick Actions</h3>
+        <div className="bg-green-50 border border-blue-200 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-green-800 mb-3">Quick Actions</h3>
           <div className="flex flex-wrap gap-3">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+            <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
               Export Products
             </button>
             <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">

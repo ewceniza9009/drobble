@@ -55,14 +55,14 @@ const LoginPage = () => {
         <button
             type="submit"
             disabled={status === 'loading'}
-            className="w-full p-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 disabled:bg-slate-400 transition-colors flex items-center justify-center space-x-2"
+            className="w-full p-3 bg-green-600 text-white font-bold rounded-md hover:bg-green-700 disabled:bg-slate-400 transition-colors flex items-center justify-center space-x-2"
           >
             <FaSignInAlt />
             <span>{status === 'loading' ? 'Logging in...' : 'Login'}</span>
         </button>
       </form>
       <p className="text-center text-sm text-slate-600 mt-6">
-        Don't have an account? <Link to="/register" className="font-semibold text-blue-600 hover:underline">Sign up</Link>
+        Don't have an account? <Link to="/register" className="font-semibold text-green-600 hover:underline">Sign up</Link>
       </p>
     </div>
   );

@@ -46,7 +46,7 @@ const AdminReviews = () => {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center">
           <div className="flex items-center space-x-4">
             <div className="bg-white p-3 rounded-lg shadow-sm">
-              <FaComments className="text-3xl text-blue-600" />
+              <FaComments className="text-3xl text-green-600" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-800">Review Moderation</h1>
@@ -82,14 +82,14 @@ const AdminReviews = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Average Rating</p>
-              <p className="text-2xl font-bold text-blue-600">
+              <p className="text-2xl font-bold text-green-600">
                 {reviews.length > 0 
                   ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
                   : '0.0'
                 }
               </p>
             </div>
-            <div className="bg-blue-100 p-3 rounded-lg">
+            <div className="bg-green-100 p-3 rounded-lg">
               <StarRating rating={reviews.length > 0 ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length : 0} />
             </div>
           </div>
@@ -199,10 +199,10 @@ const AdminReviews = () => {
 
       {/* Quick Actions */}
       {reviews.length > 0 && (
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-blue-800 mb-3">Quick Actions</h3>
+        <div className="mt-6 bg-green-50 border border-blue-200 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-green-800 mb-3">Quick Actions</h3>
           <div className="flex flex-wrap gap-3">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+            <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
               Approve All 5-Star Reviews
             </button>
             <button className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium">

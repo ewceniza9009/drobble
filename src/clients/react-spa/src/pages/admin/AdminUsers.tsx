@@ -33,7 +33,7 @@ const AdminUsers = () => {
   const getRoleIcon = (role: number) => {
     switch (role) {
       case 2: return <FaCrown className="text-yellow-500" />;
-      case 1: return <FaBuysellads className="text-blue-500" />;
+      case 1: return <FaBuysellads className="text-green-500" />;
       default: return <FaUser className="text-gray-500" />;
     }
   };
@@ -41,7 +41,7 @@ const AdminUsers = () => {
   const getRoleColor = (role: number) => {
     switch (role) {
       case 2: return 'bg-yellow-100 text-yellow-800 ring-yellow-200';
-      case 1: return 'bg-blue-100 text-blue-800 ring-blue-200';
+      case 1: return 'bg-green-100 text-green-800 ring-blue-200';
       default: return 'bg-gray-100 text-gray-800 ring-gray-200';
     }
   };
@@ -71,7 +71,7 @@ const AdminUsers = () => {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center">
           <div className="flex items-center space-x-4">
             <div className="bg-white p-3 rounded-lg shadow-sm">
-              <FaUsers className="text-3xl text-blue-600" />
+              <FaUsers className="text-3xl text-green-600" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-800">User Management</h1>
@@ -99,8 +99,8 @@ const AdminUsers = () => {
               <p className="text-sm font-medium text-gray-600">Total Users</p>
               <p className="text-2xl font-bold text-gray-800">{totalUsers}</p>
             </div>
-            <div className="bg-blue-100 p-3 rounded-lg">
-              <FaUsers className="text-xl text-blue-600" />
+            <div className="bg-green-100 p-3 rounded-lg">
+              <FaUsers className="text-xl text-green-600" />
             </div>
           </div>
         </div>

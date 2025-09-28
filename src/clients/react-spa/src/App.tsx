@@ -65,7 +65,7 @@ function App() {
       <Toaster position="bottom-center" />
       <header className="bg-white/80 backdrop-blur-lg border-b border-slate-200 sticky top-0 z-50">
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-slate-800 hover:text-blue-600 transition-colors">
+          <Link to="/" className="text-2xl font-bold text-slate-800 hover:text-green-600 transition-colors">
           <img src="/appicontext.svg" alt="drobble" className="h-8 w-auto" />
           </Link>
           <div className="flex-grow mx-8 hidden md:block"><SearchBar /></div>
@@ -73,13 +73,13 @@ function App() {
             <CartIcon />
             {token ? (
               <>
-                {userRole === 'Admin' && <Link to="/admin" title="Admin Panel" className="text-slate-600 hover:text-blue-600 transition-colors"><FaCog size="1.2em" /></Link>}
-                {userRole === 'Vendor' && <Link to="/vendor" title="Vendor Panel" className="text-slate-600 hover:text-blue-600 transition-colors"><FaCog size="1.2em" /></Link>}
-                <Link to="/profile" title="My Account" className="text-slate-600 hover:text-blue-600 transition-colors"><FaUser size="1.2em" /></Link>
-                <button onClick={handleLogout} title="Logout" className="text-slate-600 hover:text-blue-600 transition-colors"><FaSignOutAlt size="1.2em" /></button>
+                {userRole === 'Admin' && <Link to="/admin" title="Admin Panel" className="text-slate-600 hover:text-green-600 transition-colors"><FaCog size="1.2em" /></Link>}
+                {userRole === 'Vendor' && <Link to="/vendor" title="Vendor Panel" className="text-slate-600 hover:text-green-600 transition-colors"><FaCog size="1.2em" /></Link>}
+                <Link to="/profile" title="My Account" className="text-slate-600 hover:text-green-600 transition-colors"><FaUser size="1.2em" /></Link>
+                <button onClick={handleLogout} title="Logout" className="text-slate-600 hover:text-green-600 transition-colors"><FaSignOutAlt size="1.2em" /></button>
               </>
             ) : (
-              <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Login</Link>
+              <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-green-600 transition-colors">Login</Link>
             )}
           </div>
         </nav>

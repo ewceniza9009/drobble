@@ -93,7 +93,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </span>
         )}
         {product.isFeatured && (
-          <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+          <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
             FEATURED
           </span>
         )}
@@ -142,7 +142,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock || !token}
-            className="bg-white text-gray-900 p-3 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-blue-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-white text-gray-900 p-3 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-green-600 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Add to cart"
           >
             <FaShoppingCart />
@@ -187,7 +187,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
         {/* Product Name */}
         <Link to={`/products/${product.id}`}>
-          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-blue-600 transition-colors leading-tight">
+          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-green-600 transition-colors leading-tight">
             {product.name}
           </h3>
         </Link>
@@ -202,7 +202,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         {/* Price and Action */}
         <div className="flex items-center justify-between mt-auto">
           <div className="flex flex-col">
-            <span className="text-xl font-bold text-blue-600">
+            <span className="text-xl font-bold text-green-600">
               {formatCurrency(product.price)}
             </span>
             {product.stock && product.stock > 0 && (
@@ -215,7 +215,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock || !token}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center space-x-2 text-sm font-medium shadow-md"
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center space-x-2 text-sm font-medium shadow-md"
           >
             <FaShoppingCart />
             <span>Add to Cart</span>
@@ -227,7 +227,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <div className="lg:hidden border-t border-gray-100">
         <Link
           to={`/products/${product.id}`}
-          className="block text-center py-2 text-sm text-gray-600 hover:text-blue-600 transition-colors"
+          className="block text-center py-2 text-sm text-gray-600 hover:text-green-600 transition-colors"
         >
           Quick View
         </Link>

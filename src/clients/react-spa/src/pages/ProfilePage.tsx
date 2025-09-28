@@ -19,7 +19,7 @@ const StatusBadge = ({ status }: { status: string }) => {
       icon: <FaCalendar className="mr-1" />
     },
     Paid: {
-      class: 'bg-blue-100 text-blue-800 ring-1 ring-inset ring-blue-200',
+      class: 'bg-green-100 text-green-800 ring-1 ring-inset ring-blue-200',
       icon: <FaReceipt className="mr-1" />
     },
     Shipped: {
@@ -163,7 +163,7 @@ const ProfilePage = () => {
                         {/* Status and Amount */}
                         <div className="flex flex-col items-end space-y-2">
                           <StatusBadge status={order.status} />
-                          <p className="text-lg font-bold text-blue-600">{formatCurrency(order.totalAmount)}</p>
+                          <p className="text-lg font-bold text-green-600">{formatCurrency(order.totalAmount)}</p>
                         </div>
 
                         {/* Chevron */}
@@ -192,7 +192,7 @@ const ProfilePage = () => {
                 <div className="text-sm text-gray-600">Delivered</div>
               </div>
               <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-green-600">
                   {formatCurrency(orders.reduce((sum, order) => sum + order.totalAmount, 0))}
                 </div>
                 <div className="text-sm text-gray-600">Total Spent</div>
@@ -220,7 +220,7 @@ const ProfilePage = () => {
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Lifetime spent</span>
-                <span className="text-blue-600 font-medium">
+                <span className="text-green-600 font-medium">
                   {formatCurrency(orders.reduce((sum, order) => sum + order.totalAmount, 0))}
                 </span>
               </div>
