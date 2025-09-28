@@ -65,7 +65,9 @@ function App() {
       <Toaster position="bottom-center" />
       <header className="bg-white/80 backdrop-blur-lg border-b border-slate-200 sticky top-0 z-50">
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-slate-800 hover:text-blue-600 transition-colors">Drobble</Link>
+          <Link to="/" className="text-2xl font-bold text-slate-800 hover:text-blue-600 transition-colors">
+          <img src="/appicontext.svg" alt="drobble" className="h-8 w-auto" />
+          </Link>
           <div className="flex-grow mx-8 hidden md:block"><SearchBar /></div>
           <div className="flex items-center space-x-5">
             <CartIcon />

@@ -48,7 +48,7 @@ const Footer = () => {
                 </div>
 
                 <div className="mt-12 border-t border-slate-700 pt-8 text-center text-sm text-slate-500">
-                    <p>&copy; {new Date().getFullYear()} Drobble Inc. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} Drobble Inc. All rights reserved. Created by Erwin Wilson Ceniza with ASP.NET Core 9 Microservices.</p>
                 </div>
             </div>
         </footer>
