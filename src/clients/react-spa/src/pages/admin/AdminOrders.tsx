@@ -1,7 +1,7 @@
 import { useGetAdminOrdersQuery, useUpdateOrderStatusMutation, useCancelOrderMutation } from '../../store/apiSlice';
 import { toast } from 'react-hot-toast';
 import { formatCurrency } from '../../utils/formatting';
-import { FaShoppingBag, FaTruck, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { FaShoppingBag, FaTruck, FaCheckCircle, FaTimesCircle, FaUser } from 'react-icons/fa';
 
 const AdminOrders = () => {
     const { data, error, isLoading } = useGetAdminOrdersQuery();
@@ -53,6 +53,7 @@ const AdminOrders = () => {
                     <thead className="bg-gray-50">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
@@ -63,6 +64,12 @@ const AdminOrders = () => {
                         {orders.map((order) => (
                             <tr key={order.id}>
                                 <td className="px-6 py-4 font-mono text-sm">{order.id.substring(0, 8)}...</td>
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center">
+                                        <FaUser className="text-gray-400 mr-2" />
+                                        {order.username}
+                                    </div>
+                                </td>
                                 <td className="px-6 py-4">{new Date(order.createdAt).toLocaleDateString()}</td>
                                 <td className="px-6 py-4"><span className={`px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800`}>{order.status}</span></td>
                                 <td className="px-6 py-4 text-right font-semibold">{formatCurrency(order.totalAmount)}</td>

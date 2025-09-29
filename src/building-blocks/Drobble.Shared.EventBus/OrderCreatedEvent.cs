@@ -7,7 +7,7 @@ public record OrderCreatedEvent
     public Guid OrderId { get; init; }
     public Guid UserId { get; init; }
     public decimal TotalAmount { get; init; }
-    public string Currency { get; init; }
+    public string Currency { get; init; } = "PHP";
     public List<OrderItemMessage> Items { get; init; } = new();
 }
 

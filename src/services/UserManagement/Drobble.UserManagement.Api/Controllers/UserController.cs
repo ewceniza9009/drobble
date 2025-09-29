@@ -24,13 +24,22 @@ public class UsersController : ControllerBase
     {
         var userId = await _mediator.Send(command);
         return CreatedAtAction(nameof(Register), new { id = userId }, new { UserId = userId });
-    }
+    }    
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginUserQuery query)
     {
         var token = await _mediator.Send(query);
         return Ok(new { Token = token });
+    }
+
+    [HttpPost("batch")]
+    [Authorize]
+    public async Task<IActionResult> GetUsersByIds([FromBody] IEnumerable<Guid> userIds)
+    {
+        var query = new GetUsersByIdsQuery(userIds);
+        var users = await _mediator.Send(query);
+        return Ok(users);
     }
 
     // --- ADMIN ENDPOINTS ---

@@ -78,6 +78,10 @@ builder.Services.AddSwaggerGen(options => {
   });
 });
 
+builder.Services.AddHttpClient<IUserManagementService, UserManagementService>(client => {
+    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:UserManagementApi"]!);
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
