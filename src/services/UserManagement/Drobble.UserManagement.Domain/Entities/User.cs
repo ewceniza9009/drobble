@@ -11,7 +11,7 @@ public class User : Entity<Guid>
     public UserRole Role { get; set; } = UserRole.User;
     public DateTime? LastLogin { get; set; }
     public bool IsMfaEnabled { get; set; }
-    public bool IsActive { get; set; } = true; // New property for soft delete/ban
+    public bool IsActive { get; set; } = true;      
 }
 
 public enum UserRole

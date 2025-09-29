@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 namespace Drobble.ShoppingCart.Application.Consumers;
 
-/// <summary>
-/// Listens for the OrderCreatedEvent and clears the corresponding user's shopping cart.
-/// </summary>
 public class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
 {
     private readonly ICartRepository _cartRepository;

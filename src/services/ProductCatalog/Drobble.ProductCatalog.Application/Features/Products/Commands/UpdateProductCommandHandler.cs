@@ -1,10 +1,9 @@
-﻿// ---- File: src/services/ProductCatalog/Application/Features/Products/Commands/UpdateProductCommandHandler.cs ----
-using Drobble.ProductCatalog.Application.Contracts;
+﻿using Drobble.ProductCatalog.Application.Contracts;
 using Drobble.ProductCatalog.Application.Features.Commands;
 using Drobble.Shared.EventBus.Events;
 using MassTransit;
 using MediatR;
-using MongoDB.Bson; // <-- ADD THIS LINE
+using MongoDB.Bson;
 
 namespace Drobble.ProductCatalog.Application.Features.Products.Commands;
 

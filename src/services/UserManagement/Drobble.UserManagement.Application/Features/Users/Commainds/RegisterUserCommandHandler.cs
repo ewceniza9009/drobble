@@ -1,5 +1,4 @@
-﻿// src/services/UserManagement/Drobble.UserManagement.Application/Features/Users/Commands/RegisterUserCommandHandler.cs
-using Drobble.UserManagement.Application.Contracts;
+﻿using Drobble.UserManagement.Application.Contracts;
 using Drobble.UserManagement.Domain.Entities;
 using MediatR;
 using System;
@@ -23,7 +22,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
     {
         if (await _userRepository.IsUsernameTakenAsync(request.Username, cancellationToken))
         {
-            throw new Exception("Username is already taken."); // In real apps, use custom exceptions
+            throw new Exception("Username is already taken.");       
         }
 
         if (await _userRepository.IsEmailTakenAsync(request.Email, cancellationToken))
@@ -31,7 +30,6 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, G
             throw new Exception("Email is already taken.");
         }
 
-        // Hash the password using our service
         var hashedPassword = _passwordHasher.Hash(request.Password);
 
         var user = new User

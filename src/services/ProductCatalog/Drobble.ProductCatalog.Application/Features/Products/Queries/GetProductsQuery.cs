@@ -1,10 +1,8 @@
-﻿// ---- File: src/services/ProductCatalog/Application/Features/Products/Queries/GetProductsQuery.cs ----
-using Drobble.ProductCatalog.Application.Contracts;
+﻿using Drobble.ProductCatalog.Application.Contracts;
 using MediatR;
 
 namespace Drobble.ProductCatalog.Application.Features.Products.Queries;
 
-// FIX: Added CategoryId and ExcludeId to the query record
 public record GetProductsQuery(int Page, int PageSize, bool? IsFeatured, string? CategoryId, string? ExcludeId) : IRequest<PaginatedResult<ProductDto>>;
 
 public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, PaginatedResult<ProductDto>>
@@ -18,7 +16,6 @@ public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, Paginat
 
     public async Task<PaginatedResult<ProductDto>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
-        // FIX: Pass all filter parameters to the repository
         var (products, total) = await _productRepository.GetAllAsync(request.Page, request.PageSize, request.IsFeatured, request.CategoryId, request.ExcludeId, cancellationToken);
 
         var productDtos = products.Select(p => new ProductDto
@@ -30,7 +27,7 @@ public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, Paginat
             Stock = p.Stock,
             CategoryId = p.CategoryId.ToString(),
             IsActive = p.IsActive,
-            ImageUrl = p.ImageUrls.FirstOrDefault() // Map the first image
+            ImageUrl = p.ImageUrls.FirstOrDefault()     
         }).ToList();
 
         return new PaginatedResult<ProductDto>

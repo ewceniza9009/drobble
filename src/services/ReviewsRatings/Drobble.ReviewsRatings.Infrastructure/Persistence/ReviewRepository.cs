@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ReviewsRatings/Drobble.ReviewsRatings.Infrastructure/Persistence/ReviewRepository.cs ----
-using Drobble.ReviewsRatings.Application.Contracts;
+﻿using Drobble.ReviewsRatings.Application.Contracts;
 using Drobble.ReviewsRatings.Domain.Entities;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;

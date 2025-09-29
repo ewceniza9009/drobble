@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ReviewsRatings/Drobble.ReviewsRatings.Application/Features/Reviews/Queries/ReviewDtos.cs ----
-namespace Drobble.ReviewsRatings.Application.Features.Reviews.Queries;
+﻿namespace Drobble.ReviewsRatings.Application.Features.Reviews.Queries;
 
 public class ReviewDto
 {
@@ -8,7 +7,6 @@ public class ReviewDto
     public int Rating { get; set; }
     public string? Comment { get; set; }
     public DateTime CreatedAt { get; set; }
-    // We can add UserName later if needed by fetching from the User service
 }
 
 public class AverageRatingDto

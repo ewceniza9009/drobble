@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ReviewsRatings/Drobble.ReviewsRatings.Application/Features/Reviews/Commands/CreateReviewCommandHandler.cs ----
-using Drobble.ReviewsRatings.Application.Contracts;
+﻿using Drobble.ReviewsRatings.Application.Contracts;
 using Drobble.ReviewsRatings.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +28,6 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, O
             throw new UnauthorizedAccessException("User is not authenticated.");
         }
 
-        // Fetch product details to get the VendorId
         var product = await _productCatalogService.GetProductByIdAsync(request.ProductId, cancellationToken);
         if (product is null)
         {
@@ -40,10 +38,10 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, O
         {
             ProductId = ObjectId.Parse(request.ProductId),
             UserId = userId,
-            VendorId = product.VendorId, // Set the VendorId from the product details
+            VendorId = product.VendorId,        
             Rating = request.Rating,
             Comment = request.Comment,
-            VerifiedPurchase = false, // This would be implemented by checking the Order service
+            VerifiedPurchase = false,          
             ModerationStatus = ModerationStatus.Pending
         };
 

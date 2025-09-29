@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ReviewsRatings/Drobble.ReviewsRatings.Application/Features/Reviews/Commands/ModerateReviewCommand.cs ----
-using Drobble.ReviewsRatings.Application.Contracts;
+﻿using Drobble.ReviewsRatings.Application.Contracts;
 using Drobble.ReviewsRatings.Domain.Entities;
 using MediatR;
 using MongoDB.Bson;

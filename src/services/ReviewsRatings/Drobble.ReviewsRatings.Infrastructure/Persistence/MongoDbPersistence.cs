@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ReviewsRatings/Drobble.ReviewsRatings.Infrastructure/Persistence/MongoDbPersistence.cs ----
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 

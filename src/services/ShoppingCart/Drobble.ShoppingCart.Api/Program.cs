@@ -1,4 +1,3 @@
-// ---- File: src/services/ShoppingCart/Api/Program.cs ----
 using Drobble.ShoppingCart.Application.Consumers;
 using Drobble.ShoppingCart.Application.Contracts;
 using Drobble.ShoppingCart.Application.Features.Carts.Commands;
@@ -14,7 +13,6 @@ MongoDbPersistence.Configure();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Add services to the container.
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
 
@@ -35,12 +33,10 @@ builder.Services.AddMassTransit(busConfig => {
             h.Username("guest");
             h.Password("guest");
         });
-        // This automatically sets up the endpoint for the consumer
         cfg.ConfigureEndpoints(context);
     });
 });
 
-// Add Authentication and Authorization
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -63,7 +59,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 2. Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -72,7 +67,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Add Authentication and Authorization middleware
 app.UseAuthentication();
 app.UseAuthorization();
 

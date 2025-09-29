@@ -16,7 +16,6 @@ public class JwtGenerator : IJwtGenerator
     public JwtGenerator(IConfiguration config)
     {
         _config = config;
-        // IMPORTANT: Key must be long enough for the algorithm (HS256 requires 128 bits / 16 bytes)
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
     }
 

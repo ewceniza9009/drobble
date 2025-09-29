@@ -1,6 +1,6 @@
 ﻿using Drobble.OrderManagement.Application.Contracts;
-using Microsoft.AspNetCore.Http; // Required for IHttpContextAccessor
-using System.Net.Http.Headers;   // Required for AuthenticationHeaderValue
+using Microsoft.AspNetCore.Http; 
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace Drobble.OrderManagement.Infrastructure.Services;

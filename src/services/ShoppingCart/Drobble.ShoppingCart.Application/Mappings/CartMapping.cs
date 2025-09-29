@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ShoppingCart/Application/Mappings/CartMappings.cs ----
-using Drobble.ShoppingCart.Application.Features.Carts;
+﻿using Drobble.ShoppingCart.Application.Features.Carts;
 using Drobble.ShoppingCart.Domain.Entities;
 using System.Linq;
 

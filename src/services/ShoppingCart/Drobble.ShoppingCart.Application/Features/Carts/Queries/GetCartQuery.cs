@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ShoppingCart/Application/Features/Carts/Queries/GetCartQuery.cs ----
-using MediatR;
+﻿using MediatR;
 using System;
 using Drobble.ShoppingCart.Application.Contracts;
 using Microsoft.AspNetCore.Http;
@@ -7,7 +6,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
-using Drobble.ShoppingCart.Application.Mappings; // Add this using directive
+using Drobble.ShoppingCart.Application.Mappings;
 
 namespace Drobble.ShoppingCart.Application.Features.Carts.Queries;
 

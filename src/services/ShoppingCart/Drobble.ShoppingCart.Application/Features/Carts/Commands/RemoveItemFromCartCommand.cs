@@ -1,11 +1,10 @@
-﻿// ---- File: src/services/ShoppingCart/Application/Features/Carts/Commands/RemoveItemFromCartCommand.cs ----
-using MediatR;
+﻿using MediatR;
 using System;
 using Drobble.ShoppingCart.Application.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Drobble.ShoppingCart.Application.Mappings; // Add this using directive
+using Drobble.ShoppingCart.Application.Mappings;
 using MongoDB.Bson;
 
 namespace Drobble.ShoppingCart.Application.Features.Carts.Commands;

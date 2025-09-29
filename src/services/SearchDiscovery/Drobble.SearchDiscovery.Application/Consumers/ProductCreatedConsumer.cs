@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/SearchDiscovery/Application/Consumers/ProductCreatedConsumer.cs ----
-using Drobble.SearchDiscovery.Domain;
+﻿using Drobble.SearchDiscovery.Domain;
 using Drobble.Shared.EventBus.Events;
 using Elastic.Clients.Elasticsearch;
 using MassTransit;
@@ -32,7 +31,6 @@ public class ProductCreatedConsumer : IConsumer<ProductCreatedEvent>
             ImageUrl = context.Message.ImageUrl
         };
 
-        // ** THE FIX IS HERE **
         // Create an explicit request to remove ambiguity.
         var request = new IndexRequest<ProductDocument>(productDocument, IndexName, productDocument.Id);
         var response = await _esClient.IndexAsync(request);

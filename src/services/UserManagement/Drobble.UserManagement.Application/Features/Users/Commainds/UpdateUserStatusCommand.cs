@@ -21,7 +21,7 @@ public class UpdateUserStatusCommandHandler : IRequestHandler<UpdateUserStatusCo
         var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
         if (user is null)
         {
-            throw new Exception("User not found."); // Replace with NotFoundException
+            throw new Exception("User not found.");    
         }
 
         user.IsActive = request.IsActive;

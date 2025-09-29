@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ProductCatalog/Infrastructure/Persistence/ProductRepository.cs ----
-using Drobble.ProductCatalog.Application.Contracts;
+﻿using Drobble.ProductCatalog.Application.Contracts;
 using Drobble.ProductCatalog.Domain.Entities;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -30,7 +29,6 @@ public class ProductRepository : IProductRepository
         await _productsCollection.InsertOneAsync(product, null, cancellationToken);
     }
 
-    // FIX: Implemented the full filtering logic for all new parameters.
     public async Task<(IEnumerable<Product> Products, int Total)> GetAllAsync(int page, int pageSize, bool? isFeatured, string? categoryId, string? excludeId, CancellationToken cancellationToken = default)
     {
         var builder = Builders<Product>.Filter;
@@ -48,7 +46,7 @@ public class ProductRepository : IProductRepository
 
         if (!string.IsNullOrEmpty(excludeId) && ObjectId.TryParse(excludeId, out var exId))
         {
-            filter &= builder.Ne(p => p.Id, exId); // Ne = Not Equal
+            filter &= builder.Ne(p => p.Id, exId);     
         }
 
         var total = await _productsCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
@@ -98,7 +96,6 @@ public class ProductRepository : IProductRepository
     }
 }
 
-// Helper class to bind appsettings.json to a C# object
 public class MongoDbSettings
 {
     public string ConnectionString { get; set; }

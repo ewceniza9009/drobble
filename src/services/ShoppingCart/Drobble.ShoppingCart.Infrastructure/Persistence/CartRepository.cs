@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ShoppingCart/Infrastructure/Persistence/CartRepository.cs ----
-using Drobble.ShoppingCart.Application.Contracts;
+﻿using Drobble.ShoppingCart.Application.Contracts;
 using Drobble.ShoppingCart.Domain.Entities;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;

@@ -1,5 +1,4 @@
-﻿// src/services/OrderManagement/Drobble.OrderManagement.Domain/Entities/Shipping.cs
-using Drobble.Shared.Kernel;
+﻿using Drobble.Shared.Kernel;
 using System;
 
 namespace Drobble.OrderManagement.Domain.Entities;

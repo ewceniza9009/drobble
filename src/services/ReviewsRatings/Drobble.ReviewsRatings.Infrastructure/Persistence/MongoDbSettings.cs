@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ReviewsRatings/Drobble.ReviewsRatings.Infrastructure/Persistence/MongoDbSettings.cs ----
-namespace Drobble.ReviewsRatings.Infrastructure.Persistence;
+﻿namespace Drobble.ReviewsRatings.Infrastructure.Persistence;
 
 public class MongoDbSettings
 {

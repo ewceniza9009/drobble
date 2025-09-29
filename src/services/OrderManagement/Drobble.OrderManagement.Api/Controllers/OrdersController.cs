@@ -1,6 +1,5 @@
 ﻿using Drobble.OrderManagement.Application.Features.Orders.Commands;
 using Drobble.OrderManagement.Application.Features.Orders.Queries;
-using Drobble.OrderManagement.Domain.Entities; // Required for OrderStatus enum
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,7 +1,6 @@
-﻿// ---- File: src/services/SearchDiscovery/Application/Features/SearchProductsQuery.cs ----
-using Drobble.SearchDiscovery.Domain;
+﻿using Drobble.SearchDiscovery.Domain;
 using Elastic.Clients.Elasticsearch;
-using Elastic.Clients.Elasticsearch.QueryDsl; // Add this using directive
+using Elastic.Clients.Elasticsearch.QueryDsl;
 using MediatR;
 
 namespace Drobble.SearchDiscovery.Application.Features;
@@ -25,7 +24,6 @@ public class SearchProductsQueryHandler : IRequestHandler<SearchProductsQuery, I
                 .MultiMatch(mm => mm
                     .Query(request.QueryText)
                     .Fields("name,description")
-                    // ** THE FIX IS HERE **
                     // This query type is optimized for "search-as-you-type"
                     .Type(TextQueryType.BoolPrefix)
                 )

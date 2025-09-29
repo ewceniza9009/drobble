@@ -1,5 +1,4 @@
-﻿// src/services/OrderManagement/Drobble.OrderManagement.Infrastructure/Persistence/OrderDbContext.cs
-using Drobble.OrderManagement.Domain.Entities;
+﻿using Drobble.OrderManagement.Domain.Entities;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;

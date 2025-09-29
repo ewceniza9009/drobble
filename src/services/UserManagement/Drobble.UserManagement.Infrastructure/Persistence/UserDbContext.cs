@@ -1,5 +1,4 @@
-﻿// src/services/UserManagement/Drobble.UserManagement.Infrastructure/Persistence/UserDbContext.cs
-using Drobble.UserManagement.Domain.Entities;
+﻿using Drobble.UserManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 

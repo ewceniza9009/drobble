@@ -1,5 +1,4 @@
-﻿// src/services/OrderManagement/Drobble.OrderManagement.Application/Features/Orders/Queries/GetOrderByIdQueryHandler.cs
-using Drobble.OrderManagement.Application.Contracts;
+﻿using Drobble.OrderManagement.Application.Contracts;
 using MediatR;
 using System;
 using System.Linq;

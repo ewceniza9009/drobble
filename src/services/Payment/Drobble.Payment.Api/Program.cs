@@ -1,12 +1,9 @@
-// ---- File: src/services/Payment/Api/Program.cs ----
 using Drobble.Payment.Application.Consumers;
 using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddMassTransit(busConfig => {
-    // Add our consumer
     busConfig.AddConsumer<OrderCreatedConsumer>();
 
     busConfig.UsingRabbitMq((context, cfg) => {
@@ -15,7 +12,6 @@ builder.Services.AddMassTransit(busConfig => {
             h.Password("guest");
         });
 
-        // Automatically configures a receive endpoint for the consumer
         cfg.ConfigureEndpoints(context);
     });
 });
@@ -27,7 +23,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

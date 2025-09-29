@@ -23,7 +23,7 @@ public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, string>
         var user = await _userRepository.GetByUsernameAsync(request.Username, cancellationToken);
         if (user is null)
         {
-            throw new Exception("Invalid username or password."); // Use generic error
+            throw new Exception("Invalid username or password.");    
         }
 
         var isPasswordValid = _passwordVerifier.Verify(request.Password, user.PasswordHash);

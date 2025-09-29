@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ShoppingCart/Infrastructure/Persistence/MongoDbPersistence.cs ----
-using Drobble.Shared.Kernel;
+﻿using Drobble.Shared.Kernel;
 using Drobble.ShoppingCart.Domain.Entities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;

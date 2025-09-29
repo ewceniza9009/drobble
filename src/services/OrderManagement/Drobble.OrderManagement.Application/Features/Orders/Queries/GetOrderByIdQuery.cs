@@ -1,5 +1,4 @@
-﻿// src/services/OrderManagement/Drobble.OrderManagement.Application/Features/Orders/Queries/GetOrderByIdQuery.cs
-using MediatR;
+﻿using MediatR;
 using System;
 
 namespace Drobble.OrderManagement.Application.Features.Orders.Queries;

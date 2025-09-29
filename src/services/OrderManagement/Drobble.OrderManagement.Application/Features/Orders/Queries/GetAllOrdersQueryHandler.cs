@@ -33,7 +33,7 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Pagin
         {
             Id = order.Id,
             UserId = order.UserId,
-            Username = userMap.GetValueOrDefault(order.UserId, "Unknown User"), // Add username
+            Username = userMap.GetValueOrDefault(order.UserId, "Unknown User"),
             Status = order.Status.ToString(),
             TotalAmount = order.TotalAmount,
             Currency = order.Currency,

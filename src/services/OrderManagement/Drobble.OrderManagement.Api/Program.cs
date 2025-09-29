@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/OrderManagement/Drobble.OrderManagement.Api/Program.cs ----
-using Drobble.OrderManagement.Application.Contracts;
+﻿using Drobble.OrderManagement.Application.Contracts;
 using Drobble.OrderManagement.Application.Features.Orders.Commands;
 using Drobble.OrderManagement.Infrastructure.Persistence;
 using Drobble.OrderManagement.Infrastructure.Services;
@@ -10,9 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using System.Security.Claims; // ADDED for ClaimTypes
+using System.Security.Claims; 
 
-// Ensure this is at the very top to prevent default mapping confusion globally
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,13 +48,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
           ValidAudience = builder.Configuration["Jwt:Audience"],
           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
 
-          // FIX: Explicitly use the ClaimTypes.Role constant for role mapping
           RoleClaimType = ClaimTypes.Role
       };
   });
 
 builder.Services.AddAuthorization(options => {
-    // FIX: Policies already use RequireRole, ensuring compatibility
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("VendorOnly", policy => policy.RequireRole("Vendor", "Admin"));
 });
@@ -99,13 +95,11 @@ app.Use(async (context, next) =>
     {
         var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
 
-        // FIX: Use ClaimTypes constants for accurately checking UserId and Role
         var userId = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         var role = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
         logger.LogInformation("DEBUG_AUTH (ORDER MANAGEMENT): User '{UserId}' authenticated. Role claim found: '{Role}'", userId ?? "NULL", role ?? "NONE");
 
-        // Log all claims for comprehensive debugging
         foreach (var claim in context.User.Claims)
         {
             logger.LogInformation("DEBUG_AUTH (ORDER MANAGEMENT): Claim Type: {Type}, Value: {Value}", claim.Type, claim.Value);

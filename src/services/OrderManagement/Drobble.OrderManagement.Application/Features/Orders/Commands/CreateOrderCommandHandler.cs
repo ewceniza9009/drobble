@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/OrderManagement/Application/Features/Orders/Commands/CreateOrderCommandHandler.cs ----
-using Drobble.OrderManagement.Application.Contracts;
+﻿using Drobble.OrderManagement.Application.Contracts;
 using Drobble.OrderManagement.Domain.Entities;
 using Drobble.Shared.EventBus.Events;
 using MassTransit;

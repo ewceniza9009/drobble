@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ReviewsRatings/Drobble.ReviewsRatings.Application/Features/Reviews/Queries/GetReviewsByProductQuery.cs ----
-using Drobble.ReviewsRatings.Application.Contracts;
+﻿using Drobble.ReviewsRatings.Application.Contracts;
 using MediatR;
 using MongoDB.Bson;
 

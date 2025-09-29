@@ -1,5 +1,4 @@
-﻿// src/services/OrderManagement/Drobble.OrderManagement.Application/Features/Orders/Queries/OrderDto.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Drobble.OrderManagement.Application.Features.Orders.Queries;
@@ -11,7 +10,7 @@ public class OrderDto
     public string Username { get; set; }
     public string Status { get; set; }
     public decimal TotalAmount { get; set; }
-    public string Currency { get; set; }
+    public string Currency { get; set; } = "PHP";
     public DateTime CreatedAt { get; set; }
     public List<OrderItemDto> Items { get; set; } = new();
 }

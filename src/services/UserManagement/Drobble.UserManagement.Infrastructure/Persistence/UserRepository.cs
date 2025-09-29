@@ -1,5 +1,4 @@
-﻿// src/services/UserManagement/Drobble.UserManagement.Infrastructure/Persistence/UserRepository.cs
-using Drobble.UserManagement.Application.Contracts;
+﻿using Drobble.UserManagement.Application.Contracts;
 using Drobble.UserManagement.Domain.Entities;
 using Drobble.UserManagement.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;

@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ReviewsRatings/Drobble.ReviewsRatings.Application/Features/Reviews/Commands/CreateReviewCommand.cs ----
-using MediatR;
+﻿using MediatR;
 using MongoDB.Bson;
 
 namespace Drobble.ReviewsRatings.Application.Features.Reviews.Commands;

@@ -1,9 +1,5 @@
-﻿// ---- File: src/services/SearchDiscovery/Domain/ProductDocument.cs ----
-namespace Drobble.SearchDiscovery.Domain;
+﻿namespace Drobble.SearchDiscovery.Domain;
 
-/// <summary>
-/// Represents a flattened product record for storage and searching in Elasticsearch.
-/// </summary>
 public class ProductDocument
 {
     public string Id { get; set; }

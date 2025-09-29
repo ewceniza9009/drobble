@@ -1,7 +1,6 @@
-﻿// ---- File: src/services/ShoppingCart/Application/Features/Carts/Commands/MergeCartCommand.cs ----
-using Drobble.ShoppingCart.Application.Contracts;
+﻿using Drobble.ShoppingCart.Application.Contracts;
 using Drobble.ShoppingCart.Application.Mappings;
-using Drobble.ShoppingCart.Domain.Entities; // Required for CartItem
+using Drobble.ShoppingCart.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Linq;

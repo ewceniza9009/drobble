@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ShoppingCart/Domain/Entitites/Cart.cs ----
-using Drobble.Shared.Kernel;
+﻿using Drobble.Shared.Kernel;
 using MongoDB.Bson;
 
 namespace Drobble.ShoppingCart.Domain.Entities;

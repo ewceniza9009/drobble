@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ProductCatalog/Drobble.ProductCatalog.Api/Controllers/ProductsController.cs ----
-using Drobble.ProductCatalog.Application.Features.Commands;
+﻿using Drobble.ProductCatalog.Application.Features.Commands;
 using Drobble.ProductCatalog.Application.Features.Products.Commands;
 using Drobble.ProductCatalog.Application.Features.Products.Queries;
 using MediatR;
@@ -27,7 +26,7 @@ public class ProductsController : ControllerBase
         return product is not null ? Ok(product) : NotFound();
     }
 
-    // FIX: Added 'categoryId' and 'exclude' parameters to handle more complex filtering.
+    // Added 'categoryId' and 'exclude' parameters to handle more complex filtering.
     [HttpGet]
     public async Task<IActionResult> GetProducts(
         [FromQuery] int page = 1,

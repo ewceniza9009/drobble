@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 namespace Drobble.ReviewsRatings.Infrastructure.Services;
 
-/// <summary>
-/// Implements the IProductCatalogService to communicate with the Product Catalog API.
-/// </summary>
 public class ProductCatalogService : IProductCatalogService
 {
     private readonly HttpClient _httpClient;

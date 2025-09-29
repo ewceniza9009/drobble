@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ProductCatalog/Application/Consumers/OrderCreatedConsumer.cs ----
-using Drobble.ProductCatalog.Application.Contracts;
+﻿using Drobble.ProductCatalog.Application.Contracts;
 using Drobble.Shared.EventBus.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;

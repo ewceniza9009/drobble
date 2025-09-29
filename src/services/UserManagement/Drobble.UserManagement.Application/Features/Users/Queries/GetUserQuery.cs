@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace Drobble.UserManagement.Application.Features.Users.Queries;
 
-// Using a simplified DTO for the user list
 public record UserDto(Guid Id, string Username, string Email, UserRole Role, bool IsActive, DateTime CreatedAt);
 
 public record GetUsersQuery(int Page, int PageSize, string? Search, UserRole? Role, bool? IsActive) : IRequest<IEnumerable<UserDto>>;

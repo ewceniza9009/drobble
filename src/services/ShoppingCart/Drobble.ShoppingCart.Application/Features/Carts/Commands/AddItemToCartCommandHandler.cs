@@ -1,6 +1,5 @@
-﻿// ---- File: src/services/ShoppingCart/Application/Features/Carts/Commands/AddItemToCartCommandHandler.cs ----
-using Drobble.ShoppingCart.Application.Contracts;
-using Drobble.ShoppingCart.Application.Mappings; // Add this using directive
+﻿using Drobble.ShoppingCart.Application.Contracts;
+using Drobble.ShoppingCart.Application.Mappings;
 using Drobble.ShoppingCart.Domain.Entities;
 using MediatR;
 using MongoDB.Bson;

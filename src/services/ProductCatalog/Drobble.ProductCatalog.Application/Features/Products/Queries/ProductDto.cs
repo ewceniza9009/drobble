@@ -8,7 +8,7 @@ public class ProductDto
     public decimal Price { get; set; }
     public int Stock { get; set; }
     public string CategoryId { get; set; }
-    public Guid? VendorId { get; set; } // Expose VendorId
+    public Guid? VendorId { get; set; }   
     public bool IsActive { get; set; }
     public string? ImageUrl { get; set; }
 }

@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/ProductCatalog/Application/Features/Products/Commands/CreateProductCommandHandler.cs ----
-using Drobble.ProductCatalog.Application.Contracts;
+﻿using Drobble.ProductCatalog.Application.Contracts;
 using Drobble.ProductCatalog.Domain.Entities;
 using Drobble.Shared.EventBus.Events;
 using MassTransit;

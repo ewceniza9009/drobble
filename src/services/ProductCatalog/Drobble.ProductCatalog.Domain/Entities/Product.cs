@@ -10,8 +10,8 @@ public class Product : Entity<ObjectId>
     public decimal Price { get; set; }
     public int Stock { get; set; }
     public ObjectId CategoryId { get; set; }
-    public Guid? VendorId { get; set; } // New property for vendor ownership
+    public Guid? VendorId { get; set; }      
     public List<string> ImageUrls { get; set; } = new();
     public bool IsActive { get; set; } = true;
-    public bool IsFeatured { get; set; } = false; // New property for featured status
+    public bool IsFeatured { get; set; } = false;      
 }
