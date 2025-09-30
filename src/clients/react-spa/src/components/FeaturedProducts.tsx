@@ -1,3 +1,4 @@
+// ---- File: src/components/FeaturedProducts.tsx ----
 import { useGetFeaturedProductsQuery } from '../store/apiSlice';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -45,19 +46,19 @@ const FeaturedProducts = () => {
     const visibleThumbnails = getVisibleThumbnails();
 
     return (
-        <section className="py-8 bg-gray-100 rounded-xl relative overflow-hidden">
+        <section className="py-8 bg-gray-100 dark:bg-slate-900 rounded-xl relative overflow-hidden">
             {/* Subtle Parallax Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-100 to-gray-200 transform -skew-y-3 origin-top-left animate-subtle-parallax" />
+            <div className="absolute inset-0 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-900 transform -skew-y-3 origin-top-left animate-subtle-parallax" />
             
             <div className="container mx-auto px-4 relative z-10">
                 <div className="text-center mb-8">
-                    <h2 className="text-4xl font-extrabold text-gray-900 mb-3 animate-slide-in">
+                    <h2 className="text-4xl font-extrabold text-gray-900 dark:text-slate-100 mb-3 animate-slide-in">
                         Featured
                     </h2>
                 </div>
 
                 {/* Custom Carousel Layout */}
-                <div className="bg-white rounded-2xl shadow-2xl p-8 transform transition-all duration-500">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 transform transition-all duration-500">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Large Featured Product - Left Side */}
                         <Tilt
@@ -69,7 +70,7 @@ const FeaturedProducts = () => {
                         >
                             <div 
                                 onClick={() => handleProductClick(currentProduct.id)}
-                                className="bg-gray-50 rounded-xl p-12 border-2 border-blue-200 relative overflow-hidden"
+                                className="bg-gray-50 dark:bg-slate-800/50 rounded-xl p-12 border-2 border-blue-200 dark:border-slate-700 relative overflow-hidden"
                             >
                                 <div className="text-center mb-6">
                                     <span className="inline-block bg-green-600 text-white px-5 py-2 rounded-full text-sm font-semibold mb-4 animate-bounce-in">
@@ -81,7 +82,7 @@ const FeaturedProducts = () => {
                                 <div className="flex flex-col md:flex-row gap-8 items-center">
                                     {/* Product Image with Enhanced Hover Effect */}
                                     <div className="flex-1 w-full">
-                                        <div className="rounded-xl overflow-hidden bg-white shadow-lg group-hover:shadow-2xl transition-all duration-500">
+                                        <div className="rounded-xl overflow-hidden bg-white dark:bg-slate-700 shadow-lg group-hover:shadow-2xl transition-all duration-500">
                                             <div className="relative w-full h-72 overflow-hidden rounded-xl">
                                                 <img
                                                     src={currentProduct.imageUrl || 'https://placehold.co/600x400/png?text=Product+Image'}
@@ -100,10 +101,10 @@ const FeaturedProducts = () => {
                                     
                                     {/* Product Info with Animation */}
                                     <div className="flex-1 animate-slide-up">
-                                        <h3 className="text-3xl font-extrabold text-gray-900 mb-4 group-hover:text-green-600 transition-colors duration-300">
+                                        <h3 className="text-3xl font-extrabold text-gray-900 dark:text-slate-100 mb-4 group-hover:text-green-600 transition-colors duration-300">
                                             {currentProduct.name}
                                         </h3>
-                                        <p className="text-gray-600 mb-6 line-clamp-3 text-lg leading-relaxed">
+                                        <p className="text-gray-600 dark:text-slate-400 mb-6 line-clamp-3 text-lg leading-relaxed">
                                             {currentProduct.description || 'Premium quality product with excellent features and durability.'}
                                         </p>
                                         
@@ -111,14 +112,14 @@ const FeaturedProducts = () => {
                                             <span className="text-4xl font-bold text-green-600 animate-pulse-price">
                                                 {formatCurrency(currentProduct.price)}
                                             </span>
-                                            <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold animate-bounce-in">
+                                            <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-4 py-2 rounded-full text-sm font-semibold animate-bounce-in">
                                                 In Stock
                                             </span>
                                         </div>
                                         
                                         <div className="flex items-center space-x-2 text-yellow-400 mb-4">
                                             {'★'.repeat(5)}
-                                            <span className="text-gray-600 text-sm">(127 reviews)</span>
+                                            <span className="text-gray-600 dark:text-slate-400 text-sm">(127 reviews)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -128,7 +129,7 @@ const FeaturedProducts = () => {
                         {/* Thumbnail Grid - Right Side */}
                         <div className="lg:col-span-1">
                             <div className="h-full flex flex-col">
-                                <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center lg:text-left pb-4 animate-slide-in">
+                                <h3 className="text-2xl font-semibold text-gray-900 dark:text-slate-100 mb-6 text-center lg:text-left pb-4 animate-slide-in">
                                     More Products
                                 </h3>
                                 
@@ -146,10 +147,10 @@ const FeaturedProducts = () => {
                                                 glareEnable={true}
                                                 glareMaxOpacity={0.15}
                                                 className={`
-                                                    cursor-pointer transition-all duration-500 rounded-xl p-4 border-2 bg-white group
+                                                    cursor-pointer transition-all duration-500 rounded-xl p-4 border-2 bg-white dark:bg-slate-800 group
                                                     ${isActive 
-                                                        ? 'border-blue-200 bg-green-50 shadow-lg transform scale-105' 
-                                                        : 'border-gray-200 hover:border-blue-300 hover:shadow-lg hover:scale-105'
+                                                        ? 'border-blue-200 dark:border-slate-600 bg-green-50 dark:bg-slate-700/50 shadow-lg transform scale-105' 
+                                                        : 'border-gray-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-slate-600 hover:shadow-lg hover:scale-105'
                                                     }
                                                 `}
                                             >
@@ -157,7 +158,7 @@ const FeaturedProducts = () => {
                                                     {/* Miniature Product Card */}
                                                     <div className="flex flex-col items-center text-center space-y-3">
                                                         {/* Product Image with Hover Effect */}
-                                                        <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
+                                                        <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 dark:bg-slate-700">
                                                             <img
                                                                 src={product.imageUrl || 'https://placehold.co/80x80/png?text=Product'}
                                                                 alt={product.name}
@@ -171,7 +172,7 @@ const FeaturedProducts = () => {
                                                         
                                                         {/* Product Info */}
                                                         <div className="flex-1 w-full">
-                                                            <h4 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2 leading-tight group-hover:text-green-600 transition-colors duration-300">
+                                                            <h4 className="text-sm font-semibold text-gray-900 dark:text-slate-200 line-clamp-2 mb-2 leading-tight group-hover:text-green-600 transition-colors duration-300">
                                                                 {product.name}
                                                             </h4>
                                                             <p className="text-base font-bold text-green-600">
@@ -184,65 +185,10 @@ const FeaturedProducts = () => {
                                         );
                                     })}
                                 </div>
-
-                                {/* Navigation Dots */}
-                                {products.length > 1 && (
-                                    <div className="flex justify-center space-x-3 mt-6 pt-4">
-                                        {products.map((_, index) => (
-                                            <button
-                                                key={index}
-                                                onClick={() => setCurrentIndex(index)}
-                                                className={`
-                                                    w-3 h-3 rounded-full transition-all duration-300 hover:scale-150
-                                                    ${currentIndex === index 
-                                                        ? 'bg-green-600 w-8 transform scale-110' 
-                                                        : 'bg-gray-300 hover:bg-gray-400'
-                                                    }
-                                                `}
-                                                aria-label={`Go to product ${index + 1}`}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-
-                                {/* Navigation Arrows for mobile */}
-                                {products.length > 1 && (
-                                    <div className="flex justify-center space-x-6 mt-6 lg:hidden">
-                                        <button
-                                            onClick={() => setCurrentIndex(currentIndex === 0 ? products.length - 1 : currentIndex - 1)}
-                                            className="p-4 bg-gray-200 rounded-full hover:bg-gray-300 transition-all duration-300 shadow-md hover:scale-110 transform"
-                                        >
-                                            ←
-                                        </button>
-                                        <span className="flex items-center text-sm text-gray-600 font-medium">
-                                            {currentIndex + 1} / {products.length}
-                                        </span>
-                                        <button
-                                            onClick={() => setCurrentIndex(currentIndex === products.length - 1 ? 0 : currentIndex + 1)}
-                                            className="p-4 bg-gray-200 rounded-full hover:bg-gray-300 transition-all duration-300 shadow-md hover:scale-110 transform"
-                                        >
-                                            →
-                                        </button>
-                                    </div>
-                                )}
                             </div>
                         </div>
                     </div>
                 </div>
-
-                {/* Progress Bar with Animation */}
-                {products.length > 1 && (
-                    <div className="mt-8 px-4">
-                        <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
-                            <div 
-                                className="bg-green-600 h-1.5 rounded-full transition-all duration-[10000ms] ease-linear animate-progress"
-                                style={{ 
-                                    width: `${((currentIndex + 1) / products.length) * 100}%` 
-                                }}
-                            />
-                        </div>
-                    </div>
-                )}
             </div>
         </section>
     );

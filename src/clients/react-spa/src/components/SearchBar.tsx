@@ -1,4 +1,3 @@
-// ---- File: src/components/SearchBar.tsx ----
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
@@ -16,17 +15,17 @@ const SearchBar = () => {
   };
 
   return (
-    <form onSubmit={handleSearch} className="relative w-full max-w-xs">
+    <form onSubmit={handleSearch} className="relative w-full max-w-lg mx-auto">
       <input
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Search for products..."
-        className="w-full px-4 py-2 text-sm border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="w-full px-4 py-2 text-sm border dark:border-slate-600 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 dark:placeholder-slate-400"
       />
       <button 
         type="submit" 
-        className="absolute top-0 right-0 h-full px-4 text-gray-500 hover:text-green-600"
+        className="absolute top-0 right-0 h-full px-4 text-gray-500 dark:text-slate-400 hover:text-green-600 dark:hover:text-green-400"
         aria-label="Search"
       >
         <FaSearch />

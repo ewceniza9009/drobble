@@ -84,10 +84,10 @@ const AdminProductEdit = () => {
 
   if (isLoadingProduct && isEditing) return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 text-center">
         <div className="animate-pulse">
-          <FaBox className="mx-auto text-4xl text-gray-300 mb-4" />
-          <p className="text-gray-600">Loading product details...</p>
+          <FaBox className="mx-auto text-4xl text-gray-300 dark:text-gray-600 mb-4" />
+          <p className="text-gray-600 dark:text-slate-400">Loading product details...</p>
         </div>
       </div>
     </div>
@@ -96,24 +96,24 @@ const AdminProductEdit = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-xl border border-gray-200 mb-8">
+      <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-700 mb-8">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center">
           <div className="flex items-center space-x-4">
-            <div className="bg-white p-3 rounded-lg shadow-sm">
+            <div className="bg-white dark:bg-slate-700 p-3 rounded-lg shadow-sm">
               <FaBox className="text-3xl text-green-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100">
                 {isEditing ? 'Edit Product' : 'Create New Product'}
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-slate-400 mt-1">
                 {isEditing ? 'Update product information and details' : 'Add a new product to your catalog'}
               </p>
             </div>
           </div>
           <Link 
             to="/admin/products" 
-            className="mt-4 lg:mt-0 flex items-center space-x-2 text-gray-600 hover:text-gray-800 font-medium"
+            className="mt-4 lg:mt-0 flex items-center space-x-2 text-gray-600 dark:text-slate-300 hover:text-gray-800 dark:hover:text-slate-100 font-medium"
           >
             <FaArrowLeft />
             <span>Back to Products</span>
@@ -124,9 +124,9 @@ const AdminProductEdit = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Form */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200">
-            <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-              <h2 className="text-lg font-semibold text-gray-800 flex items-center">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100 flex items-center">
                 <FaFileAlt className="mr-2 text-gray-400" />
                 Product Information
               </h2>
@@ -136,36 +136,36 @@ const AdminProductEdit = () => {
               <div className="space-y-6">
                 {/* Basic Information */}
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-slate-200 mb-4 flex items-center">
                     <FaTag className="mr-2 text-green-500" />
                     Basic Information
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Product Name</label>
                       <input 
                         type="text" 
                         value={name} 
                         onChange={(e) => setName(e.target.value)} 
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                        className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200" 
                         placeholder="Enter product name"
                         required 
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Description</label>
                       <textarea 
                         value={description} 
                         onChange={(e) => setDescription(e.target.value)} 
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                        className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200" 
                         rows={4}
                         placeholder="Enter product description"
                       ></textarea>
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                      <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-2 flex items-center">
                         <FaDollarSign className="mr-1 text-green-500" />
                         Price
                       </label>
@@ -174,13 +174,13 @@ const AdminProductEdit = () => {
                         step="0.01" 
                         value={price} 
                         onChange={(e) => setPrice(Number(e.target.value))} 
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                        className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200" 
                         required 
                       />
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                      <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-2 flex items-center">
                         <FaWarehouse className="mr-1 text-orange-500" />
                         Stock Quantity
                       </label>
@@ -188,7 +188,7 @@ const AdminProductEdit = () => {
                         type="number" 
                         value={stock} 
                         onChange={(e) => setStock(Number(e.target.value))} 
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                        className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200" 
                         required 
                       />
                     </div>
@@ -197,28 +197,28 @@ const AdminProductEdit = () => {
 
                 {/* Media & Images */}
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-slate-200 mb-4 flex items-center">
                     <FaImage className="mr-2 text-purple-500" />
                     Media & Images
                   </h3>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Image URL</label>
                       <input 
                         type="text" 
                         value={imageUrl} 
                         onChange={(e) => setImageUrl(e.target.value)} 
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                        className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200" 
                         placeholder="https://example.com/image.jpg"
                       />
                     </div>
                     {imageUrl && (
                       <div className="mt-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Image Preview</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Image Preview</label>
                         <img 
                           src={imageUrl} 
                           alt="Product preview" 
-                          className="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                          className="w-32 h-32 object-cover rounded-lg border border-gray-300 dark:border-slate-600"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                           }}
@@ -230,39 +230,39 @@ const AdminProductEdit = () => {
 
                 {/* Additional Details */}
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-slate-200 mb-4 flex items-center">
                     <FaLayerGroup className="mr-2 text-green-500" />
                     Additional Details
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">SKU</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">SKU</label>
                       <input 
                         type="text" 
                         value={sku} 
                         onChange={(e) => setSku(e.target.value)} 
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                        className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200" 
                         placeholder="Product SKU"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Weight (kg)</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Weight (kg)</label>
                       <input 
                         type="number" 
                         step="0.1" 
                         value={weight} 
                         onChange={(e) => setWeight(Number(e.target.value))} 
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                        className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200" 
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Category</label>
                       <select 
                         value={categoryId} 
                         onChange={(e) => setCategoryId(e.target.value)} 
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
                       >
                         <option value="6745f5a2f372d8a156391d18">Kitchenware</option>
                         <option value="6745f5a2f372d8a156391d19">Home Decor</option>
@@ -276,9 +276,9 @@ const AdminProductEdit = () => {
                           type="checkbox" 
                           checked={isFeatured} 
                           onChange={(e) => setIsFeatured(e.target.checked)} 
-                          className="w-4 h-4 text-green-600 rounded focus:ring-blue-500"
+                          className="w-4 h-4 text-green-600 rounded focus:ring-blue-500 bg-gray-100 dark:bg-slate-600 border-gray-300 dark:border-slate-500"
                         />
-                        <span className="text-sm font-medium text-gray-700">Feature this product</span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-slate-300">Feature this product</span>
                       </label>
                     </div>
                   </div>
@@ -286,10 +286,10 @@ const AdminProductEdit = () => {
               </div>
 
               {/* Form Actions */}
-              <div className="mt-8 pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
+              <div className="mt-8 pt-6 border-t border-gray-200 dark:border-slate-700 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
                 <Link 
                   to="/admin/products" 
-                  className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-medium text-center"
+                  className="px-6 py-3 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-all font-medium text-center"
                 >
                   Cancel
                 </Link>
@@ -310,32 +310,30 @@ const AdminProductEdit = () => {
         <div className="lg:col-span-1">
           <div className="space-y-6">
             {/* Product Summary */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Product Summary</h3>
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-4">Product Summary</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Status:</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    isEditing ? 'bg-green-100 text-green-800' : 'bg-green-100 text-green-800'
-                  }`}>
+                  <span className="text-gray-600 dark:text-slate-400">Status:</span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300`}>
                     {isEditing ? 'Existing Product' : 'New Product'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Price:</span>
-                  <span className="font-medium text-gray-800">{formatCurrency(price)}</span>
+                  <span className="text-gray-600 dark:text-slate-400">Price:</span>
+                  <span className="font-medium text-gray-800 dark:text-slate-200">{formatCurrency(price)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Stock:</span>
+                  <span className="text-gray-600 dark:text-slate-400">Stock:</span>
                   <span className={`font-medium ${
-                    stock === 0 ? 'text-red-600' : stock < 10 ? 'text-orange-600' : 'text-green-600'
+                    stock === 0 ? 'text-red-600 dark:text-red-400' : stock < 10 ? 'text-orange-600 dark:text-orange-400' : 'text-green-600 dark:text-green-400'
                   }`}>
                     {stock} units
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Featured:</span>
-                  <span className={`font-medium ${isFeatured ? 'text-green-600' : 'text-gray-600'}`}>
+                  <span className="text-gray-600 dark:text-slate-400">Featured:</span>
+                  <span className={`font-medium ${isFeatured ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-slate-400'}`}>
                     {isFeatured ? 'Yes' : 'No'}
                   </span>
                 </div>
@@ -343,9 +341,9 @@ const AdminProductEdit = () => {
             </div>
 
             {/* Tips */}
-            <div className="bg-green-50 border border-blue-200 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-green-800 mb-3">Tips</h3>
-              <ul className="space-y-2 text-sm text-green-700">
+            <div className="bg-green-50 dark:bg-slate-800/50 border border-blue-200 dark:border-slate-700 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-green-800 dark:text-green-300 mb-3">Tips</h3>
+              <ul className="space-y-2 text-sm text-green-700 dark:text-green-400">
                 <li>• Use high-quality images for better conversion</li>
                 <li>• Set realistic stock levels to avoid overselling</li>
                 <li>• Feature popular products on the homepage</li>

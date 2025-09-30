@@ -1,4 +1,3 @@
-// ---- File: src/components/RelatedProducts.tsx ----
 import { useGetProductsByCategoryQuery } from '../store/apiSlice';
 import ProductCard from './ProductCard';
 
@@ -20,7 +19,7 @@ const RelatedProducts = ({ categoryId, currentProductId }: RelatedProductsProps)
 
     return (
         <div className="mt-16">
-            <h2 className="text-2xl font-bold mb-6 text-slate-800">You Might Also Like</h2>
+            <h2 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100">You Might Also Like</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {products.map(product => (
                     <ProductCard key={product.id} product={product} />

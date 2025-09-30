@@ -11,7 +11,6 @@ const HomePage = () => {
         <Hero />
         <FeaturedProducts />
         <section id="all-products">
-            <h2 className="text-3xl font-bold text-slate-800 my-6 text-center">All Products</h2>
             <ProductList />
         </section>
     </>

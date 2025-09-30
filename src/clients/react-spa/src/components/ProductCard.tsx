@@ -81,7 +81,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <div
-      className="group relative bg-white rounded-xl shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-200 overflow-hidden"
+      className="group relative bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-slate-700 overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -93,7 +93,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </span>
         )}
         {product.isFeatured && (
-          <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+          <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
             FEATURED
           </span>
         )}
@@ -110,7 +110,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         className={`absolute top-3 right-3 z-10 p-2 rounded-full shadow-lg transition-all duration-300 ${
           isWishlisted
             ? "bg-red-500 text-white"
-            : "bg-white text-gray-600 hover:bg-red-500 hover:text-white"
+            : "bg-white dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white"
         }`}
         aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
       >
@@ -118,7 +118,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </button>
 
       {/* Product Image */}
-      <div className="relative aspect-square bg-gray-100">
+      <div className="relative aspect-square bg-gray-100 dark:bg-slate-700">
         <Link to={`/products/${product.id}`} className="block absolute inset-0">
           <img
             src={
@@ -170,15 +170,15 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   className={`text-sm ${
                     star <= Math.floor(averageRating)
                       ? "text-yellow-400 fill-current"
-                      : "text-gray-300"
+                      : "text-gray-300 dark:text-gray-600"
                   }`}
                 />
               ))}
             </div>
-            <span className="text-xs text-gray-600 ml-1">({reviewCount})</span>
+            <span className="text-xs text-gray-600 dark:text-slate-400 ml-1">({reviewCount})</span>
           </div>
           {!isOutOfStock && (
-            <div className="flex items-center text-xs text-green-600">
+            <div className="flex items-center text-xs text-green-600 dark:text-green-400">
               <FaTruck className="mr-1" />
               <span>Free Shipping</span>
             </div>
@@ -187,14 +187,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
         {/* Product Name */}
         <Link to={`/products/${product.id}`}>
-          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-green-600 transition-colors leading-tight">
+          <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-2 line-clamp-2 hover:text-green-600 transition-colors leading-tight">
             {product.name}
           </h3>
         </Link>
 
         {/* Description */}
         {product.description && (
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">
+          <p className="text-sm text-gray-600 dark:text-slate-400 mb-3 line-clamp-2 leading-relaxed">
             {product.description}
           </p>
         )}
@@ -202,11 +202,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
         {/* Price and Action */}
         <div className="flex items-center justify-between mt-auto">
           <div className="flex flex-col">
-            <span className="text-xl font-bold text-green-600">
+            <span className="text-xl font-bold text-green-600 dark:text-green-400">
               {formatCurrency(product.price)}
             </span>
             {product.stock && product.stock > 0 && (
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 dark:text-slate-400">
                 {product.stock} in stock
               </span>
             )}
@@ -224,10 +224,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </div>
 
       {/* Quick View on Mobile */}
-      <div className="lg:hidden border-t border-gray-100">
+      <div className="lg:hidden border-t border-gray-100 dark:border-slate-700">
         <Link
           to={`/products/${product.id}`}
-          className="block text-center py-2 text-sm text-gray-600 hover:text-green-600 transition-colors"
+          className="block text-center py-2 text-sm text-gray-600 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
         >
           Quick View
         </Link>

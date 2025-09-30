@@ -35,11 +35,11 @@ const ReviewForm = ({ productId }: { productId: string }) => {
 
   if (!token) {
     return (
-      <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-xl border border-gray-200 text-center">
+      <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-700 text-center">
         <div className="flex flex-col items-center space-y-3">
           <FaLock className="text-2xl text-gray-400" />
-          <h3 className="text-lg font-semibold text-gray-800">Sign in to Review</h3>
-          <p className="text-gray-600 text-sm">Share your experience by logging in or creating an account.</p>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100">Sign in to Review</h3>
+          <p className="text-gray-600 dark:text-slate-400 text-sm">Share your experience by logging in or creating an account.</p>
           <div className="flex space-x-2">
             <a 
               href="/login" 
@@ -49,7 +49,7 @@ const ReviewForm = ({ productId }: { productId: string }) => {
             </a>
             <a 
               href="/register" 
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+              className="px-4 py-2 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors font-medium text-sm"
             >
               Create Account
             </a>
@@ -60,8 +60,8 @@ const ReviewForm = ({ productId }: { productId: string }) => {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 p-6">
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-4 flex items-center">
         <FaStar className="text-yellow-400 mr-2" />
         Write Your Review
       </h3>
@@ -69,7 +69,7 @@ const ReviewForm = ({ productId }: { productId: string }) => {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Rating Section */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Your Rating</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Your Rating</label>
           <div className="flex items-center space-x-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -81,7 +81,7 @@ const ReviewForm = ({ productId }: { productId: string }) => {
                 className={`text-2xl transition-all duration-200 ${
                   star <= (hoverRating || rating)
                     ? 'text-yellow-400'
-                    : 'text-gray-300 hover:text-yellow-200'
+                    : 'text-gray-300 dark:text-slate-600 hover:text-yellow-200'
                 }`}
               >
                 <FaStar />
@@ -92,19 +92,19 @@ const ReviewForm = ({ productId }: { productId: string }) => {
 
         {/* Comment Section */}
         <div>
-          <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="comment" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Your Review
-            <span className="text-gray-500 font-normal ml-1 text-xs">(min 10 characters)</span>
+            <span className="text-gray-500 dark:text-slate-400 font-normal ml-1 text-xs">(min 10 characters)</span>
           </label>
           <textarea
             id="comment"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            className="w-full p-3 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+            className="w-full p-3 bg-white dark:bg-slate-700 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
             rows={4}
             placeholder="Share your experience. What did you like or dislike?"
           />
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <div className="flex justify-between text-xs text-gray-500 dark:text-slate-400 mt-1">
             <span>{comment.length}/500</span>
             <span className={comment.length < 10 ? 'text-red-500' : 'text-green-500'}>
               {comment.length < 10 ? `${10 - comment.length} more required` : 'Good length'}
@@ -121,7 +121,7 @@ const ReviewForm = ({ productId }: { productId: string }) => {
               setComment('');
               setHoverRating(0);
             }}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+            className="px-4 py-2 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors font-medium text-sm"
           >
             Clear
           </button>
@@ -135,16 +135,6 @@ const ReviewForm = ({ productId }: { productId: string }) => {
           </button>
         </div>
       </form>
-
-      {/* Review Guidelines */}
-      <div className="mt-4 p-3 bg-green-50 rounded-lg border border-blue-200">
-        <h4 className="text-xs font-semibold text-green-800 mb-1">Review Tips</h4>
-        <ul className="text-xs text-green-700 space-y-1">
-          <li>• Share specific details about your experience</li>
-          <li>• Be honest and constructive</li>
-          <li>• Avoid personal or sensitive information</li>
-        </ul>
-      </div>
     </div>
   );
 };

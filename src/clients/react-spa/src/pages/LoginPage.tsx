@@ -27,28 +27,28 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border border-slate-200">
-      <h2 className="text-2xl font-bold mb-6 text-center text-slate-800">Welcome Back</h2>
+    <div className="max-w-md mx-auto bg-white dark:bg-slate-800 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
+      <h2 className="text-2xl font-bold mb-6 text-center text-slate-800 dark:text-slate-100">Welcome Back</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-semibold text-slate-600 mb-1" htmlFor="username">Username</label>
+          <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1" htmlFor="username">Username</label>
           <input
             id="username"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-3 bg-slate-100 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-md border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             required
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-slate-600 mb-1" htmlFor="password">Password</label>
+          <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1" htmlFor="password">Password</label>
           <input
             id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 bg-slate-100 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-md border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             required
           />
         </div>
@@ -61,8 +61,8 @@ const LoginPage = () => {
             <span>{status === 'loading' ? 'Logging in...' : 'Login'}</span>
         </button>
       </form>
-      <p className="text-center text-sm text-slate-600 mt-6">
-        Don't have an account? <Link to="/register" className="font-semibold text-green-600 hover:underline">Sign up</Link>
+      <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-6">
+        Don't have an account? <Link to="/register" className="font-semibold text-green-600 dark:text-green-400 hover:underline">Sign up</Link>
       </p>
     </div>
   );

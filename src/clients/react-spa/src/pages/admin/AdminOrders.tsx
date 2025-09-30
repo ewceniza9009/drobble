@@ -30,49 +30,49 @@ const AdminOrders = () => {
     
     if (isLoading) {
         return (
-            <div className="max-w-7xl mx-auto py-8">
-                <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 text-center">
                     <div className="animate-pulse">
-                        <FaShoppingBag className="mx-auto text-4xl text-gray-300 mb-4" />
-                        <p className="text-gray-600">Loading orders...</p>
+                        <FaShoppingBag className="mx-auto text-4xl text-gray-300 dark:text-gray-600 mb-4" />
+                        <p className="text-gray-600 dark:text-slate-400">Loading orders...</p>
                     </div>
                 </div>
             </div>
         );
     }
     
-    if (error) return <p className="text-red-500">Error loading orders.</p>;
+    if (error) return <div className="max-w-7xl mx-auto px-4 py-8"><p className="text-red-500">Error loading orders.</p></div>;
 
     const orders = data?.items || [];
 
     return (
-        <div className="max-w-7xl mx-auto py-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Order Management</h1>
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100 mb-6">Order Management</h1>
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                    <thead className="bg-gray-50 dark:bg-slate-700/50">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
-                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Order ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Username</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Date</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Status</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Total</th>
+                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                         {orders.map((order) => (
-                            <tr key={order.id}>
-                                <td className="px-6 py-4 font-mono text-sm">{order.id.substring(0, 8)}...</td>
+                            <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                                <td className="px-6 py-4 font-mono text-sm text-gray-800 dark:text-slate-300">{order.id.substring(0, 8)}...</td>
                                 <td className="px-6 py-4">
-                                    <div className="flex items-center">
-                                        <FaUser className="text-gray-400 mr-2" />
+                                    <div className="flex items-center text-gray-800 dark:text-slate-200">
+                                        <FaUser className="text-gray-400 dark:text-slate-500 mr-2" />
                                         {order.username}
                                     </div>
                                 </td>
-                                <td className="px-6 py-4">{new Date(order.createdAt).toLocaleDateString()}</td>
-                                <td className="px-6 py-4"><span className={`px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800`}>{order.status}</span></td>
-                                <td className="px-6 py-4 text-right font-semibold">{formatCurrency(order.totalAmount)}</td>
+                                <td className="px-6 py-4 text-gray-800 dark:text-slate-300">{new Date(order.createdAt).toLocaleDateString()}</td>
+                                <td className="px-6 py-4"><span className={`px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300`}>{order.status}</span></td>
+                                <td className="px-6 py-4 text-right font-semibold text-gray-800 dark:text-slate-200">{formatCurrency(order.totalAmount)}</td>
                                 <td className="px-6 py-4 text-center space-x-2">
                                     {order.status === 'Pending' && (
                                         <>

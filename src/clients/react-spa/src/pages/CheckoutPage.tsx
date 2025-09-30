@@ -97,15 +97,15 @@ const CheckoutPage = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center p-8">Loading Checkout...</div>;
+    return <div className="text-center p-8 text-gray-700 dark:text-slate-300">Loading Checkout...</div>;
   }
   
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header Navigation */}
       <div className="flex justify-center mb-8">
-        <div className="flex space-x-8  font-medium">
-          <span className="border-b-2 border-blue-600 pb-1">Information</span>
+        <div className="flex space-x-8 font-medium text-gray-700 dark:text-slate-300">
+          <span className="border-b-2 border-blue-600 pb-1 text-gray-900 dark:text-white">Information</span>
           <span className="text-gray-400 pb-1">Shipping</span>
           <span className="text-gray-400 pb-1">Payment</span>
         </div>
@@ -115,8 +115,8 @@ const CheckoutPage = () => {
         {/* Left Column - Checkout Forms */}
         <div className="space-y-8">
           {/* Express Checkout */}
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-            <h3 className="text-lg font-semibold mb-4">Express checkout</h3>
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-slate-100">Express checkout</h3>
             <div className="space-y-3">
               <button className="w-full bg-black text-white py-3 rounded-lg font-medium flex items-center justify-center space-x-2">
                 <span>Maya</span>
@@ -131,15 +131,15 @@ const CheckoutPage = () => {
             </div>
             
             <div className="flex items-center my-6">
-              <div className="flex-1 border-t border-gray-300"></div>
-              <span className="px-4 text-gray-500 text-sm">OR</span>
-              <div className="flex-1 border-t border-gray-300"></div>
+              <div className="flex-1 border-t border-gray-300 dark:border-slate-600"></div>
+              <span className="px-4 text-gray-500 dark:text-slate-400 text-sm">OR</span>
+              <div className="flex-1 border-t border-gray-300 dark:border-slate-600"></div>
             </div>
 
             {/* Contact Information */}
             <div>
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Contact information</h3>
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100">Contact information</h3>
               </div>
               
               <div className="space-y-4">
@@ -148,17 +148,17 @@ const CheckoutPage = () => {
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
                 />
                 
                 <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="newsletter" className="rounded" />
-                  <label htmlFor="newsletter" className="text-sm text-gray-600">
+                  <input type="checkbox" id="newsletter" className="rounded dark:bg-slate-600 dark:border-slate-500" />
+                  <label htmlFor="newsletter" className="text-sm text-gray-600 dark:text-slate-400">
                     Email me about new collections, special events, promotions and what's going on at Our Place.
                   </label>
                 </div>
                 
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-slate-500">
                   By providing your email address, you agree to our Terms of Service and Privacy Policy. 
                   You may unsubscribe at any time.
                 </p>
@@ -167,12 +167,12 @@ const CheckoutPage = () => {
 
             {/* Shipping Address */}
             <div className="mt-8">
-              <h3 className="text-lg font-semibold  mb-4">Shipping address</h3>
+              <h3 className="text-lg font-semibold  mb-4 text-gray-800 dark:text-slate-100">Shipping address</h3>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium  mb-1">Country/region</label>
-                  <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-slate-300">Country/region</label>
+                  <select className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200">
                     <option>Philippines</option>
                   </select>
                 </div>
@@ -184,7 +184,7 @@ const CheckoutPage = () => {
                       placeholder="First name"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
                     />
                   </div>
                   <div>
@@ -193,7 +193,7 @@ const CheckoutPage = () => {
                       placeholder="Last name"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
                     />
                   </div>
                 </div>
@@ -204,7 +204,7 @@ const CheckoutPage = () => {
                     placeholder="Enter street or postcode"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
                   />
                 </div>
               </div>
@@ -213,15 +213,15 @@ const CheckoutPage = () => {
         </div>
 
         {/* Right Column - Order Summary */}
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 h-fit sticky top-8">
-          <h2 className="text-xl font-semibold  mb-6 border-b border-gray-200 pb-4 flex items-center">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700 h-fit sticky top-8">
+          <h2 className="text-xl font-semibold  mb-6 border-b border-gray-200 dark:border-slate-700 pb-4 flex items-center text-gray-800 dark:text-slate-100">
             <FaShoppingCart className="mr-3" /> Order Summary
           </h2>
           
           {/* Product List */}
           <div className="space-y-4 mb-6">
             {enrichedItems.map(item => (
-              <div key={item.productId} className="flex items-center justify-between py-3 border-b border-gray-100">
+              <div key={item.productId} className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-slate-700">
                 <div className="flex items-center space-x-4">
                   <img 
                     src={item.imageUrl || 'https://placehold.co/100x100/png?text=...'} 
@@ -229,33 +229,33 @@ const CheckoutPage = () => {
                     className="w-16 h-16 object-cover rounded-md" 
                   />
                   <div>
-                    <p className="font-semibold ">{item.name}</p>
-                    <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+                    <p className="font-semibold text-gray-800 dark:text-slate-200">{item.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400">Quantity: {item.quantity}</p>
                   </div>
                 </div>
-                <p className="font-semibold ">{formatCurrency(item.price * item.quantity)}</p>
+                <p className="font-semibold text-gray-800 dark:text-slate-200">{formatCurrency(item.price * item.quantity)}</p>
               </div>
             ))}
           </div>
           
           {/* Order Total */}
-          <div className="space-y-3 py-4 border-t border-gray-200">
+          <div className="space-y-3 py-4 border-t border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300">
             <div className="flex justify-between ">
               <span>Subtotal</span>
               <span>{formatCurrency(cartTotal)}</span>
             </div>
             <div className="flex justify-between ">
               <span>Shipping</span>
-              <span>Free</span>
+              <span className="text-green-600 dark:text-green-400">Free</span>
             </div>
-            <div className="flex justify-between font-bold text-lg  border-t border-gray-200 pt-3">
+            <div className="flex justify-between font-bold text-lg border-t border-gray-200 dark:border-slate-700 pt-3 text-gray-800 dark:text-slate-100">
               <span>Total</span>
-              <span  className="text-green-600">{formatCurrency(cartTotal)}</span>
+              <span  className="text-green-600 dark:text-green-400">{formatCurrency(cartTotal)}</span>
             </div>
           </div>
 
           {/* Security Badge */}
-          <div className="flex items-center justify-center space-x-2 text-green-600 mt-4 py-3 border-t border-gray-200">
+          <div className="flex items-center justify-center space-x-2 text-green-600 dark:text-green-400 mt-4 py-3 border-t border-gray-200 dark:border-slate-700">
             <FaLock />
             <span className="text-sm font-medium">Secure checkout</span>
           </div>
@@ -271,7 +271,7 @@ const CheckoutPage = () => {
           </button>
 
           {/* Shipping Info */}
-          <div className="flex items-center justify-center space-x-2 text-gray-600 mt-4 text-sm">
+          <div className="flex items-center justify-center space-x-2 text-gray-600 dark:text-slate-400 mt-4 text-sm">
             <FaTruck />
             <span>Free shipping on all orders</span>
           </div>
