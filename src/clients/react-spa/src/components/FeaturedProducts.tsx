@@ -51,12 +51,6 @@ const FeaturedProducts = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-900 transform -skew-y-3 origin-top-left animate-subtle-parallax" />
             
             <div className="container mx-auto px-4 relative z-10">
-                <div className="text-center mb-8">
-                    <h2 className="text-4xl font-extrabold text-gray-900 dark:text-slate-100 mb-3 animate-slide-in">
-                        Featured
-                    </h2>
-                </div>
-
                 {/* Custom Carousel Layout */}
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 transform transition-all duration-500">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
