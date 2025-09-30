@@ -94,7 +94,7 @@ const AdminProductEdit = () => {
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-700 mb-8">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center">

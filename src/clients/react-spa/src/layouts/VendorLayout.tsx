@@ -17,7 +17,7 @@ const VendorLayout = () => {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row min-h-[calc(100vh-140px)]">
+        <div className="flex flex-col lg:flex-row min-h-[calc(100vh-140px)] rounded-xl">
             {/* Mobile Header */}
             <div className="lg:hidden bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 p-4">
                 <div className="flex items-center justify-between">

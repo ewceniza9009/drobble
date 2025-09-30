@@ -46,8 +46,8 @@ const AdminOrders = () => {
     const orders = data?.items || [];
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100 mb-6">Order Management</h1>
+        <div className="max-w-7xl mx-4 px-4 pb-6 dark:border-slate-700 border rounded-xl">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100 my-6">Order Management</h1>
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                     <thead className="bg-gray-50 dark:bg-slate-700/50">

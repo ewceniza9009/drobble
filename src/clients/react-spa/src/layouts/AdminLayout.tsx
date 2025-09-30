@@ -37,9 +37,9 @@ const AdminLayout = () => {
       {/* Sidebar Navigation */}
       <aside
         className={`
-          fixed lg:sticky lg:top-24 lg:max-h-[calc(100vh-96px)] lg:overflow-y-auto 
+          fixed lg:sticky lg:top-24 lg:max-h-[calc(100vh-100px)] lg:overflow-y-auto 
           inset-y-0 left-0 z-50 lg:z-30
-          w-64 flex-shrink-0 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700
+          w-64 flex-shrink-0 bg-white dark:bg-slate-800 border rounded-xl border-gray-200 dark:border-slate-700
           transform transition-transform duration-300 ease-in-out
           lg:translate-x-0
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
