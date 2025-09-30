@@ -49,9 +49,9 @@ const ProductDetailPage = () => {
 
   if (error) return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-        <p className="text-red-600 text-lg">Failed to load product. Please try again.</p>
-        <a href="/products" className="text-green-600 hover:underline mt-2 inline-block">Back to Products</a>
+      <div className="bg-red-50 dark:bg-gray-700 border border-red-200 dark:border-slate-700 rounded-xl p-6 text-center">
+        <p className="text-red-600 dark:text-red-400 text-lg">Failed to load product. Please try again.</p>
+        <a href="/" className="text-green-600 hover:underline mt-2 inline-block">Back to Products</a>
       </div>
     </div>
   );
@@ -60,7 +60,7 @@ const ProductDetailPage = () => {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 text-center">
         <p className="text-gray-600 dark:text-slate-400 text-lg">Product not found.</p>
-        <a href="/products" className="text-green-600 hover:underline mt-2 inline-block">Browse Products</a>
+        <a href="/" className="text-green-600 hover:underline mt-2 inline-block">Browse Products</a>
       </div>
     </div>
   );
