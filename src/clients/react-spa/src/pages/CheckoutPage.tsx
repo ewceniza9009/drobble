@@ -405,12 +405,12 @@ const CheckoutPage = () => {
         <div className="lg:col-span-1">
           <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 sticky top-8">
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4">
+            <div className="bg-gradient-to-r from-green-600 to-green-700 p-4">
               <h2 className="text-xl font-bold text-white flex items-center">
                 <FaShoppingCart className="mr-3" /> 
                 Order Summary
               </h2>
-              <p className="text-blue-100 text-sm mt-1">
+              <p className="text-green-100 text-sm mt-1">
                 {enrichedItems.length} item{enrichedItems.length !== 1 ? 's' : ''} in cart
               </p>
             </div>
