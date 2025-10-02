@@ -484,4 +484,6 @@ $RECYCLE.BIN/
 *.swp
 
 #temporary ignore test projects
+tests/
 docs/DrobbleProductCatalog.products.json
+/src/services/Payment/Drobble.Payment.Api/appsettings.json
