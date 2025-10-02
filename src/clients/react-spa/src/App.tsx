@@ -17,8 +17,9 @@ import VendorLayout from './layouts/VendorLayout';
 import VendorReviews from './pages/vendor/VendorReviews';
 import Footer from './components/Footer';
 import ThemeToggle from './components/ThemeToggle';
+import toast from 'react-hot-toast/headless';
 
-// Lazy load all page components
+// Lazy load all page components for better performance
 const HomePage = lazy(() => import('./pages/HomePage'));
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
@@ -28,6 +29,7 @@ const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const OrderDetailPage = lazy(() => import('./pages/OrderDetailPage'));
 const SearchPage = lazy(() => import('./pages/SearchPage'));
+const PaymentSuccessPage = lazy(() => import('./pages/PaymentSucceesPage'));
 
 // Lazy load Admin pages
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
@@ -46,7 +48,7 @@ function App() {
   const { token } = useSelector((state: RootState) => state.auth);
   const { mode: themeMode } = useSelector((state: RootState) => state.theme);
 
-  // Apply the dark class to the root element when theme changes
+  // Apply the dark/light class to the root HTML element when the theme changes
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
@@ -58,10 +60,12 @@ function App() {
     try {
       userRole = jwtDecode<JwtPayload>(token).role;
     } catch {
-      // Invalid token, will be handled by ProtectedRoute
+      // Invalid token, will be handled by ProtectedRoute or logout
+      console.error("Invalid token found.");
     }
   }
 
+  // Fetch the user's cart from the backend if they are logged in
   useEffect(() => {
     if (token) dispatch(fetchCart());
   }, [dispatch, token]);
@@ -69,18 +73,20 @@ function App() {
   const handleLogout = () => {
     dispatch(logout());
     navigate('/');
+    toast.success('You have been logged out.');
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-900">
       <Toaster position="bottom-center" />
       <header className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-y-4">
           <Link to="/" className="text-2xl font-bold text-slate-800 dark:text-white hover:text-green-600 transition-colors">
-            <img src="/appicontext.svg" alt="drobble" className="h-8 w-auto" />
+            {/* Using an SVG or image for the logo is more flexible */}
+            <img src="/appicontext.svg" alt="drobble logo" className="h-8 w-auto" />
           </Link>
 
-          {/* Search bar: full-width and last on mobile, auto-width and middle on desktop */}
+          {/* Search bar: full-width on mobile, auto-width on desktop */}
           <div className="w-full order-last md:w-auto md:flex-grow md:order-none md:mx-8">
             <SearchBar />
           </div>
@@ -102,7 +108,7 @@ function App() {
         </nav>
       </header>
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Suspense fallback={<div className="text-center p-8 text-xl">Loading...</div>}>
+        <Suspense fallback={<div className="text-center p-8 text-xl text-gray-600 dark:text-slate-400">Loading Page...</div>}>
           <Routes>
             {/* --- Public Routes --- */}
             <Route path="/" element={<HomePage />} />
@@ -117,6 +123,7 @@ function App() {
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/orders/:orderId" element={<OrderDetailPage />} />
+              <Route path="/payment/success" element={<PaymentSuccessPage />} />
             </Route>
             
             {/* --- Admin Only Routes --- */}
@@ -132,7 +139,7 @@ function App() {
               </Route>
             </Route>
 
-            {/* --- Vendor Routes --- */}
+            {/* --- Vendor Routes (also accessible by Admin) --- */}
             <Route element={<ProtectedRoute allowedRoles={['Vendor', 'Admin']} />}>
               <Route path="/vendor" element={<VendorLayout />}>
                 <Route index element={<Navigate to="products" replace />} />

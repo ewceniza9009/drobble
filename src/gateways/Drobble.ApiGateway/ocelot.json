@@ -1,5 +1,20 @@
 {
   "Routes": [
+    // --- PAYMENT ROUTES ---
+    {
+      "UpstreamPathTemplate": "/api/payments/{everything}",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5081
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/payments/{everything}",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+
     // --- ADMIN ROUTES ---
     {
       "UpstreamPathTemplate": "/api/admin/users/{everything}",

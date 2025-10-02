@@ -5,7 +5,7 @@ import type { RootState, AppDispatch } from '../store/store';
 import { placeOrder } from '../store/cartSlice';
 import { toast } from 'react-hot-toast';
 import api from '../api/axios';
-import { FaShoppingCart, FaCreditCard, FaPaypal, FaLock, FaTruck } from 'react-icons/fa';
+import { FaShoppingCart, FaPaypal } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatting';
 
 interface ProductDetail {
@@ -26,10 +26,11 @@ interface EnrichedCartItem {
 const CheckoutPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { items: cartItems, status } = useSelector((state: RootState) => state.cart);
+  const { items: cartItems } = useSelector((state: RootState) => state.cart);
 
   const [enrichedItems, setEnrichedItems] = useState<EnrichedCartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -80,19 +81,39 @@ const CheckoutPage = () => {
       return;
     }
 
+    setIsProcessing(true);
+    const orderItems = enrichedItems.map(item => ({ productId: item.productId, quantity: item.quantity, price: item.price }));
+
     try {
-      const createdOrder = await dispatch(placeOrder()).unwrap();
+      // 1. Create the order in our system first to get an OrderId
+      const createdOrder = await dispatch(placeOrder(orderItems)).unwrap();
       const orderId = createdOrder?.id || createdOrder?.Id;
-      if (orderId) {
-        toast.success('Order placed successfully!');
-        navigate(`/orders/${orderId}`);
-      } else {
-        toast.error('Failed to create order: ID was not found in the server response.');
-        console.error("CRITICAL ERROR: The server's response object did not contain an 'id' or 'Id' property.", createdOrder);
+
+      if (!orderId) {
+        throw new Error("Failed to get Order ID after creation.");
       }
+      
+      // Store the new order ID in local storage before redirecting to PayPal
+      localStorage.setItem('drobbleOrderId', orderId);
+
+      // 2. Create the PayPal payment order using the new OrderId
+      const paymentResponse = await api.post('/payments/create-order', {
+        orderId: orderId,
+        gateway: 'PayPal'
+      });
+      
+      const { approvalUrl } = paymentResponse.data;
+
+      if (approvalUrl) {
+        window.location.href = approvalUrl;
+      } else {
+        throw new Error("Could not get PayPal approval URL.");
+      }
+
     } catch (error) {
-      toast.error('Failed to place order.');
+      toast.error('Failed to initiate payment. Please try again.');
       console.error(error);
+      setIsProcessing(false);
     }
   };
 
@@ -114,69 +135,21 @@ const CheckoutPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column - Checkout Forms */}
         <div className="space-y-8">
-          {/* Express Checkout */}
           <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-slate-100">Express checkout</h3>
-            <div className="space-y-3">
-              <button className="w-full bg-black text-white py-3 rounded-lg font-medium flex items-center justify-center space-x-2">
-                <span>Maya</span>
-              </button>
-              <button className="w-full bg-yellow-400 text-black py-3 rounded-lg font-medium flex items-center justify-center space-x-2">
-                <FaPaypal className="" />
-                <span>PayPal</span>
-              </button>
-              <button className="w-full bg-green-600 text-white py-3 rounded-lg font-medium">
-                GCash
-              </button>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-slate-100">Contact Information</h3>
+            <div className="space-y-4">
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+              />
             </div>
             
-            <div className="flex items-center my-6">
-              <div className="flex-1 border-t border-gray-300 dark:border-slate-600"></div>
-              <span className="px-4 text-gray-500 dark:text-slate-400 text-sm">OR</span>
-              <div className="flex-1 border-t border-gray-300 dark:border-slate-600"></div>
-            </div>
-
-            {/* Contact Information */}
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100">Contact information</h3>
-              </div>
-              
-              <div className="space-y-4">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
-                />
-                
-                <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="newsletter" className="rounded dark:bg-slate-600 dark:border-slate-500" />
-                  <label htmlFor="newsletter" className="text-sm text-gray-600 dark:text-slate-400">
-                    Email me about new collections, special events, promotions and what's going on at Our Place.
-                  </label>
-                </div>
-                
-                <p className="text-xs text-gray-500 dark:text-slate-500">
-                  By providing your email address, you agree to our Terms of Service and Privacy Policy. 
-                  You may unsubscribe at any time.
-                </p>
-              </div>
-            </div>
-
-            {/* Shipping Address */}
             <div className="mt-8">
-              <h3 className="text-lg font-semibold  mb-4 text-gray-800 dark:text-slate-100">Shipping address</h3>
-              
+              <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-slate-100">Shipping Address</h3>
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-slate-300">Country/region</label>
-                  <select className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200">
-                    <option>Philippines</option>
-                  </select>
-                </div>
-                
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <input
@@ -197,11 +170,10 @@ const CheckoutPage = () => {
                     />
                   </div>
                 </div>
-                
                 <div>
                   <input
                     type="text"
-                    placeholder="Enter street or postcode"
+                    placeholder="Address"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
@@ -214,20 +186,14 @@ const CheckoutPage = () => {
 
         {/* Right Column - Order Summary */}
         <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700 h-fit sticky top-8">
-          <h2 className="text-xl font-semibold  mb-6 border-b border-gray-200 dark:border-slate-700 pb-4 flex items-center text-gray-800 dark:text-slate-100">
+          <h2 className="text-xl font-semibold mb-6 border-b border-gray-200 dark:border-slate-700 pb-4 flex items-center text-gray-800 dark:text-slate-100">
             <FaShoppingCart className="mr-3" /> Order Summary
           </h2>
-          
-          {/* Product List */}
           <div className="space-y-4 mb-6">
             {enrichedItems.map(item => (
               <div key={item.productId} className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-slate-700">
                 <div className="flex items-center space-x-4">
-                  <img 
-                    src={item.imageUrl || 'https://placehold.co/100x100/png?text=...'} 
-                    alt={item.name} 
-                    className="w-16 h-16 object-cover rounded-md" 
-                  />
+                  <img src={item.imageUrl || 'https://placehold.co/100x100/png?text=...'} alt={item.name} className="w-16 h-16 object-cover rounded-md" />
                   <div>
                     <p className="font-semibold text-gray-800 dark:text-slate-200">{item.name}</p>
                     <p className="text-sm text-gray-500 dark:text-slate-400">Quantity: {item.quantity}</p>
@@ -238,43 +204,29 @@ const CheckoutPage = () => {
             ))}
           </div>
           
-          {/* Order Total */}
           <div className="space-y-3 py-4 border-t border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300">
-            <div className="flex justify-between ">
+            <div className="flex justify-between">
               <span>Subtotal</span>
               <span>{formatCurrency(cartTotal)}</span>
             </div>
-            <div className="flex justify-between ">
+            <div className="flex justify-between">
               <span>Shipping</span>
               <span className="text-green-600 dark:text-green-400">Free</span>
             </div>
             <div className="flex justify-between font-bold text-lg border-t border-gray-200 dark:border-slate-700 pt-3 text-gray-800 dark:text-slate-100">
               <span>Total</span>
-              <span  className="text-green-600 dark:text-green-400">{formatCurrency(cartTotal)}</span>
+              <span className="text-green-600 dark:text-green-400">{formatCurrency(cartTotal)}</span>
             </div>
           </div>
-
-          {/* Security Badge */}
-          <div className="flex items-center justify-center space-x-2 text-green-600 dark:text-green-400 mt-4 py-3 border-t border-gray-200 dark:border-slate-700">
-            <FaLock />
-            <span className="text-sm font-medium">Secure checkout</span>
-          </div>
-
-          {/* Place Order Button */}
+          
           <button
             onClick={handlePlaceOrder}
-            disabled={status === 'loading' || enrichedItems.length === 0}
-            className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-lg transition-all text-lg shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            disabled={isProcessing || enrichedItems.length === 0}
+            className="mt-6 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-4 px-4 rounded-lg transition-all text-lg shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
           >
-            <FaCreditCard />
-            <span>{status === 'loading' ? 'Processing...' : `Place Order (${formatCurrency(cartTotal)})`}</span>
+            <FaPaypal />
+            <span>{isProcessing ? 'Processing...' : 'Continue to PayPal'}</span>
           </button>
-
-          {/* Shipping Info */}
-          <div className="flex items-center justify-center space-x-2 text-gray-600 dark:text-slate-400 mt-4 text-sm">
-            <FaTruck />
-            <span>Free shipping on all orders</span>
-          </div>
         </div>
       </div>
     </div>
@@ -282,3 +234,4 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
+

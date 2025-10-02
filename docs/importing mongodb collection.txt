@@ -1,0 +1,1 @@
+mongoimport --host localhost --port 27017 --db DrobbleProductCatalog --collection products --file "X:\drobble\docs\DrobbleProductCatalog.products.json" --jsonArray

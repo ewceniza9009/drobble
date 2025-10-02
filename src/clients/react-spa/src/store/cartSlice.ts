@@ -2,7 +2,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import api from '../api/axios';
-import type { RootState } from './store';
 
 interface CartItem {
   priceAtAdd: number;
@@ -13,6 +12,14 @@ interface CartItem {
 interface CartState {
   items: CartItem[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
+}
+
+// ** THE FIX IS HERE **
+// Define an interface for the items that will be passed to placeOrder
+interface OrderItemPayload {
+    productId: string;
+    quantity: number;
+    price: number;
 }
 
 const initialState: CartState = {
@@ -53,13 +60,9 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
 
 export const placeOrder = createAsyncThunk(
   'cart/placeOrder',
-  async (_, { getState }) => {
-    const { cart } = getState() as RootState;
-    const orderItems = cart.items.map(item => ({
-        productId: item.productId,
-        quantity: item.quantity,
-        price: 0 // Price is set on the backend
-    }));
+  // ** THE FIX IS HERE **
+  // The thunk now accepts an argument containing the items with their correct prices.
+  async (orderItems: OrderItemPayload[], { }) => {
     const response = await api.post('/orders', { items: orderItems, currency: 'PHP' });
     return response.data;
   }

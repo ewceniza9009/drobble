@@ -46,7 +46,7 @@ services:
     image: rabbitmq:3.13-management-alpine
     container_name: drobble-rabbitmq
     ports:
-      - "5672:5672"   # AMQP port
+      - "5672:5672"    # AMQP port
       - "15672:15672" # Management UI
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}

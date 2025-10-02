@@ -1,4 +1,5 @@
-﻿using Drobble.OrderManagement.Application.Contracts;
+﻿using Drobble.OrderManagement.Application.Consumers;     
+using Drobble.OrderManagement.Application.Contracts;
 using Drobble.OrderManagement.Application.Features.Orders.Commands;
 using Drobble.OrderManagement.Infrastructure.Persistence;
 using Drobble.OrderManagement.Infrastructure.Services;
@@ -9,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using System.Security.Claims; 
+using System.Security.Claims;
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
@@ -28,11 +29,15 @@ builder.Services.AddHttpClient<IProductCatalogService, ProductCatalogService>(cl
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommand).Assembly));
 
 builder.Services.AddMassTransit(busConfig => {
+    busConfig.AddConsumer<PaymentSucceededConsumer>();
+
     busConfig.UsingRabbitMq((context, cfg) => {
         cfg.Host(builder.Configuration["RabbitMQ:Host"], "/", h => {
             h.Username("guest");
             h.Password("guest");
         });
+
+        cfg.ConfigureEndpoints(context);
     });
 });
 
@@ -47,13 +52,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
           ValidIssuer = builder.Configuration["Jwt:Issuer"],
           ValidAudience = builder.Configuration["Jwt:Audience"],
           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
-
           RoleClaimType = ClaimTypes.Role
       };
   });
 
 builder.Services.AddAuthorization(options => {
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("VendorOnly", policy => policy.RequireRole("Vendor", "Admin"));
 });
 

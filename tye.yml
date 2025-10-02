@@ -37,6 +37,12 @@ services:
     - port: 5086
       protocol: http
 
+- name: payment
+  project: src/services/Payment/Drobble.Payment.Api/Drobble.Payment.Api.csproj
+  bindings:
+    - port: 5081
+      protocol: http
+
 - name: api-gateway
   project: src/gateways/Drobble.ApiGateway/Drobble.ApiGateway.csproj
   bindings:
