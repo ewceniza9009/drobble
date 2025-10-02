@@ -4,8 +4,6 @@ using Drobble.Shared.EventBus.Events;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 // This using alias is the critical fix for the name collision with PayPal's Transaction class.
@@ -32,10 +30,6 @@ public class CapturePaymentOrderCommandHandler : IRequestHandler<CapturePaymentO
     {
         _logger.LogInformation("Attempting to capture payment for Gateway Order ID: {GatewayOrderId}", request.GatewayOrderId);
 
-        // 1. Capture the payment with the gateway
-        var captureResponse = await _paymentGatewayService.CaptureOrderAsync(request.GatewayOrderId, cancellationToken);
-
-        // 2. Find the pending transaction in our database using the GatewayOrderId
         var transaction = await _transactionRepository.GetByGatewayTransactionIdAsync(request.GatewayOrderId, cancellationToken);
 
         if (transaction is null)
@@ -44,7 +38,18 @@ public class CapturePaymentOrderCommandHandler : IRequestHandler<CapturePaymentO
             return false;
         }
 
-        // 3. Update the transaction status and publish an event
+        // Check if the transaction has already been captured successfully.
+        // This makes the endpoint idempotent (safe to call multiple times).
+        if (transaction.Status == PaymentStatus.Succeeded)
+        {
+            _logger.LogWarning("Received duplicate capture request for already succeeded Gateway Order ID: {GatewayOrderId}", request.GatewayOrderId);
+            return true; // Return success without doing anything.
+        }
+
+        // 1. Capture the payment with the gateway
+        var captureResponse = await _paymentGatewayService.CaptureOrderAsync(request.GatewayOrderId, cancellationToken);
+
+        // 2. Update the transaction status and publish an event
         if (captureResponse.IsSuccess)
         {
             transaction.Status = PaymentStatus.Succeeded;

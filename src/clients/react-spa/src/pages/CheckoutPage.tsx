@@ -5,7 +5,15 @@ import type { RootState, AppDispatch } from '../store/store';
 import { placeOrder } from '../store/cartSlice';
 import { toast } from 'react-hot-toast';
 import api from '../api/axios';
-import { FaShoppingCart, FaPaypal } from 'react-icons/fa';
+import { 
+  FaShoppingCart, 
+  FaPaypal, 
+  FaUser, 
+  FaLock,
+  FaShippingFast,
+  FaExternalLinkAlt,
+  FaTag
+} from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatting';
 
 interface ProductDetail {
@@ -23,6 +31,18 @@ interface EnrichedCartItem {
   imageUrl: string;
 }
 
+interface ShippingInfo {
+  email: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  phone: string;
+}
+
 const CheckoutPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -31,10 +51,36 @@ const CheckoutPage = () => {
   const [enrichedItems, setEnrichedItems] = useState<EnrichedCartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [email, setEmail] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [address, setAddress] = useState('');
+  const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
+    email: '',
+    firstName: '',
+    lastName: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'United States',
+    phone: ''
+  });
+
+  // Load saved shipping info from localStorage
+  useEffect(() => {
+    const savedShippingInfo = localStorage.getItem('drobbleShippingInfo');
+    if (savedShippingInfo) {
+      try {
+        setShippingInfo(JSON.parse(savedShippingInfo));
+      } catch (error) {
+        console.error('Failed to load saved shipping info', error);
+      }
+    }
+  }, []);
+
+  // Save shipping info to localStorage whenever it changes
+  useEffect(() => {
+    if (shippingInfo.email || shippingInfo.firstName || shippingInfo.lastName) {
+      localStorage.setItem('drobbleShippingInfo', JSON.stringify(shippingInfo));
+    }
+  }, [shippingInfo]);
 
   useEffect(() => {
     if (!isLoading && enrichedItems.length === 0) {
@@ -74,15 +120,51 @@ const CheckoutPage = () => {
   }, [cartItems]);
   
   const cartTotal = enrichedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shippingCost = 0; // Free shipping
+  const tax = cartTotal * 0.08; // 8% tax
+  const finalTotal = cartTotal + shippingCost + tax;
+
+  const handleInputChange = (field: keyof ShippingInfo, value: string) => {
+    setShippingInfo(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleProductClick = (productId: string) => {
+    navigate(`/products/${productId}`);
+  };
+
+  const validateForm = (): boolean => {
+    const requiredFields: (keyof ShippingInfo)[] = ['email', 'firstName', 'lastName', 'address', 'city', 'state', 'zipCode', 'phone'];
+    const missingFields = requiredFields.filter(field => !shippingInfo[field].trim());
+    
+    if (missingFields.length > 0) {
+      toast.error(`Please fill in all required fields`);
+      return false;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(shippingInfo.email)) {
+      toast.error('Please enter a valid email address');
+      return false;
+    }
+
+    return true;
+  };
 
   const handlePlaceOrder = async () => {
-    if (!email || !firstName || !lastName || !address) {
-      toast.error('Please fill in all required fields');
+    if (!validateForm()) {
       return;
     }
 
     setIsProcessing(true);
-    const orderItems = enrichedItems.map(item => ({ productId: item.productId, quantity: item.quantity, price: item.price }));
+    const orderItems = enrichedItems.map(item => ({ 
+      productId: item.productId, 
+      quantity: item.quantity, 
+      price: item.price 
+    }));
 
     try {
       // 1. Create the order in our system first to get an OrderId
@@ -93,7 +175,8 @@ const CheckoutPage = () => {
         throw new Error("Failed to get Order ID after creation.");
       }
       
-      // Store the new order ID in local storage before redirecting to PayPal
+      // Store shipping info and order ID
+      localStorage.setItem('drobbleShippingInfo', JSON.stringify(shippingInfo));
       localStorage.setItem('drobbleOrderId', orderId);
 
       // 2. Create the PayPal payment order using the new OrderId
@@ -118,66 +201,202 @@ const CheckoutPage = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center p-8 text-gray-700 dark:text-slate-300">Loading Checkout...</div>;
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="text-center p-12 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700">
+          <div className="animate-pulse">
+            <FaShoppingCart className="mx-auto text-5xl text-gray-400 mb-4" />
+            <p className="text-lg text-gray-600 dark:text-slate-400">Loading your checkout...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
-  
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header Navigation */}
       <div className="flex justify-center mb-8">
         <div className="flex space-x-8 font-medium text-gray-700 dark:text-slate-300">
-          <span className="border-b-2 border-blue-600 pb-1 text-gray-900 dark:text-white">Information</span>
-          <span className="text-gray-400 pb-1">Shipping</span>
-          <span className="text-gray-400 pb-1">Payment</span>
+          <span className="border-b-2 border-green-600 pb-1 text-gray-900 dark:text-white flex items-center">
+            <FaUser className="mr-2" />
+            Information
+          </span>
+          <span className="text-gray-400 pb-1 flex items-center">
+            <FaShippingFast className="mr-2" />
+            Shipping
+          </span>
+          <span className="text-gray-400 pb-1 flex items-center">
+            <FaLock className="mr-2" />
+            Payment
+          </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Checkout Forms */}
-        <div className="space-y-8">
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-slate-100">Contact Information</h3>
-            <div className="space-y-4">
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
-              />
-            </div>
-            
-            <div className="mt-8">
-              <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-slate-100">Shipping Address</h3>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+        <div className="lg:col-span-2">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
+            <h3 className="text-xl font-semibold mb-6 text-gray-800 dark:text-slate-100">
+              Contact & Shipping Information
+            </h3>
+
+            <div className="space-y-6">
+              {/* Contact Information */}
+              <div>
+                <h4 className="text-lg font-medium mb-4 text-gray-800 dark:text-slate-200">
+                  Contact Information
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      Email Address *
+                    </label>
                     <input
-                      type="text"
-                      placeholder="First name"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                      type="email"
+                      value={shippingInfo.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                      autoComplete="email"
+                      required
                     />
                   </div>
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      Phone Number *
+                    </label>
                     <input
-                      type="text"
-                      placeholder="Last name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                      type="tel"
+                      value={shippingInfo.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                      autoComplete="tel"
+                      required
                     />
                   </div>
                 </div>
-                <div>
+              </div>
+
+              {/* Shipping Address */}
+              <div>
+                <h4 className="text-lg font-medium mb-4 text-gray-800 dark:text-slate-200">
+                  Shipping Address
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      First Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={shippingInfo.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                      autoComplete="given-name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      Last Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={shippingInfo.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                      autoComplete="family-name"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                    Street Address *
+                  </label>
                   <input
                     type="text"
-                    placeholder="Address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                    value={shippingInfo.address}
+                    onChange={(e) => handleInputChange('address', e.target.value)}
+                    className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                    autoComplete="street-address"
+                    required
                   />
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      City *
+                    </label>
+                    <input
+                      type="text"
+                      value={shippingInfo.city}
+                      onChange={(e) => handleInputChange('city', e.target.value)}
+                      className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                      autoComplete="address-level2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      State *
+                    </label>
+                    <input
+                      type="text"
+                      value={shippingInfo.state}
+                      onChange={(e) => handleInputChange('state', e.target.value)}
+                      className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                      autoComplete="address-level1"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      ZIP Code *
+                    </label>
+                    <input
+                      type="text"
+                      value={shippingInfo.zipCode}
+                      onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                      className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                      autoComplete="postal-code"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                    Country *
+                  </label>
+                  <select
+                    value={shippingInfo.country}
+                    onChange={(e) => handleInputChange('country', e.target.value)}
+                    className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
+                    autoComplete="country"
+                    required
+                  >
+                    <option value="United States">United States</option>
+                    <option value="Canada">Canada</option>
+                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="Australia">Australia</option>
+                    <option value="Philippines">Philippines</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Security Notice */}
+            <div className="mt-8 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+              <div className="flex items-start space-x-3">
+                <FaLock className="text-green-500 mt-1 flex-shrink-0" />
+                <div>
+                  <h4 className="font-semibold text-green-800 dark:text-green-300">Secure Checkout</h4>
+                  <p className="text-sm text-green-700 dark:text-green-400 mt-1">
+                    Your personal information is encrypted and secure. We never share your details with third parties.
+                  </p>
                 </div>
               </div>
             </div>
@@ -185,48 +404,130 @@ const CheckoutPage = () => {
         </div>
 
         {/* Right Column - Order Summary */}
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700 h-fit sticky top-8">
-          <h2 className="text-xl font-semibold mb-6 border-b border-gray-200 dark:border-slate-700 pb-4 flex items-center text-gray-800 dark:text-slate-100">
-            <FaShoppingCart className="mr-3" /> Order Summary
-          </h2>
-          <div className="space-y-4 mb-6">
-            {enrichedItems.map(item => (
-              <div key={item.productId} className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-slate-700">
-                <div className="flex items-center space-x-4">
-                  <img src={item.imageUrl || 'https://placehold.co/100x100/png?text=...'} alt={item.name} className="w-16 h-16 object-cover rounded-md" />
-                  <div>
-                    <p className="font-semibold text-gray-800 dark:text-slate-200">{item.name}</p>
-                    <p className="text-sm text-gray-500 dark:text-slate-400">Quantity: {item.quantity}</p>
+        <div className="lg:col-span-1">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 sticky top-8 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-green-600 to-green-700 p-4">
+              <h2 className="text-xl font-bold text-white flex items-center">
+                <FaShoppingCart className="mr-3" /> 
+                Order Summary
+              </h2>
+              <p className="text-green-100 text-sm mt-1">
+                {enrichedItems.length} item{enrichedItems.length !== 1 ? 's' : ''} in cart
+              </p>
+            </div>
+            
+            {/* Items List */}
+            <div className="p-4 max-h-96 overflow-y-auto">
+              <div className="space-y-3">
+                {enrichedItems.map(item => (
+                  <div 
+                    key={item.productId} 
+                    className="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-3 border border-gray-200 dark:border-slate-600 hover:border-green-300 dark:hover:border-green-500 transition-colors"
+                  >
+                    <div className="flex items-start space-x-3">
+                      {/* Clickable Product Image */}
+                      <div 
+                        onClick={() => handleProductClick(item.productId)}
+                        className="relative group cursor-pointer flex-shrink-0"
+                      >
+                        <img 
+                          src={item.imageUrl || 'https://placehold.co/100x100/png?text=...'} 
+                          alt={item.name} 
+                          className="w-16 h-16 object-cover rounded-md border border-gray-300 dark:border-slate-600 group-hover:border-green-500 transition-colors"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-md flex items-center justify-center">
+                          <FaExternalLinkAlt className="text-white opacity-0 group-hover:opacity-100 transition-opacity text-sm" />
+                        </div>
+                      </div>
+                      
+                      {/* Product Details */}
+                      <div className="flex-1 min-w-0">
+                        <h3 
+                          onClick={() => handleProductClick(item.productId)}
+                          className="font-semibold text-gray-800 dark:text-slate-200 text-sm leading-tight cursor-pointer hover:text-green-600 dark:hover:text-green-400 transition-colors line-clamp-2"
+                        >
+                          {item.name}
+                        </h3>
+                        
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center space-x-3">
+                            <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs px-2 py-1 rounded-full font-medium">
+                              Qty: {item.quantity}
+                            </span>
+                            <span className="text-xs text-gray-500 dark:text-slate-400">
+                              {formatCurrency(item.price)} each
+                            </span>
+                          </div>
+                          
+                          <div className="text-right">
+                            <p className="font-bold text-green-600 dark:text-green-400 text-sm">
+                              {formatCurrency(item.price * item.quantity)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <p className="font-semibold text-gray-800 dark:text-slate-200">{formatCurrency(item.price * item.quantity)}</p>
+                ))}
               </div>
-            ))}
+            </div>
+            
+            {/* Price Breakdown */}
+            <div className="border-t border-gray-200 dark:border-slate-700 p-4 bg-gray-50 dark:bg-slate-700/30">
+              <div className="space-y-2">
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-sm text-gray-600 dark:text-slate-400">Subtotal</span>
+                  <span className="text-sm font-medium text-gray-800 dark:text-slate-200">{formatCurrency(cartTotal)}</span>
+                </div>
+                
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-sm text-gray-600 dark:text-slate-400">Shipping</span>
+                  <span className="text-sm font-medium text-green-600 dark:text-green-400 flex items-center">
+                    <FaTag className="mr-1" />
+                    Free
+                  </span>
+                </div>
+                
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-sm text-gray-600 dark:text-slate-400">Tax</span>
+                  <span className="text-sm font-medium text-gray-800 dark:text-slate-200">{formatCurrency(tax)}</span>
+                </div>
+                
+                <div className="border-t border-gray-300 dark:border-slate-600 mt-2 pt-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-lg text-gray-800 dark:text-slate-100">Total</span>
+                    <span className="font-bold text-lg text-green-600 dark:text-green-400">
+                      {formatCurrency(finalTotal)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 text-right mt-1">
+                    Includes {formatCurrency(tax)} tax
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Checkout Button */}
+            <div className="p-4 border-t border-gray-200 dark:border-slate-700">
+              <button
+                onClick={handlePlaceOrder}
+                disabled={isProcessing || enrichedItems.length === 0}
+                className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-bold py-4 px-4 rounded-lg transition-all shadow-lg disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed flex items-center justify-center space-x-3 transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <FaPaypal className="text-xl" />
+                <span className="text-lg">{isProcessing ? 'Processing...' : 'Continue to PayPal'}</span>
+              </button>
+
+              {/* Security Badge */}
+              <div className="mt-4 text-center">
+                <div className="flex items-center justify-center space-x-2 text-xs text-gray-500 dark:text-slate-400 bg-gray-100 dark:bg-slate-800 py-2 rounded-lg">
+                  <FaLock className="text-green-500" />
+                  <span>Secure SSL Encryption • 256-bit Security</span>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <div className="space-y-3 py-4 border-t border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300">
-            <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span>{formatCurrency(cartTotal)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Shipping</span>
-              <span className="text-green-600 dark:text-green-400">Free</span>
-            </div>
-            <div className="flex justify-between font-bold text-lg border-t border-gray-200 dark:border-slate-700 pt-3 text-gray-800 dark:text-slate-100">
-              <span>Total</span>
-              <span className="text-green-600 dark:text-green-400">{formatCurrency(cartTotal)}</span>
-            </div>
-          </div>
-          
-          <button
-            onClick={handlePlaceOrder}
-            disabled={isProcessing || enrichedItems.length === 0}
-            className="mt-6 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-4 px-4 rounded-lg transition-all text-lg shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-          >
-            <FaPaypal />
-            <span>{isProcessing ? 'Processing...' : 'Continue to PayPal'}</span>
-          </button>
         </div>
       </div>
     </div>
@@ -234,4 +535,3 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
-

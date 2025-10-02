@@ -8,7 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+// Using aliases for both PayPal classes to avoid any possible name conflicts.
 using PayPalOrder = PayPalCheckoutSdk.Orders.Order;
+using PayPalEnvironment = PayPalCheckoutSdk.Core.PayPalEnvironment;
+// **FIX**: Import the PayPalHttp namespace to catch the specific exception
+using PayPalHttp;
 
 namespace Drobble.Payment.Infrastructure.Services;
 
@@ -99,9 +103,24 @@ public class PayPalService : IPaymentGatewayService
             _logger.LogWarning("PayPal capture status was not 'COMPLETED' for {GatewayOrderId}. Status: {Status}", gatewayOrderId, result.Status);
             return new CaptureOrderResponse(false, string.Empty);
         }
+        catch (HttpException ex) // **THE FIX IS HERE**
+        {
+            // Specifically catch the PayPal exception
+            // If the error is "ORDER_ALREADY_CAPTURED", it means a concurrent request (like from React's StrictMode) already succeeded.
+            // In this case, we can treat it as a success for our application's logic.
+            if (ex.Message.Contains("ORDER_ALREADY_CAPTURED"))
+            {
+                _logger.LogWarning("Attempted to capture an already captured order {GatewayOrderId}. Treating as success.", gatewayOrderId);
+                // We don't have a new transaction ID, but we can return success.
+                return new CaptureOrderResponse(true, "N/A - Already Captured");
+            }
+
+            _logger.LogError(ex, "Error capturing PayPal order {GatewayOrderId}", gatewayOrderId);
+            return new CaptureOrderResponse(false, string.Empty);
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error capturing PayPal order {GatewayOrderId}", gatewayOrderId);
+            _logger.LogError(ex, "A general error occurred while capturing PayPal order {GatewayOrderId}", gatewayOrderId);
             return new CaptureOrderResponse(false, string.Empty);
         }
     }
