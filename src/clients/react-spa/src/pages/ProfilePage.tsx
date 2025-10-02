@@ -126,7 +126,7 @@ const Sidebar = ({ stats }: { stats: AccountStats }) => {
         </h3>
         <div className="space-y-2">
           <Link 
-            to="/products" 
+            to="/" 
             className="flex items-center gap-2 text-gray-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm py-2"
           >
             <FaShoppingBag className="w-4 h-4" />
@@ -139,23 +139,11 @@ const Sidebar = ({ stats }: { stats: AccountStats }) => {
             <FaShoppingCart className="w-4 h-4" />
             My Cart
           </Link>
-          <Link 
-            to="/profile" 
-            className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium text-sm py-2"
-          >
-            <FaUser className="w-4 h-4" />
-            My Account
-          </Link>
         </div>
       </div>
 
       {/* Store Info */}
       <div className="pt-6 border-t border-gray-200 dark:border-slate-600">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-200 mb-3">Drobble</h3>
-        <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
-          Your one-stop shop for the best products online. Quality and customer satisfaction are our top priorities.
-        </p>
-        
         <div className="space-y-3 text-sm">
           <div>
             <h4 className="font-medium text-gray-800 dark:text-slate-200 mb-2">Contact Us</h4>

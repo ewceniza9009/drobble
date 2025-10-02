@@ -6,6 +6,27 @@ body {
     @apply bg-slate-50 dark:bg-slate-900 font-sans antialiased text-slate-700 dark:text-slate-300;
 }
 
+/* Add this to your globals.css or tailwind.css */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thumb-gray-300 {
+  scrollbar-color: rgb(209 213 219) rgb(243 244 246);
+}
+
+.dark .scrollbar-thumb-slate-600 {
+  scrollbar-color: rgb(71 85 105) rgb(30 41 59);
+}
+
+.scrollbar-track-gray-100 {
+  scrollbar-track-color: rgb(243 244 246);
+}
+
+.dark .scrollbar-track-slate-800 {
+  scrollbar-track-color: rgb(30 41 59);
+}
+
 /* Slick carousel customizations for better mobile experience */
 .slick-slide {
   display: flex !important;

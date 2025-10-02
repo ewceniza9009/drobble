@@ -10,9 +10,7 @@ import {
   FaPaypal, 
   FaUser, 
   FaLock,
-  FaShippingFast,
-  FaExternalLinkAlt,
-  FaTag
+  FaShippingFast
 } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatting';
 
@@ -403,129 +401,102 @@ const CheckoutPage = () => {
           </div>
         </div>
 
-        {/* Right Column - Order Summary */}
+        {/* Order Summary */}
         <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 sticky top-8 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 sticky top-8">
             {/* Header */}
-            <div className="bg-gradient-to-r from-green-600 to-green-700 p-4">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4">
               <h2 className="text-xl font-bold text-white flex items-center">
                 <FaShoppingCart className="mr-3" /> 
                 Order Summary
               </h2>
-              <p className="text-green-100 text-sm mt-1">
+              <p className="text-blue-100 text-sm mt-1">
                 {enrichedItems.length} item{enrichedItems.length !== 1 ? 's' : ''} in cart
               </p>
             </div>
             
             {/* Items List */}
-            <div className="p-4 max-h-96 overflow-y-auto">
+            <div className={`
+              p-4 
+              ${enrichedItems.length > 4 ? 'max-h-80' : 'max-h-full'}
+              ${enrichedItems.length > 4 ? 'overflow-y-auto' : 'overflow-visible'}
+              
+              /* Consistent Scrollbar Styling */
+              scrollbar-thin 
+              scrollbar-thumb-gray-300 
+              scrollbar-track-gray-100 
+              dark:dark scrollbar-thumb-slate-600 
+              dark:dark scrollbar-track-slate-800/50
+              hover:scrollbar-thumb-gray-400 
+              dark:dark hover:scrollbar-thumb-slate-500
+            `}>
               <div className="space-y-3">
                 {enrichedItems.map(item => (
-                  <div 
-                    key={item.productId} 
-                    className="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-3 border border-gray-200 dark:border-slate-600 hover:border-green-300 dark:hover:border-green-500 transition-colors"
-                  >
-                    <div className="flex items-start space-x-3">
-                      {/* Clickable Product Image */}
-                      <div 
-                        onClick={() => handleProductClick(item.productId)}
-                        className="relative group cursor-pointer flex-shrink-0"
-                      >
-                        <img 
-                          src={item.imageUrl || 'https://placehold.co/100x100/png?text=...'} 
-                          alt={item.name} 
-                          className="w-16 h-16 object-cover rounded-md border border-gray-300 dark:border-slate-600 group-hover:border-green-500 transition-colors"
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-md flex items-center justify-center">
-                          <FaExternalLinkAlt className="text-white opacity-0 group-hover:opacity-100 transition-opacity text-sm" />
+                  <div key={item.productId} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/30 rounded-lg">
+                    {/* Product Image */}
+                    <img 
+                      src={item.imageUrl} 
+                      alt={item.name}
+                      className="w-12 h-12 object-cover rounded-lg cursor-pointer"
+                      onClick={() => handleProductClick(item.productId)}
+                    />
+                    
+                    {/* Product Details */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm text-gray-800 dark:text-slate-200 truncate">
+                        {item.name}
+                      </p>
+                      <div className="flex items-center justify-between mt-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500 dark:text-slate-400">
+                            Qty: {item.quantity}
+                          </span>
+                          <span className="text-xs text-gray-500 dark:text-slate-400">
+                            • {formatCurrency(item.price)} each
+                          </span>
                         </div>
-                      </div>
-                      
-                      {/* Product Details */}
-                      <div className="flex-1 min-w-0">
-                        <h3 
-                          onClick={() => handleProductClick(item.productId)}
-                          className="font-semibold text-gray-800 dark:text-slate-200 text-sm leading-tight cursor-pointer hover:text-green-600 dark:hover:text-green-400 transition-colors line-clamp-2"
-                        >
-                          {item.name}
-                        </h3>
-                        
-                        <div className="flex items-center justify-between mt-2">
-                          <div className="flex items-center space-x-3">
-                            <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs px-2 py-1 rounded-full font-medium">
-                              Qty: {item.quantity}
-                            </span>
-                            <span className="text-xs text-gray-500 dark:text-slate-400">
-                              {formatCurrency(item.price)} each
-                            </span>
-                          </div>
-                          
-                          <div className="text-right">
-                            <p className="font-bold text-green-600 dark:text-green-400 text-sm">
-                              {formatCurrency(item.price * item.quantity)}
-                            </p>
-                          </div>
-                        </div>
+                        <span className="font-semibold text-green-600 dark:text-green-400 text-sm">
+                          {formatCurrency(item.price * item.quantity)}
+                        </span>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            
+
             {/* Price Breakdown */}
-            <div className="border-t border-gray-200 dark:border-slate-700 p-4 bg-gray-50 dark:bg-slate-700/30">
+            <div className="p-4 border-t border-gray-200 dark:border-slate-700">
               <div className="space-y-2">
-                <div className="flex justify-between items-center py-1">
-                  <span className="text-sm text-gray-600 dark:text-slate-400">Subtotal</span>
-                  <span className="text-sm font-medium text-gray-800 dark:text-slate-200">{formatCurrency(cartTotal)}</span>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-slate-400">Subtotal</span>
+                  <span className="text-gray-800 dark:text-slate-200">{formatCurrency(cartTotal)}</span>
                 </div>
-                
-                <div className="flex justify-between items-center py-1">
-                  <span className="text-sm text-gray-600 dark:text-slate-400">Shipping</span>
-                  <span className="text-sm font-medium text-green-600 dark:text-green-400 flex items-center">
-                    <FaTag className="mr-1" />
-                    Free
-                  </span>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-slate-400">Shipping</span>
+                  <span className="text-green-600 dark:text-green-400">Free</span>
                 </div>
-                
-                <div className="flex justify-between items-center py-1">
-                  <span className="text-sm text-gray-600 dark:text-slate-400">Tax</span>
-                  <span className="text-sm font-medium text-gray-800 dark:text-slate-200">{formatCurrency(tax)}</span>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-slate-400">Tax</span>
+                  <span className="text-gray-800 dark:text-slate-200">{formatCurrency(tax)}</span>
                 </div>
-                
-                <div className="border-t border-gray-300 dark:border-slate-600 mt-2 pt-3">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-lg text-gray-800 dark:text-slate-100">Total</span>
-                    <span className="font-bold text-lg text-green-600 dark:text-green-400">
-                      {formatCurrency(finalTotal)}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-slate-400 text-right mt-1">
-                    Includes {formatCurrency(tax)} tax
-                  </p>
+                <div className="flex justify-between font-bold text-lg border-t border-gray-300 dark:border-slate-600 pt-3">
+                  <span className="text-gray-800 dark:text-slate-100">Total</span>
+                  <span className="text-green-600 dark:text-green-400">{formatCurrency(finalTotal)}</span>
                 </div>
               </div>
             </div>
-            
+
             {/* Checkout Button */}
             <div className="p-4 border-t border-gray-200 dark:border-slate-700">
               <button
                 onClick={handlePlaceOrder}
                 disabled={isProcessing || enrichedItems.length === 0}
-                className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-bold py-4 px-4 rounded-lg transition-all shadow-lg disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed flex items-center justify-center space-x-3 transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                <FaPaypal className="text-xl" />
-                <span className="text-lg">{isProcessing ? 'Processing...' : 'Continue to PayPal'}</span>
+                <FaPaypal />
+                <span>{isProcessing ? 'Processing...' : 'Continue to PayPal'}</span>
               </button>
-
-              {/* Security Badge */}
-              <div className="mt-4 text-center">
-                <div className="flex items-center justify-center space-x-2 text-xs text-gray-500 dark:text-slate-400 bg-gray-100 dark:bg-slate-800 py-2 rounded-lg">
-                  <FaLock className="text-green-500" />
-                  <span>Secure SSL Encryption • 256-bit Security</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
