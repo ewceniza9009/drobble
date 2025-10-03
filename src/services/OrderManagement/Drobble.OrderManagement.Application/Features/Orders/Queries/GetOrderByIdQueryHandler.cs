@@ -33,6 +33,8 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
             TotalAmount = order.TotalAmount,
             Currency = order.Currency,
             CreatedAt = order.CreatedAt,
+            PaymentMethod = order.PaymentMethod,
+            ShippingCost = order.ShippingCost,
             Items = order.OrderItems.Select(oi => new OrderItemDto
             {
                 ProductId = oi.ProductId,

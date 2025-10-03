@@ -6,7 +6,7 @@ public enum PaymentStatus
     Succeeded,
     Failed,
     Refunded,
-    Captured // Added for PayPal flow
+    Captured
 }
 
 public enum PaymentGateway
@@ -14,5 +14,6 @@ public enum PaymentGateway
     PayPal,
     PayMaya,
     GCash,
-    Stripe // Keep for future expansion
+    Stripe,
+    CashOnDelivery    
 }

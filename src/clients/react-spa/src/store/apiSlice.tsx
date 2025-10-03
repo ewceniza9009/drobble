@@ -15,7 +15,8 @@ interface Product {
   isFeatured?: boolean;
 }
 interface PaginatedResponse<T> { items: T[]; total: number; }
-interface Order { id:string; username: string; totalAmount: number; status: string; createdAt: string; items: { productId: string; quantity: number; price: number }[]; }
+// Added paymentMethod and shippingCost to the Order interface
+interface Order { id:string; username: string; totalAmount: number; status: string; createdAt: string; paymentMethod: string; shippingCost: number; items: { productId: string; quantity: number; price: number }[]; }
 interface AdminUserDto { id: string; username: string; email: string; role: string; isActive: boolean; }
 interface ProductUpdateArg { id: string; name: string; description: string; price: number; stock: number; categoryId: string; imageUrl: string; }
 interface ProductCreateArg { name: string; description: string; price: number; stock: number; categoryId: string; imageUrl: string; }

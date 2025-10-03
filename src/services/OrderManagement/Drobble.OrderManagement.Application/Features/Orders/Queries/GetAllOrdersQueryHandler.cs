@@ -32,6 +32,8 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Pagin
             TotalAmount = order.TotalAmount,
             Currency = order.Currency,
             CreatedAt = order.CreatedAt,
+            PaymentMethod = order.PaymentMethod,
+            ShippingCost = order.ShippingCost,
             Items = order.OrderItems.Select(oi => new OrderItemDto
             {
                 ProductId = oi.ProductId,

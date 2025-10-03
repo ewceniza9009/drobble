@@ -2,7 +2,7 @@
 import { useGetAdminOrdersQuery, useShipOrderMutation, useCancelOrderMutation } from '../../store/apiSlice';
 import { toast } from 'react-hot-toast';
 import { formatCurrency } from '../../utils/formatting';
-import { FaShoppingBag, FaTruck, FaCheckCircle, FaTimesCircle, FaUser } from 'react-icons/fa';
+import { FaShoppingBag, FaTruck, FaCheckCircle, FaTimesCircle, FaUser, FaCreditCard, FaMoneyBillWave, FaSync } from 'react-icons/fa';
 import { useState } from 'react';
 import Modal from '../../components/Modal';
 
@@ -12,16 +12,25 @@ interface Order {
     totalAmount: number;
     status: string;
     createdAt: string;
+    paymentMethod: string;
 }
 
 const AdminOrders = () => {
-    const { data, error, isLoading } = useGetAdminOrdersQuery();
+    // ** THE FIX IS HERE (Step 1) **: Destructure the refetch function and isFetching state.
+    const { data, error, isLoading, refetch, isFetching } = useGetAdminOrdersQuery();
     const [shipOrder, { isLoading: isShipping }] = useShipOrderMutation();
     const [cancelOrder, { isLoading: isCancelling }] = useCancelOrderMutation();
     
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
     const [trackingNumber, setTrackingNumber] = useState('');
+
+    const getPaymentIcon = (paymentMethod: string) => {
+        if (paymentMethod === 'CashOnDelivery') {
+            return <FaMoneyBillWave className="mr-2 text-green-500"/>;
+        }
+        return <FaCreditCard className="mr-2 text-blue-500"/>;
+    };
 
     const handleOpenShipModal = (order: Order) => {
         setSelectedOrder(order);
@@ -81,7 +90,19 @@ const AdminOrders = () => {
 
     return (
         <div className="max-w-7xl mx-4 px-4 pb-6 dark:border-slate-700 border rounded-xl">
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100 my-6">Order Management</h1>
+            {/* ** THE FIX IS HERE (Step 2) **: Added a header with a Refresh button */}
+            <div className="flex justify-between items-center my-6">
+                <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100">Order Management</h1>
+                <button
+                    onClick={() => refetch()}
+                    disabled={isFetching}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
+                >
+                    <FaSync className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
+                    Refresh
+                </button>
+            </div>
+
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                     <thead className="bg-gray-50 dark:bg-slate-700/50">
@@ -89,6 +110,7 @@ const AdminOrders = () => {
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Order ID</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Username</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Date</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Payment</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Status</th>
                             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Total</th>
                             <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Actions</th>
@@ -105,35 +127,31 @@ const AdminOrders = () => {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 text-gray-800 dark:text-slate-300">{new Date(order.createdAt).toLocaleDateString()}</td>
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center text-sm text-gray-800 dark:text-slate-300">
+                                        {getPaymentIcon(order.paymentMethod)}
+                                        {order.paymentMethod === 'CashOnDelivery' ? 'COD' : order.paymentMethod}
+                                    </div>
+                                </td>
                                 <td className="px-6 py-4"><span className={`px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300`}>{order.status}</span></td>
                                 <td className="px-6 py-4 text-right font-semibold text-gray-800 dark:text-slate-200">{formatCurrency(order.totalAmount)}</td>
                                 
-                                {/* ** THE FIX IS HERE **: Replaced the chaotic layout with a clean flex container */}
                                 <td className="px-6 py-4 text-center">
                                     <div className="flex items-center justify-center space-x-2">
-                                        {order.status === 'Paid' && (
-                                            <>
-                                                <button
-                                                    onClick={() => handleOpenShipModal(order)}
-                                                    disabled={isShipping}
-                                                    className="bg-indigo-500 text-white px-3 py-1 rounded-md hover:bg-indigo-600 text-sm disabled:bg-gray-400 flex items-center"
-                                                >
-                                                    <FaTruck className="inline mr-1" /> Ship
-                                                </button>
-                                                <button
-                                                    onClick={() => handleCancelOrder(order.id)}
-                                                    disabled={isCancelling}
-                                                    className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm disabled:bg-gray-400 flex items-center"
-                                                >
-                                                    <FaTimesCircle className="inline mr-1" /> Cancel
-                                                </button>
-                                            </>
-                                        )}
-                                        {order.status === 'Pending' && (
+                                        {(order.status === 'Paid' || (order.status === 'Pending' && order.paymentMethod === 'CashOnDelivery')) && (
                                             <button
+                                                onClick={() => handleOpenShipModal(order)}
+                                                disabled={isShipping}
+                                                className="bg-indigo-500 text-white px-3 py-1 rounded-md hover:bg-indigo-600 text-sm disabled:bg-gray-400 flex items-center"
+                                            >
+                                                <FaTruck className="inline mr-1" /> Ship
+                                            </button>
+                                        )}
+                                        {order.status !== 'Shipped' && order.status !== 'Cancelled' && order.status !== 'Delivered' && (
+                                             <button
                                                 onClick={() => handleCancelOrder(order.id)}
                                                 disabled={isCancelling}
-                                                className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm disabled:bg-gray-400 flex items-center justify-center mx-auto"
+                                                className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm disabled:bg-gray-400 flex items-center"
                                             >
                                                 <FaTimesCircle className="inline mr-1" /> Cancel
                                             </button>

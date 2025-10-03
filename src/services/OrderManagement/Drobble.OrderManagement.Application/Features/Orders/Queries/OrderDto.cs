@@ -12,6 +12,8 @@ public class OrderDto
     public decimal TotalAmount { get; set; }
     public string Currency { get; set; } = "PHP";
     public DateTime CreatedAt { get; set; }
+    public string PaymentMethod { get; set; }   
+    public decimal ShippingCost { get; set; }   
     public List<OrderItemDto> Items { get; set; } = new();
 }
 

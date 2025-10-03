@@ -7,7 +7,9 @@ namespace Drobble.OrderManagement.Application.Features.Orders.Commands;
 public record CreateOrderCommand(
     List<OrderItemDto> Items,
     string Currency,
-    ShippingAddressDto ShippingAddress) : IRequest<Guid>;
+    ShippingAddressDto ShippingAddress,
+    string PaymentMethod,   
+    decimal ShippingCost) : IRequest<Guid>;   
 
 public record OrderItemDto(string ProductId, int Quantity, decimal Price);
 

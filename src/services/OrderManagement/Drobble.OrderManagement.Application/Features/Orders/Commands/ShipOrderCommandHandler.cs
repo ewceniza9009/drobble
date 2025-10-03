@@ -32,19 +32,18 @@ public class ShipOrderCommandHandler : IRequestHandler<ShipOrderCommand>
             throw new Exception($"Order with ID {request.OrderId} not found.");
         }
 
-        // Business Rule: You can only ship an order that has been paid for.
-        if (order.Status != OrderStatus.Paid)
+        bool isShippable = order.Status == OrderStatus.Paid || (order.Status == OrderStatus.Pending && order.PaymentMethod == "CashOnDelivery");
+
+        if (!isShippable)
         {
-            throw new InvalidOperationException($"Order {order.Id} cannot be shipped because its status is '{order.Status}'.");
+            throw new InvalidOperationException($"Order {order.Id} cannot be shipped because its status is '{order.Status}' and payment method is '{order.PaymentMethod}'.");
         }
 
-        // **THE FIX IS HERE**: Throw an exception if shipping details are missing, as this indicates a data problem.
         if (order.ShippingDetails is null)
         {
             throw new InvalidOperationException($"Cannot ship order {order.Id} because it has no shipping details.");
         }
 
-        // Update the order status and shipping details
         order.Status = OrderStatus.Shipped;
         order.UpdatedAt = DateTime.UtcNow;
         order.ShippingDetails.TrackingNumber = request.TrackingNumber;
@@ -52,7 +51,6 @@ public class ShipOrderCommandHandler : IRequestHandler<ShipOrderCommand>
         await _orderRepository.UpdateAsync(order, cancellationToken);
         _logger.LogInformation("Order {OrderId} status updated to Shipped with tracking number {TrackingNumber}", order.Id, request.TrackingNumber);
 
-        // Publish an event to notify other services (e.g., Notification service)
         await _publishEndpoint.Publish(new OrderShippedEvent
         {
             OrderId = order.Id,

@@ -44,7 +44,9 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
         {
             UserId = userId,
             Currency = request.Currency,
-            Status = OrderStatus.Pending
+            Status = OrderStatus.Pending,
+            PaymentMethod = request.PaymentMethod,    
+            ShippingCost = request.ShippingCost      
         };
 
         foreach (var itemDto in request.Items)
@@ -62,12 +64,12 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
             });
         }
 
-        order.TotalAmount = order.OrderItems.Sum(item => item.Price * item.Quantity);
+        order.TotalAmount = order.OrderItems.Sum(item => item.Price * item.Quantity) + order.ShippingCost;
 
         order.ShippingDetails = new Shipping
         {
             Address = JsonSerializer.Serialize(request.ShippingAddress),
-            Method = ShippingMethod.Standard    
+            Method = ShippingMethod.Standard
         };
 
         await _orderRepository.AddAsync(order, cancellationToken);
