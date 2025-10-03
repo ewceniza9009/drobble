@@ -6,7 +6,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
-// This using alias is the critical fix for the name collision with PayPal's Transaction class.
 using Transaction = Drobble.Payment.Domain.Entities.Transaction;
 
 namespace Drobble.Payment.Application.Features;

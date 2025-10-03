@@ -13,30 +13,23 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- Define CORS Policy ---
 var AllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: AllowSpecificOrigins,
       policy =>
       {
-          policy.WithOrigins("http://localhost:5173") // Allow your React app
+          policy.WithOrigins("http://localhost:5173")     
                 .AllowAnyHeader()
                 .AllowAnyMethod();
       });
 });
 
-
-// --- Service Registration ---
-
-// 1. Database Context
 builder.Services.AddDbContext<PaymentDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"),
-    // Explicitly tell EF Core where to find the migrations
     npgsqlOptions => npgsqlOptions.MigrationsAssembly("Drobble.Payment.Infrastructure")));
 
-// 2. Repositories and Services
-builder.Services.AddHttpContextAccessor(); // Add HttpContextAccessor
+builder.Services.AddHttpContextAccessor();   
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IPaymentGatewayService, PayPalService>();
 builder.Services.AddHttpClient<IOrderService, OrderService>(client =>
@@ -44,10 +37,8 @@ builder.Services.AddHttpClient<IOrderService, OrderService>(client =>
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:OrderManagementApi"]!);
 });
 
-// 3. MediatR for CQRS
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreatePaymentOrderCommand).Assembly));
 
-// 4. MassTransit for RabbitMQ
 builder.Services.AddMassTransit(busConfig => {
     busConfig.AddConsumer<OrderCreatedConsumer>();
     busConfig.UsingRabbitMq((context, cfg) => {
@@ -59,7 +50,6 @@ builder.Services.AddMassTransit(busConfig => {
     });
 });
 
-// 5. Authentication
 var jwtKey = builder.Configuration["Jwt:Key"];
 if (string.IsNullOrEmpty(jwtKey))
 {
@@ -80,8 +70,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization();
 
-
-// 6. API Controllers and Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -89,16 +77,13 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Drobble Payment API", Version = "v1" });
 });
 
-
 var app = builder.Build();
 
-// --- HTTP Pipeline Configuration ---
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 
-    // Auto-run migrations on startup in development
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<PaymentDbContext>();
@@ -106,8 +91,7 @@ if (app.Environment.IsDevelopment())
     }
 }
 
-// **REMOVED** app.UseHttpsRedirection(); to prevent issues behind the gateway
-app.UseCors(AllowSpecificOrigins); // **ADDED** Use the CORS policy
+app.UseCors(AllowSpecificOrigins);      
 
 app.UseAuthentication();
 app.UseAuthorization();

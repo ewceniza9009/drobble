@@ -26,7 +26,6 @@ public class GetVendorOrdersQueryHandler : IRequestHandler<GetVendorOrdersQuery,
             throw new UnauthorizedAccessException("Cannot determine vendor from token.");
         }
 
-        // 1. Get all product IDs belonging to this vendor
         var vendorProductIds = (await _productCatalogService.GetProductIdsByVendorAsync(vendorId, cancellationToken)).ToHashSet();
 
         if (!vendorProductIds.Any())
@@ -34,22 +33,18 @@ public class GetVendorOrdersQueryHandler : IRequestHandler<GetVendorOrdersQuery,
             return Enumerable.Empty<OrderDto>();
         }
 
-        // 2. Find all orders that contain at least one of these products
         var orders = await _orderRepository.GetOrdersByProductIdsAsync(vendorProductIds, cancellationToken);
 
-        // 3. Map to DTOs, filtering each order to only show items relevant to the vendor
         return orders.Select(order => new OrderDto
         {
             Id = order.Id,
             UserId = order.UserId,
             Status = order.Status.ToString(),
-            // NOTE: TotalAmount will reflect the entire order, which might be desired.
-            // A "VendorTotal" could be calculated here if needed.
             TotalAmount = order.TotalAmount,
             Currency = order.Currency,
             CreatedAt = order.CreatedAt,
             Items = order.OrderItems
-                        .Where(oi => vendorProductIds.Contains(oi.ProductId)) // Filter items
+                        .Where(oi => vendorProductIds.Contains(oi.ProductId))   
                         .Select(oi => new OrderItemDto
                         {
                             ProductId = oi.ProductId,

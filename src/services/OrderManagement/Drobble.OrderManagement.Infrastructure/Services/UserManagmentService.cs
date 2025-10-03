@@ -8,14 +8,13 @@ namespace Drobble.OrderManagement.Infrastructure.Services;
 public class UserManagementService : IUserManagementService
 {
     private readonly HttpClient _httpClient;
-    private readonly IHttpContextAccessor _httpContextAccessor; // Inject HttpContextAccessor
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public UserManagementService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
     {
         _httpClient = httpClient;
         _httpContextAccessor = httpContextAccessor;
     }
-
 
     public async Task<IEnumerable<UserData>> GetUsersByIdsAsync(IEnumerable<Guid> userIds, CancellationToken cancellationToken = default)
     {

@@ -3,7 +3,6 @@ using MediatR;
 
 namespace Drobble.OrderManagement.Application.Features.Orders.Queries;
 
-// Change the return type to the new PaginatedResult
 public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, PaginatedResult<OrderDto>>
 {
     private readonly IOrderRepository _orderRepository;
@@ -17,18 +16,13 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Pagin
 
     public async Task<PaginatedResult<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
     {
-        // Get both the orders and the total count from the repository
         var (orders, totalCount) = await _orderRepository.GetAllAsync(request.Page, request.PageSize, cancellationToken);
 
-        // --- DATA ENRICHMENT ---
-        // 1. Get all unique user IDs from the orders
         var userIds = orders.Select(o => o.UserId).Distinct();
 
-        // 2. Fetch the user data in a single batch call
         var users = await _userManagementService.GetUsersByIdsAsync(userIds, cancellationToken);
         var userMap = users.ToDictionary(u => u.Id, u => u.Username);
 
-        // 3. Map to DTOs and add the username
         var orderDtos = orders.Select(order => new OrderDto
         {
             Id = order.Id,

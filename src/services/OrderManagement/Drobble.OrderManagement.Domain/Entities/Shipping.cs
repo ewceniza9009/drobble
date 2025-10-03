@@ -6,12 +6,11 @@ namespace Drobble.OrderManagement.Domain.Entities;
 public class Shipping : Entity<Guid>
 {
     public Guid OrderId { get; set; }
-    public string Address { get; set; } // Could be JSONB in the DB, string for simplicity here
+    public string Address { get; set; }           
     public ShippingMethod Method { get; set; }
     public string? TrackingNumber { get; set; }
     public DateTime? EstimatedDelivery { get; set; }
 
-    // Navigation property for EF Core
     public Order Order { get; set; }
 }
 

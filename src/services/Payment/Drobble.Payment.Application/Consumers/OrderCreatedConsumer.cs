@@ -1,5 +1,4 @@
-﻿// ---- File: src/services/Payment/Application/Consumers/OrderCreatedConsumer.cs ----
-using Drobble.Shared.EventBus.Events;
+﻿using Drobble.Shared.EventBus.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
@@ -21,10 +20,6 @@ public class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
             context.Message.OrderId,
             context.Message.Currency,
             context.Message.TotalAmount);
-
-        // In a real application, you would:
-        // 1. Interact with a payment gateway like Stripe
-        // 2. Publish a PaymentSucceeded or PaymentFailed event
 
         return Task.CompletedTask;
     }
