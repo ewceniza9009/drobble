@@ -26,6 +26,7 @@ public class OrderRepository : IOrderRepository
     {
         return await _context.Orders
             .Include(o => o.OrderItems)
+            .Include(o => o.ShippingDetails)         
             .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     }
 
@@ -34,6 +35,7 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders
             .Where(o => o.UserId == userId)
             .Include(o => o.OrderItems)
+            .Include(o => o.ShippingDetails)         
             .OrderByDescending(o => o.CreatedAt)
             .ToListAsync(cancellationToken);
     }
@@ -44,6 +46,7 @@ public class OrderRepository : IOrderRepository
 
         var orders = await _context.Orders
             .Include(o => o.OrderItems)
+            .Include(o => o.ShippingDetails)         
             .OrderByDescending(o => o.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -62,6 +65,7 @@ public class OrderRepository : IOrderRepository
     {
         return await _context.Orders
             .Include(o => o.OrderItems)
+            .Include(o => o.ShippingDetails)         
             .Where(o => o.OrderItems.Any(oi => productIds.Contains(oi.ProductId)))
             .OrderByDescending(o => o.CreatedAt)
             .ToListAsync(cancellationToken);

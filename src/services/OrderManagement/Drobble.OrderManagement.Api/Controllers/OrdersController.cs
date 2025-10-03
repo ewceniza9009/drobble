@@ -64,6 +64,17 @@ public class OrdersController : ControllerBase
         return NoContent();
     }
 
+    // --- NEW ENDPOINT FOR ADMINS TO SHIP AN ORDER ---
+    public record ShipOrderRequest(string TrackingNumber);
+
+    [HttpPost("admin/{id:guid}/ship")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> ShipOrder(Guid id, [FromBody] ShipOrderRequest request)
+    {
+        await _mediator.Send(new ShipOrderCommand(id, request.TrackingNumber));
+        return NoContent();
+    }
+
     [HttpPost("admin/{id:guid}/cancel")]
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> CancelOrder(Guid id)

@@ -164,14 +164,27 @@ const CheckoutPage = () => {
       price: item.price 
     }));
 
-    try {
-      // 1. Create the order in our system first to get an OrderId
-      const createdOrder = await dispatch(placeOrder(orderItems)).unwrap();
-      const orderId = createdOrder?.id || createdOrder?.Id;
+    // ** THE FIX IS HERE **: Construct the full payload with shipping address
+    const orderPayload = {
+        items: orderItems,
+        shippingAddress: {
+            fullName: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+            addressLine: shippingInfo.address,
+            city: shippingInfo.city,
+            state: shippingInfo.state,
+            zipCode: shippingInfo.zipCode,
+            country: shippingInfo.country,
+        }
+    };
 
-      if (!orderId) {
-        throw new Error("Failed to get Order ID after creation.");
-      }
+    try {
+       // 1. Create the order in our system first to get an OrderId
+        const createdOrder = await dispatch(placeOrder(orderPayload)).unwrap(); // Pass the full payload
+        const orderId = createdOrder?.id || createdOrder?.Id;
+
+        if (!orderId) {
+            throw new Error("Failed to get Order ID after creation.");
+        }
       
       // Store shipping info and order ID
       localStorage.setItem('drobbleShippingInfo', JSON.stringify(shippingInfo));

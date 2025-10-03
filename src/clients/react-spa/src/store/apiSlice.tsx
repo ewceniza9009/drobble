@@ -1,3 +1,4 @@
+// ---- Modify file: src/clients/react-spa/src/store/apiSlice.tsx ----
 // ---- File: src/store/apiSlice.tsx ----
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RootState } from "./store";
@@ -19,7 +20,8 @@ interface AdminUserDto { id: string; username: string; email: string; role: stri
 interface ProductUpdateArg { id: string; name: string; description: string; price: number; stock: number; categoryId: string; imageUrl: string; }
 interface ProductCreateArg { name: string; description: string; price: number; stock: number; categoryId: string; imageUrl: string; }
 interface SearchProduct { id: string; name: string; description: string; price: number; imageUrl: string; }
-interface OrderStatusUpdateArg { orderId: string; newStatus: string; } // For admin status updates
+interface OrderStatusUpdateArg { orderId: string; newStatus: string; } 
+interface ShipOrderArg { orderId: string; trackingNumber: string; } 
 
 // --- INTERFACES FOR REVIEWS ---
 interface Review {
@@ -141,6 +143,14 @@ export const apiSlice = createApi({
         }),
         invalidatesTags: (_result, _error, arg) => [{ type: 'AdminOrder', id: 'LIST' }, { type: 'Order', id: arg.orderId }],
     }),
+    shipOrder: builder.mutation<void, ShipOrderArg>({
+        query: ({ orderId, trackingNumber }) => ({
+            url: `admin/orders/${orderId}/ship`,
+            method: 'POST',
+            body: { trackingNumber },
+        }),
+        invalidatesTags: (_result, _error, arg) => [{ type: 'AdminOrder', id: 'LIST' }, { type: 'Order', id: arg.orderId }],
+    }),
 
     // --- VENDOR ENDPOINTS ---
     getVendorProducts: builder.query<PaginatedResponse<Product>, { page?: number; pageSize?: number }>({
@@ -173,5 +183,6 @@ export const {
   useGetProductsByCategoryQuery,
   useGetAdminOrdersQuery,
   useUpdateOrderStatusMutation,
+  useShipOrderMutation,
   useCancelOrderMutation,
 } = apiSlice;

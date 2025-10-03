@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,7 +38,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
 
         var productIds = request.Items.Select(i => i.ProductId);
         var productDetails = (await _productCatalogService.GetProductsByIdsAsync(productIds, cancellationToken))
-                             .ToDictionary(p => p.Id);
+                                .ToDictionary(p => p.Id);
 
         var order = new Order
         {
@@ -63,9 +64,14 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
 
         order.TotalAmount = order.OrderItems.Sum(item => item.Price * item.Quantity);
 
+        order.ShippingDetails = new Shipping
+        {
+            Address = JsonSerializer.Serialize(request.ShippingAddress),
+            Method = ShippingMethod.Standard    
+        };
+
         await _orderRepository.AddAsync(order, cancellationToken);
 
-        // Publish the event to the message bus
         await _publishEndpoint.Publish(new OrderCreatedEvent
         {
             OrderId = order.Id,

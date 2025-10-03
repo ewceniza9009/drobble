@@ -1,19 +1,33 @@
-import { useGetAdminOrdersQuery, useUpdateOrderStatusMutation, useCancelOrderMutation } from '../../store/apiSlice';
+// ---- Modify file: src/clients/react-spa/src/pages/admin/AdminOrders.tsx ----
+import { useGetAdminOrdersQuery, useShipOrderMutation, useCancelOrderMutation } from '../../store/apiSlice';
 import { toast } from 'react-hot-toast';
 import { formatCurrency } from '../../utils/formatting';
 import { FaShoppingBag, FaTruck, FaCheckCircle, FaTimesCircle, FaUser } from 'react-icons/fa';
+import { useState } from 'react';
 
 const AdminOrders = () => {
     const { data, error, isLoading } = useGetAdminOrdersQuery();
-    const [updateStatus, { isLoading: isUpdating }] = useUpdateOrderStatusMutation();
+    const [shipOrder, { isLoading: isShipping }] = useShipOrderMutation();
     const [cancelOrder, { isLoading: isCancelling }] = useCancelOrderMutation();
 
-    const handleUpdateStatus = (orderId: string, newStatus: string) => {
-        const promise = updateStatus({ orderId, newStatus }).unwrap();
+    // State to hold the tracking number input for each order
+    const [trackingNumbers, setTrackingNumbers] = useState<{ [key: string]: string }>({});
+
+    const handleTrackingNumberChange = (orderId: string, value: string) => {
+        setTrackingNumbers(prev => ({ ...prev, [orderId]: value }));
+    };
+
+    const handleShipOrder = (orderId: string) => {
+        const trackingNumber = trackingNumbers[orderId];
+        if (!trackingNumber || trackingNumber.trim() === '') {
+            toast.error('Please enter a tracking number.');
+            return;
+        }
+        const promise = shipOrder({ orderId, trackingNumber }).unwrap();
         toast.promise(promise, {
-            loading: 'Updating order status...',
-            success: `Order status updated to ${newStatus}!`,
-            error: 'Failed to update status.',
+            loading: 'Marking order as shipped...',
+            success: 'Order has been marked as shipped!',
+            error: 'Failed to ship order.',
         });
     };
 
@@ -73,41 +87,37 @@ const AdminOrders = () => {
                                 <td className="px-6 py-4 text-gray-800 dark:text-slate-300">{new Date(order.createdAt).toLocaleDateString()}</td>
                                 <td className="px-6 py-4"><span className={`px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300`}>{order.status}</span></td>
                                 <td className="px-6 py-4 text-right font-semibold text-gray-800 dark:text-slate-200">{formatCurrency(order.totalAmount)}</td>
-                                <td className="px-6 py-4 text-center space-x-2">
-                                    {order.status === 'Pending' && (
-                                        <>
-                                            <button 
-                                                onClick={() => handleUpdateStatus(order.id, 'Paid')}
-                                                disabled={isUpdating}
-                                                className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 text-sm disabled:bg-gray-400"
-                                            >
-                                                Mark as Paid
-                                            </button>
-                                            <button 
-                                                onClick={() => handleCancelOrder(order.id)}
-                                                disabled={isCancelling}
-                                                className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm disabled:bg-gray-400"
-                                            >
-                                                <FaTimesCircle className="inline mr-1" /> Cancel
-                                            </button>
-                                        </>
-                                    )}
+                                <td className="px-6 py-4 text-center space-y-2">
                                     {order.status === 'Paid' && (
-                                        <button 
-                                            onClick={() => handleUpdateStatus(order.id, 'Shipped')} 
-                                            disabled={isUpdating}
-                                            className="bg-indigo-500 text-white px-3 py-1 rounded-md hover:bg-indigo-600 text-sm disabled:bg-gray-400"
-                                        >
-                                            <FaTruck className="inline mr-1" /> Mark Shipped
-                                        </button>
+                                        <div className="flex items-center space-x-2 justify-center">
+                                            <input
+                                                type="text"
+                                                placeholder="Tracking #"
+                                                value={trackingNumbers[order.id] || ''}
+                                                onChange={(e) => handleTrackingNumberChange(order.id, e.target.value)}
+                                                className="px-2 py-1 text-sm border rounded-md w-28 bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                                            />
+                                            <button
+                                                onClick={() => handleShipOrder(order.id)}
+                                                disabled={isShipping}
+                                                className="bg-indigo-500 text-white px-3 py-1 rounded-md hover:bg-indigo-600 text-sm disabled:bg-gray-400 flex items-center"
+                                            >
+                                                <FaTruck className="inline mr-1" /> Ship
+                                            </button>
+                                        </div>
                                     )}
                                     {order.status === 'Shipped' && (
-                                        <button 
-                                            onClick={() => handleUpdateStatus(order.id, 'Delivered')}
-                                            disabled={isUpdating}
-                                            className="bg-cyan-500 text-white px-3 py-1 rounded-md hover:bg-cyan-600 text-sm disabled:bg-gray-400"
+                                        <button className="bg-cyan-500 text-white px-3 py-1 rounded-md text-sm disabled:bg-gray-400" disabled>
+                                            <FaCheckCircle className="inline mr-1" /> Shipped
+                                        </button>
+                                    )}
+                                    {(order.status === 'Pending' || order.status === 'Paid') && (
+                                        <button
+                                            onClick={() => handleCancelOrder(order.id)}
+                                            disabled={isCancelling}
+                                            className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm disabled:bg-gray-400 flex items-center justify-center mx-auto"
                                         >
-                                            <FaCheckCircle className="inline mr-1" /> Mark Delivered
+                                            <FaTimesCircle className="inline mr-1" /> Cancel
                                         </button>
                                     )}
                                 </td>

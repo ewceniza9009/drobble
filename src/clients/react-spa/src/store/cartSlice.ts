@@ -22,6 +22,18 @@ interface OrderItemPayload {
     price: number;
 }
 
+interface PlaceOrderPayload {
+    items: OrderItemPayload[];
+    shippingAddress: {
+        fullName: string;
+        addressLine: string;
+        city: string;
+        state: string;
+        zipCode: string;
+        country: string;
+    };
+}
+
 const initialState: CartState = {
   items: [],
   status: 'idle',
@@ -60,14 +72,16 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
 
 export const placeOrder = createAsyncThunk(
   'cart/placeOrder',
-  // ** THE FIX IS HERE **
-  // The thunk now accepts an argument containing the items with their correct prices.
-  async (orderItems: OrderItemPayload[], { }) => {
-    const response = await api.post('/orders', { items: orderItems, currency: 'PHP' });
+  async (orderPayload: PlaceOrderPayload, { }) => {
+    // ** THE FIX IS HERE **: Send the full payload
+    const response = await api.post('/orders', {
+        items: orderPayload.items,
+        currency: 'PHP',
+        shippingAddress: orderPayload.shippingAddress
+    });
     return response.data;
   }
 );
-
 export const mergeCart = createAsyncThunk('cart/mergeCart', async () => {
     const response = await api.post('/cart/merge');
     return response.data?.items || [];
