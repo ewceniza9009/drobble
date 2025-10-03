@@ -24,7 +24,7 @@ const ReviewList = ({ productId }: { productId: string }) => {
           <div className="flex items-center mb-2">
             <FaUserCircle className="text-slate-400 dark:text-slate-500 text-2xl mr-3" />
             <div>
-              <p className="font-semibold text-slate-800 dark:text-slate-200">User {review.userId.substring(0, 8)}</p>
+              <p className="font-semibold text-slate-800 dark:text-slate-200">{review.userName}</p>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Reviewed on {new Date(review.createdAt).toLocaleDateString()}
               </p>

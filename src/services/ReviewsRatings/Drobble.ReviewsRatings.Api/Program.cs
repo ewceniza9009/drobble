@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using System.Security.Claims;    
+using System.Text;
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 MongoDbPersistence.Configure();
@@ -68,6 +68,10 @@ builder.Services.AddSwaggerGen(options =>
    new string[]{}
   }
  });
+});
+
+builder.Services.AddHttpClient<IUserManagementService, UserManagementService>(client => {
+    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:UserManagementApi"]!);
 });
 
 var app = builder.Build();
