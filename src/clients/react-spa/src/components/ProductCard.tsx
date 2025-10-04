@@ -13,11 +13,12 @@ import { addItemToCart } from "../store/cartSlice";
 import type { AppDispatch, RootState } from "../store/store";
 import { toast } from "react-hot-toast";
 
+// --- 1. UPDATE THE INTERFACE ---
 interface Product {
   id: string;
   name: string;
   price: number;
-  imageUrl?: string;
+  imageUrls?: string[]; // Use the new array property
   description?: string;
   stock?: number;
   rating?: number;
@@ -79,6 +80,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const reviewCount = product.reviewCount || 24;
   const isOutOfStock = (product.stock || 0) === 0;
 
+  // --- 2. SELECT THE FIRST IMAGE FROM THE ARRAY ---
+  const displayImage = (product.imageUrls && product.imageUrls.length > 0)
+    ? product.imageUrls[0]
+    : "https://placehold.co/600x600/png?text=Product+Image";
+
   return (
     <div
       className="group relative bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-slate-700 overflow-hidden"
@@ -121,11 +127,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <div className="relative aspect-square bg-gray-100 dark:bg-slate-700">
         <Link to={`/products/${product.id}`} className="block absolute inset-0">
           <img
-            src={
-              imageError || !product.imageUrl
-                ? "https://placehold.co/600x600/png?text=Product+Image"
-                : product.imageUrl
-            }
+            // --- 3. USE THE CORRECT IMAGE VARIABLE ---
+            src={imageError ? "https://placehold.co/600x600/png?text=Product+Image" : displayImage}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"
@@ -221,16 +224,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <span>Add to Cart</span>
           </button>
         </div>
-      </div>
-
-      {/* Quick View on Mobile */}
-      <div className="lg:hidden border-t border-gray-100 dark:border-slate-700">
-        <Link
-          to={`/products/${product.id}`}
-          className="block text-center py-2 text-sm text-gray-600 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
-        >
-          Quick View
-        </Link>
       </div>
     </div>
   );

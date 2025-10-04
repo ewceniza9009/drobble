@@ -9,5 +9,7 @@ public record UpdateProductCommand(
     decimal Price,
     int Stock,
     string CategoryId,
-    string? ImageUrl) : IRequest; 
-
+    List<string>? ImageUrls,
+    string? Sku,
+    decimal Weight,
+    bool IsFeatured) : IRequest;       

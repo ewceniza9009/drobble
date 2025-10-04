@@ -11,7 +11,7 @@ import { toast } from 'react-hot-toast';
 interface ProductDetail {
   id: string;
   name: string;
-  imageUrl: string;
+  imageUrls: string[];
   description?: string;
 }
 
@@ -74,7 +74,7 @@ const OrderDetailPage = () => {
                     return {
                         ...item,
                         name: details?.name || 'Product not found',
-                        imageUrl: details?.imageUrl || '',
+                        imageUrl: details?.imageUrls[0] || '',
                     };
                 });
                 setEnrichedItems(newEnrichedItems);

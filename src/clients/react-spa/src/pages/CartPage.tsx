@@ -11,7 +11,7 @@ interface ProductDetail {
   id: string;
   name: string;
   price: number;
-  imageUrl: string;
+  imageUrls: string[];
   description?: string;
 }
 
@@ -20,9 +20,10 @@ interface EnrichedCartItem {
   quantity: number;
   name: string;
   price: number;
-  imageUrl: string;
+  imageUrl: string; 
   description?: string;
 }
+
 
 const CartPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -49,7 +50,7 @@ const CartPage = () => {
             ...item,
             name: details?.name || 'Product not found',
             price: details?.price || 0,
-            imageUrl: details?.imageUrl || '',
+            imageUrl: details?.imageUrls?.[0] || '',
             description: details?.description || '',
           };
         });

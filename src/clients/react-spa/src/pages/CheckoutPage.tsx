@@ -6,7 +6,7 @@ import type { RootState, AppDispatch } from '../store/store';
 import { placeOrder } from '../store/cartSlice';
 import { toast } from 'react-hot-toast';
 import api from '../api/axios';
-import { useValidatePromoCodeMutation } from '../store/apiSlice';
+import { useValidatePromoCodeMutation, type Product } from '../store/apiSlice';
 import { 
     FaShoppingCart, 
     FaPaypal, 
@@ -18,11 +18,8 @@ import {
 import { formatCurrency } from '../utils/formatting';
 
 // Interfaces
-interface ProductDetail {
-    id: string;
-    name: string;
-    imageUrl: string;
-    price: number;
+interface ProductDetail extends Omit<Product, 'imageUrls'> {
+    imageUrls: string[];
 }
 interface EnrichedCartItem {
     productId: string;
@@ -113,7 +110,7 @@ const CheckoutPage = () => {
                         ...item,
                         name: details?.name || 'Product Not Found',
                         price: details?.price || 0,
-                        imageUrl: details?.imageUrl || '',
+                        imageUrl: details?.imageUrls?.[0] || '',
                     };
                 });
                 setEnrichedItems(newEnrichedItems);

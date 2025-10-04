@@ -8,5 +8,8 @@ public record CreateProductCommand(
     string Description,
     decimal Price,
     int Stock,
-    string CategoryId, 
-    string ImageUrl) : IRequest<ObjectId>;         
+    string CategoryId,
+    List<string> ImageUrls,
+    string? Sku,
+    decimal Weight,
+    bool IsFeatured) : IRequest<ObjectId>;       

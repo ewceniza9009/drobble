@@ -17,10 +17,7 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
     {
         var product = await _productRepository.GetByIdAsync(ObjectId.Parse(request.Id), cancellationToken);
 
-        if (product is null)
-        {
-            return null;
-        }
+        if (product is null) return null;
 
         return new ProductDto
         {
@@ -30,9 +27,12 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
             Price = product.Price,
             Stock = product.Stock,
             CategoryId = product.CategoryId.ToString(),
-            VendorId = product.VendorId,    
-            IsActive = product.IsActive,
-            ImageUrl = product.ImageUrls.FirstOrDefault()
+            VendorId = product.VendorId,
+            IsActive = product.IsActive,
+            IsFeatured = product.IsFeatured,
+            Sku = product.Sku,
+            Weight = product.Weight,
+            ImageUrls = product.ImageUrls       
         };
     }
 }

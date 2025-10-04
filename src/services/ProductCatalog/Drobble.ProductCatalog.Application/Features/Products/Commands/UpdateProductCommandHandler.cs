@@ -20,27 +20,25 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand>
 
     public async Task Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
-        // 1. Find the existing product
         var product = await _productRepository.GetByIdAsync(ObjectId.Parse(request.Id), cancellationToken);
         if (product is null)
         {
-            // In a real app, you would throw a specific NotFoundException
             throw new Exception($"Product with Id {request.Id} not found.");
         }
 
-        // 2. Update its properties
         product.Name = request.Name;
         product.Description = request.Description;
         product.Price = request.Price;
         product.Stock = request.Stock;
         product.CategoryId = ObjectId.Parse(request.CategoryId);
-        product.ImageUrls = new List<string> { request.ImageUrl ?? "" };
+        product.ImageUrls = request.ImageUrls ?? product.ImageUrls;
         product.UpdatedAt = DateTime.UtcNow;
+        product.Sku = request.Sku;
+        product.Weight = request.Weight;
+        product.IsFeatured = request.IsFeatured;
 
-        // 3. Save the changes back to the database
         await _productRepository.UpdateAsync(product, cancellationToken);
 
-        // 4. Publish an event to notify other services (like Search) of the update
         await _publishEndpoint.Publish(new ProductUpdatedEvent
         {
             Id = product.Id.ToString(),

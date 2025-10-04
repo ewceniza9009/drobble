@@ -3,15 +3,17 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RootState } from "./store";
 
 // --- INTERFACES ---
-interface Product {
+export interface Product {
   id: string;
   name: string;
   description: string;
   price: number;
   stock: number;
   categoryId: string;
-  imageUrl: string;
+  imageUrls: string[]; 
   isFeatured?: boolean;
+  sku?: string;          
+  weight?: number;       
 }
 interface PaginatedResponse<T> {
   items: T[];
@@ -44,7 +46,10 @@ interface ProductUpdateArg {
   price: number;
   stock: number;
   categoryId: string;
-  imageUrl: string;
+  imageUrls: string[]; 
+  sku?: string;        
+  weight?: number;     
+  isFeatured?: boolean;
 }
 interface ProductCreateArg {
   name: string;
@@ -52,7 +57,10 @@ interface ProductCreateArg {
   price: number;
   stock: number;
   categoryId: string;
-  imageUrl: string;
+  imageUrls: string[]; 
+  sku?: string;        
+  weight?: number;     
+  isFeatured?: boolean;
 }
 interface SearchProduct {
   id: string;

@@ -12,7 +12,6 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
     private readonly IProductRepository _productRepository;
     private readonly IPublishEndpoint _publishEndpoint;
 
-    // Inject the MassTransit publish endpoint
     public CreateProductCommandHandler(IProductRepository productRepository, IPublishEndpoint publishEndpoint)
     {
         _productRepository = productRepository;
@@ -28,12 +27,14 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
             Price = request.Price,
             Stock = request.Stock,
             CategoryId = ObjectId.Parse(request.CategoryId),
-            ImageUrls = new List<string> { request.ImageUrl ?? "" }
+            ImageUrls = request.ImageUrls ?? new List<string>(),
+            Sku = request.Sku,
+            Weight = request.Weight,
+            IsFeatured = request.IsFeatured
         };
 
         await _productRepository.AddAsync(product, cancellationToken);
 
-        // After saving, publish the event to the message bus
         await _publishEndpoint.Publish(new ProductCreatedEvent
         {
             Id = product.Id.ToString(),

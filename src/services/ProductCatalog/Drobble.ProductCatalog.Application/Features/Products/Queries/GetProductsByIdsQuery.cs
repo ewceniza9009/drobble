@@ -29,7 +29,7 @@ public class GetProductsByIdsQueryHandler : IRequestHandler<GetProductsByIdsQuer
             Stock = p.Stock,
             CategoryId = p.CategoryId.ToString(),
             IsActive = p.IsActive,
-            ImageUrl = p.ImageUrls.FirstOrDefault()     
+            ImageUrls = p.ImageUrls     
         });
     }
 }
