@@ -10,7 +10,10 @@ public class Order : Entity<Guid>
     public decimal TotalAmount { get; set; }
     public string Currency { get; set; } = "PHP";
     public string PaymentMethod { get; set; }   
-    public decimal ShippingCost { get; set; }   
+    public decimal ShippingCost { get; set; }
+
+    public string? AppliedPromoCode { get; set; }
+    public decimal DiscountAmount { get; set; } = 0;
 
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     public Shipping ShippingDetails { get; set; }

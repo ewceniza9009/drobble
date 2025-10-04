@@ -43,6 +43,12 @@ services:
     - port: 5081
       protocol: http
 
+- name: promotions
+  project: src/services/Promotions/Drobble.Promotions.Api/Drobble.Promotions.Api.csproj
+  bindings:
+    - port: 5201
+      protocol: http
+
 - name: api-gateway
   project: src/gateways/Drobble.ApiGateway/Drobble.ApiGateway.csproj
   bindings:

@@ -1,4 +1,4 @@
-// ---- Modify file: src/clients/react-spa/src/pages/CheckoutPage.tsx ----
+// ---- File: src/clients/react-spa/src/pages/CheckoutPage.tsx ----
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -6,6 +6,7 @@ import type { RootState, AppDispatch } from '../store/store';
 import { placeOrder } from '../store/cartSlice';
 import { toast } from 'react-hot-toast';
 import api from '../api/axios';
+import { useValidatePromoCodeMutation } from '../store/apiSlice';
 import { 
     FaShoppingCart, 
     FaPaypal, 
@@ -16,14 +17,13 @@ import {
 } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatting';
 
-// Interfaces moved to top for clarity
+// Interfaces
 interface ProductDetail {
     id: string;
     name: string;
     imageUrl: string;
     price: number;
 }
-
 interface EnrichedCartItem {
     productId: string;
     quantity: number;
@@ -31,7 +31,6 @@ interface EnrichedCartItem {
     price: number;
     imageUrl: string;
 }
-
 interface ShippingInfo {
     email: string;
     firstName: string;
@@ -43,9 +42,6 @@ interface ShippingInfo {
     country: string;
     phone: string;
 }
-
-// ** THE FIX IS HERE **: Removed the unused local interface definition.
-// The correct type is already being inferred from the placeOrder thunk.
 
 const CheckoutPage = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -65,11 +61,17 @@ const CheckoutPage = () => {
         city: '',
         state: '',
         zipCode: '',
-        country: 'Philippines', // Default country
+        country: 'Philippines',
         phone: ''
     });
     
-    const shippingCost = 150.00; // Placeholder for dynamic shipping cost calculation
+    const [promoCode, setPromoCode] = useState('');
+    const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; amount: number } | null>(null);
+    const [promoError, setPromoError] = useState<string | null>(null);
+
+    const [validatePromoCode, { isLoading: isValidatingCode }] = useValidatePromoCodeMutation();
+    
+    const shippingCost = 150.00;
 
     useEffect(() => {
         const savedShippingInfo = localStorage.getItem('drobbleShippingInfo');
@@ -126,14 +128,36 @@ const CheckoutPage = () => {
     }, [cartItems]);
     
     const cartTotal = enrichedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const tax = cartTotal * 0.08; // 8% tax
-    const finalTotal = cartTotal + shippingCost + tax;
+    const tax = cartTotal * 0.08;
+    const finalTotal = (cartTotal + shippingCost + tax) - (appliedDiscount?.amount || 0);
+
+    const handleApplyCode = async () => {
+        if (!promoCode.trim()) {
+            setPromoError("Please enter a code.");
+            return;
+        }
+        setPromoError(null);
+
+        const cartContext = {
+            totalAmount: cartTotal,
+            productIds: enrichedItems.map(i => i.productId),
+            categoryIds: []
+        };
+
+        try {
+            const result = await validatePromoCode({ code: promoCode, context: cartContext }).unwrap();
+            if (result.isValid) {
+                setAppliedDiscount({ code: promoCode, amount: result.discountAmount });
+                toast.success('Promotion applied!');
+            }
+        } catch (err: any) {
+            setAppliedDiscount(null);
+            setPromoError(err.data?.message || "Invalid or expired code.");
+        }
+    };
 
     const handleInputChange = (field: keyof ShippingInfo, value: string) => {
-        setShippingInfo(prev => ({
-            ...prev,
-            [field]: value
-        }));
+        setShippingInfo(prev => ({ ...prev, [field]: value }));
     };
 
     const handleProductClick = (productId: string) => {
@@ -148,13 +172,11 @@ const CheckoutPage = () => {
             toast.error(`Please fill in all required fields`);
             return false;
         }
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(shippingInfo.email)) {
             toast.error('Please enter a valid email address');
             return false;
         }
-
         return true;
     };
 
@@ -166,13 +188,8 @@ const CheckoutPage = () => {
 
     const handlePlaceOrder = async () => {
         setIsProcessing(true);
-
-        const orderItems = enrichedItems.map(item => ({ 
-            productId: item.productId, 
-            quantity: item.quantity, 
-            price: item.price 
-        }));
-
+        const orderItems = enrichedItems.map(item => ({ productId: item.productId, quantity: item.quantity, price: item.price }));
+        
         const orderPayload = {
             items: orderItems,
             shippingAddress: {
@@ -185,6 +202,8 @@ const CheckoutPage = () => {
             },
             paymentMethod: selectedGateway,
             shippingCost: shippingCost,
+            appliedPromoCode: appliedDiscount?.code || null,
+            discountAmount: appliedDiscount?.amount || 0,
         };
 
         try {
@@ -192,7 +211,6 @@ const CheckoutPage = () => {
                 const createdOrder = await dispatch(placeOrder(orderPayload)).unwrap();
                 toast.success('Your order has been placed!');
                 navigate(`/order-confirmation?orderId=${createdOrder.id}`);
-
             } else {
                 const createdOrder = await dispatch(placeOrder(orderPayload)).unwrap();
                 const orderId = createdOrder?.id || createdOrder?.Id;
@@ -269,7 +287,7 @@ const CheckoutPage = () => {
                                 <div>
                                     <h4 className="text-lg font-medium mb-4 text-gray-800 dark:text-slate-200">Shipping Address</h4>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                         <div>
+                                        <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">First Name *</label>
                                             <input type="text" value={shippingInfo.firstName} onChange={(e) => handleInputChange('firstName', e.target.value)} className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200" autoComplete="given-name" required />
                                         </div>
@@ -323,46 +341,46 @@ const CheckoutPage = () => {
 
                     {step === 2 && (
                         <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 space-y-6">
-                                <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-slate-100">Review & Pay</h3>
-                                
-                                <div className="border border-gray-200 dark:border-slate-700 rounded-lg p-4">
-                                    <div className="flex justify-between items-center mb-3">
-                                        <h4 className="font-semibold text-gray-700 dark:text-slate-200">Shipping Information</h4>
-                                        <button onClick={() => setStep(1)} className="text-sm text-blue-600 hover:underline">Edit</button>
-                                    </div>
-                                    <div className="text-gray-600 dark:text-slate-400 text-sm space-y-1">
-                                        <p>{`${shippingInfo.firstName} ${shippingInfo.lastName}`}</p>
-                                        <p>{shippingInfo.address}</p>
-                                        <p>{`${shippingInfo.city}, ${shippingInfo.state} ${shippingInfo.zipCode}`}</p>
-                                        <p>{shippingInfo.country}</p>
-                                        <p>Email: {shippingInfo.email}</p>
-                                        <p>Phone: {shippingInfo.phone}</p>
-                                    </div>
+                            <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-slate-100">Review & Pay</h3>
+                            
+                            <div className="border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                                <div className="flex justify-between items-center mb-3">
+                                    <h4 className="font-semibold text-gray-700 dark:text-slate-200">Shipping Information</h4>
+                                    <button onClick={() => setStep(1)} className="text-sm text-blue-600 hover:underline">Edit</button>
                                 </div>
+                                <div className="text-gray-600 dark:text-slate-400 text-sm space-y-1">
+                                    <p>{`${shippingInfo.firstName} ${shippingInfo.lastName}`}</p>
+                                    <p>{shippingInfo.address}</p>
+                                    <p>{`${shippingInfo.city}, ${shippingInfo.state} ${shippingInfo.zipCode}`}</p>
+                                    <p>{shippingInfo.country}</p>
+                                    <p>Email: {shippingInfo.email}</p>
+                                    <p>Phone: {shippingInfo.phone}</p>
+                                </div>
+                            </div>
 
-                                <div>
-                                    <h4 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-4">Select Payment Method</h4>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div 
-                                            onClick={() => setSelectedGateway('PayPal')}
-                                            className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedGateway === 'PayPal' ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 dark:border-slate-600'}`}
-                                        >
-                                            <div className="flex items-center">
-                                                <FaPaypal className="text-2xl text-blue-600 mr-3" />
-                                                <span className="font-semibold text-gray-800 dark:text-slate-200">PayPal</span>
-                                            </div>
+                            <div>
+                                <h4 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-4">Select Payment Method</h4>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div 
+                                        onClick={() => setSelectedGateway('PayPal')}
+                                        className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedGateway === 'PayPal' ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 dark:border-slate-600'}`}
+                                    >
+                                        <div className="flex items-center">
+                                            <FaPaypal className="text-2xl text-blue-600 mr-3" />
+                                            <span className="font-semibold text-gray-800 dark:text-slate-200">PayPal</span>
                                         </div>
-                                        <div 
-                                            onClick={() => setSelectedGateway('CashOnDelivery')}
-                                            className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedGateway === 'CashOnDelivery' ? 'border-green-500 ring-2 ring-green-200' : 'border-gray-300 dark:border-slate-600'}`}
-                                        >
-                                            <div className="flex items-center">
-                                                <FaMoneyBillWave className="text-2xl text-green-600 mr-3" />
-                                                <span className="font-semibold text-gray-800 dark:text-slate-200">Cash on Delivery</span>
-                                            </div>
+                                    </div>
+                                    <div 
+                                        onClick={() => setSelectedGateway('CashOnDelivery')}
+                                        className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedGateway === 'CashOnDelivery' ? 'border-green-500 ring-2 ring-green-200' : 'border-gray-300 dark:border-slate-600'}`}
+                                    >
+                                        <div className="flex items-center">
+                                            <FaMoneyBillWave className="text-2xl text-green-600 mr-3" />
+                                            <span className="font-semibold text-gray-800 dark:text-slate-200">Cash on Delivery</span>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -374,36 +392,62 @@ const CheckoutPage = () => {
                                 <FaShoppingCart className="mr-3" /> 
                                 Order Summary
                             </h2>
-                            <p className="text-green-100 text-sm mt-1">{enrichedItems.length} item{enrichedItems.length !== 1 ? 's' : ''} in cart</p>
                         </div>
                         
-                        <div className={`p-4 ${enrichedItems.length > 4 ? 'max-h-80 overflow-y-auto' : 'overflow-visible'} scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-slate-600 dark:scrollbar-track-slate-800/50 hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-slate-500`}>
-                                <div className="space-y-3">
-                                    {enrichedItems.map(item => (
-                                        <div key={item.productId} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/30 rounded-lg">
-                                            <img src={item.imageUrl} alt={item.name} className="w-12 h-12 object-cover rounded-lg cursor-pointer" onClick={() => handleProductClick(item.productId)} />
-                                            <div className="flex-1 min-w-0">
-                                                <p className="font-medium text-sm text-gray-800 dark:text-slate-200 truncate">{item.name}</p>
-                                                <div className="flex items-center justify-between mt-1">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-xs text-gray-500 dark:text-slate-400">Qty: {item.quantity}</span>
-                                                        <span className="text-xs text-gray-500 dark:text-slate-400">• {formatCurrency(item.price)} each</span>
-                                                    </div>
-                                                    <span className="font-semibold text-green-600 dark:text-green-400 text-sm">{formatCurrency(item.price * item.quantity)}</span>
+                        <div className={`p-4 ${enrichedItems.length > 4 ? 'max-h-80 overflow-y-auto' : 'overflow-visible'}`}>
+                            <div className="space-y-3">
+                                {enrichedItems.map(item => (
+                                    <div key={item.productId} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/30 rounded-lg">
+                                        <img src={item.imageUrl} alt={item.name} className="w-12 h-12 object-cover rounded-lg cursor-pointer" onClick={() => handleProductClick(item.productId)} />
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-medium text-sm text-gray-800 dark:text-slate-200 truncate">{item.name}</p>
+                                            <div className="flex items-center justify-between mt-1">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs text-gray-500 dark:text-slate-400">Qty: {item.quantity}</span>
                                                 </div>
+                                                <span className="font-semibold text-green-600 dark:text-green-400 text-sm">{formatCurrency(item.price * item.quantity)}</span>
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="p-4 border-t border-gray-200 dark:border-slate-700">
-                                <div className="space-y-2">
-                                    <div className="flex justify-between"><span className="text-gray-600 dark:text-slate-400">Subtotal</span><span className="text-gray-800 dark:text-slate-200">{formatCurrency(cartTotal)}</span></div>
-                                    <div className="flex justify-between"><span className="text-gray-600 dark:text-slate-400">Shipping</span><span className="text-gray-800 dark:text-slate-200">{formatCurrency(shippingCost)}</span></div>
-                                    <div className="flex justify-between"><span className="text-gray-600 dark:text-slate-400">Tax</span><span className="text-gray-800 dark:text-slate-200">{formatCurrency(tax)}</span></div>
-                                    <div className="flex justify-between font-bold text-lg border-t border-gray-300 dark:border-slate-600 pt-3"><span className="text-gray-800 dark:text-slate-100">Total</span><span className="text-green-600 dark:text-green-400">{formatCurrency(finalTotal)}</span></div>
+                             <div className="flex items-center gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="Enter discount code"
+                                    value={promoCode}
+                                    onChange={(e) => setPromoCode(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700"
+                                    disabled={!!appliedDiscount}
+                                />
+                                <button onClick={handleApplyCode} disabled={isValidatingCode || !!appliedDiscount} className="px-4 py-2 bg-gray-200 dark:bg-slate-600 text-gray-800 dark:text-slate-200 rounded-lg text-sm font-semibold hover:bg-gray-300 dark:hover:bg-slate-500 disabled:opacity-50">
+                                    {isValidatingCode ? '...' : 'Apply'}
+                                </button>
+                            </div>
+                            {promoError && <p className="text-red-500 text-xs mt-1">{promoError}</p>}
+                            {appliedDiscount && <p className="text-green-600 text-xs mt-1">Code '{appliedDiscount.code}' applied!</p>}
+                        </div>
+
+
+                        <div className="p-4 border-t border-gray-200 dark:border-slate-700">
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-gray-600 dark:text-slate-400"><span>Subtotal</span><span className="text-gray-800 dark:text-slate-200">{formatCurrency(cartTotal)}</span></div>
+                                <div className="flex justify-between text-gray-600 dark:text-slate-400"><span>Shipping</span><span className="text-gray-800 dark:text-slate-200">{formatCurrency(shippingCost)}</span></div>
+                                <div className="flex justify-between text-gray-600 dark:text-slate-400"><span>Tax</span><span className="text-gray-800 dark:text-slate-200">{formatCurrency(tax)}</span></div>
+                                {appliedDiscount && (
+                                     <div className="flex justify-between text-green-600 dark:text-green-400">
+                                        <span>Discount ({appliedDiscount.code})</span>
+                                        <span>- {formatCurrency(appliedDiscount.amount)}</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between font-bold text-lg border-t border-gray-300 dark:border-slate-600 pt-3">
+                                    <span className="text-gray-800 dark:text-slate-100">Total</span>
+                                    <span className="text-green-600 dark:text-green-400">{formatCurrency(finalTotal)}</span>
                                 </div>
+                            </div>
                         </div>
                         
                         {step === 2 && (

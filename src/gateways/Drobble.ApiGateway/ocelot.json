@@ -268,6 +268,32 @@
         }
       ],
       "DownstreamPathTemplate": "/api/v1/reviews/product/{productId}/average-rating"
+    },
+    {
+      "UpstreamPathTemplate": "/api/promotions/validate",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5201
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/promotions/validate",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+    {
+      "UpstreamPathTemplate": "/api/promotions/admin/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5201
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/promotions/admin/{everything}",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
     }
   ],
   "GlobalConfiguration": {

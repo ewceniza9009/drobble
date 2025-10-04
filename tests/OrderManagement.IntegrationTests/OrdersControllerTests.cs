@@ -104,7 +104,13 @@ public class OrdersControllerTests : IAsyncLifetime
             new List<Application.Features.Orders.Commands.OrderItemDto>
             {
                 new(TestProductId, 2, 0)
-            }, "PHP");
+            },
+            "USD",
+            new ShippingAddressDto("Erwin Wilson Ceniza", "123 Test St", "Test City", "TS", "12345", "Test Country"),
+            "Unknown",
+            0,
+            "PROMOCODE",
+            10.00m);
 
         // Act
         var response = await _client.PostAsJsonAsync("/api/v1/orders", command);

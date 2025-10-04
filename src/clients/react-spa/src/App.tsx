@@ -28,12 +28,14 @@ const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const OrderDetailPage = lazy(() => import('./pages/OrderDetailPage'));
 const SearchPage = lazy(() => import('./pages/SearchPage'));
-const OrderConfirmationPage = lazy(() => import('./pages/OrderConfirmationPage')); // Updated import
+const OrderConfirmationPage = lazy(() => import('./pages/OrderConfirmationPage'));
 
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminProducts = lazy(() => import('./pages/admin/AdminProducts'));
 const AdminProductEdit = lazy(() => import('./pages/admin/AdminProductEdit'));
 const AdminOrders = lazy(() => import('./pages/admin/AdminOrders'));
+const AdminPromotions = lazy(() => import('./pages/admin/AdminPromotions'));
+const AdminPromotionCreate = lazy(() => import('./pages/admin/AdminPromotionCreate'));
 
 const VendorProducts = lazy(() => import('./pages/vendor/VendorProducts'));
 
@@ -113,8 +115,6 @@ function App() {
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/orders/:orderId" element={<OrderDetailPage />} />
-              
-              {/* ** UPDATED ROUTES ** */}
               <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
               <Route path="/payment/success" element={<OrderConfirmationPage />} />
             </Route>
@@ -128,6 +128,8 @@ function App() {
                 <Route path="reviews" element={<AdminReviews />} />
                 <Route path="products/new" element={<AdminProductEdit />} />
                 <Route path="products/edit/:productId" element={<AdminProductEdit />} />
+                <Route path="promotions" element={<AdminPromotions />} />
+                <Route path="promotions/new" element={<AdminPromotionCreate />} />
               </Route>
             </Route>
 

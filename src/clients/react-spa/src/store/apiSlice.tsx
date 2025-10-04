@@ -1,5 +1,4 @@
-// ---- Modify file: src/clients/react-spa/src/store/apiSlice.tsx ----
-// ---- File: src/store/apiSlice.tsx ----
+// ---- File: src/clients/react-spa/src/store/apiSlice.tsx ----
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RootState } from "./store";
 
@@ -14,17 +13,59 @@ interface Product {
   imageUrl: string;
   isFeatured?: boolean;
 }
-interface PaginatedResponse<T> { items: T[]; total: number; }
-// Added paymentMethod and shippingCost to the Order interface
-interface Order { id:string; username: string; totalAmount: number; status: string; createdAt: string; paymentMethod: string; shippingCost: number; items: { productId: string; quantity: number; price: number }[]; }
-interface AdminUserDto { id: string; username: string; email: string; role: string; isActive: boolean; }
-interface ProductUpdateArg { id: string; name: string; description: string; price: number; stock: number; categoryId: string; imageUrl: string; }
-interface ProductCreateArg { name: string; description: string; price: number; stock: number; categoryId: string; imageUrl: string; }
-interface SearchProduct { id: string; name: string; description: string; price: number; imageUrl: string; }
-interface OrderStatusUpdateArg { orderId: string; newStatus: string; } 
-interface ShipOrderArg { orderId: string; trackingNumber: string; } 
-
-// --- INTERFACES FOR REVIEWS ---
+interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+}
+interface Order {
+  id: string;
+  username: string;
+  totalAmount: number;
+  status: string;
+  createdAt: string;
+  paymentMethod: string;
+  shippingCost: number;
+  items: { productId: string; quantity: number; price: number }[];
+}
+interface AdminUserDto {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+}
+interface ProductUpdateArg {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  categoryId: string;
+  imageUrl: string;
+}
+interface ProductCreateArg {
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  categoryId: string;
+  imageUrl: string;
+}
+interface SearchProduct {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+}
+interface OrderStatusUpdateArg {
+  orderId: string;
+  newStatus: string;
+}
+interface ShipOrderArg {
+  orderId: string;
+  trackingNumber: string;
+}
 interface Review {
   id: string;
   productId: string;
@@ -41,10 +82,46 @@ interface CreateReviewArg {
 }
 interface PendingReviewDto extends Review {}
 interface ModerateReviewArg {
-    reviewId: string;
-    approve: boolean;
-    role: 'admin' | 'vendor';
+  reviewId: string;
+  approve: boolean;
+  role: 'admin' | 'vendor';
 }
+interface PromotionRule {
+  minPurchaseAmount?: number;
+  applicableProductIds: string[];
+  applicableCategoryIds: string[];
+  exclusiveUserIds: string[];
+}
+interface PromotionDto {
+  id: string;
+  name: string;
+  description: string;
+  code: string;
+  promotionType: 'Code' | 'Automatic';
+  discountType: 'Percentage' | 'FixedAmount';
+  value: number;
+  rules: PromotionRule;
+  startDate: string;
+  endDate?: string;
+  usageLimit: number;
+  timesUsed: number;
+  isActive: boolean;
+}
+interface CartContext {
+  totalAmount: number;
+  productIds: string[];
+  categoryIds: string[];
+}
+interface ValidateCodeQueryArg {
+  code: string;
+  context: CartContext;
+}
+interface ValidationResponse {
+  isValid: boolean;
+  discountAmount: number;
+  message: string;
+}
+type CreatePromotionArg = Omit<PromotionDto, 'id' | 'timesUsed'>;
 
 export const apiSlice = createApi({
   reducerPath: "api",
@@ -58,7 +135,7 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Product', 'Order', 'Review', 'AdminUser', 'PendingReview', 'AdminOrder'],
+  tagTypes: ['Product', 'Order', 'Review', 'AdminUser', 'PendingReview', 'AdminOrder', 'Promotion'],
   endpoints: (builder) => ({
 
     // --- PUBLIC & USER ENDPOINTS ---
@@ -132,7 +209,6 @@ export const apiSlice = createApi({
     getAdminOrders: builder.query<PaginatedResponse<Order>, void>({
         query: () => 'admin/orders',
         providesTags: (result) => {
-            //console.log(result!.items);
             return result ? [...result.items.map(({ id }) => ({ type: 'AdminOrder' as const, id })), { type: 'AdminOrder', id: 'LIST' }] : [{ type: 'AdminOrder', id: 'LIST' }]
         },
     }),
@@ -151,6 +227,25 @@ export const apiSlice = createApi({
             body: { trackingNumber },
         }),
         invalidatesTags: (_result, _error, arg) => [{ type: 'AdminOrder', id: 'LIST' }, { type: 'Order', id: arg.orderId }],
+    }),
+    getAdminPromotions: builder.query<PromotionDto[], void>({
+        query: () => 'promotions/admin',
+        providesTags: (result) => result ? [...result.map(({ id }) => ({ type: 'Promotion' as const, id })), { type: 'Promotion', id: 'LIST' }] : [{ type: 'Promotion', id: 'LIST' }],
+    }),
+    createAdminPromotion: builder.mutation<PromotionDto, CreatePromotionArg>({
+        query: (promotion) => ({
+            url: 'promotions/admin',
+            method: 'POST',
+            body: promotion,
+        }),
+        invalidatesTags: [{ type: 'Promotion', id: 'LIST' }],
+    }),
+    validatePromoCode: builder.mutation<ValidationResponse, ValidateCodeQueryArg>({
+        query: (args) => ({
+            url: 'promotions/validate',
+            method: 'POST',
+            body: args,
+        }),
     }),
 
     // --- VENDOR ENDPOINTS ---
@@ -186,4 +281,7 @@ export const {
   useUpdateOrderStatusMutation,
   useShipOrderMutation,
   useCancelOrderMutation,
+  useGetAdminPromotionsQuery,
+  useCreateAdminPromotionMutation,
+  useValidatePromoCodeMutation,
 } = apiSlice;

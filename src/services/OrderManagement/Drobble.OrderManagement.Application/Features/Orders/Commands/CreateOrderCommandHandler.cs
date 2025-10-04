@@ -46,7 +46,9 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
             Currency = request.Currency,
             Status = OrderStatus.Pending,
             PaymentMethod = request.PaymentMethod,    
-            ShippingCost = request.ShippingCost      
+            ShippingCost = request.ShippingCost,
+            AppliedPromoCode = request.AppliedPromoCode,
+            DiscountAmount = request.DiscountAmount
         };
 
         foreach (var itemDto in request.Items)
@@ -64,7 +66,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
             });
         }
 
-        order.TotalAmount = order.OrderItems.Sum(item => item.Price * item.Quantity) + order.ShippingCost;
+        var subtotal = order.OrderItems.Sum(item => item.Price * item.Quantity);
+        order.TotalAmount = (subtotal + order.ShippingCost) - order.DiscountAmount;
 
         order.ShippingDetails = new Shipping
         {

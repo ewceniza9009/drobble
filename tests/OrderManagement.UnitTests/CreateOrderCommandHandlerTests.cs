@@ -53,7 +53,13 @@ public class CreateOrderCommandHandlerTests
             new List<Application.Features.Orders.Commands.OrderItemDto>
             {
                 new(productId1, 2, 0) // Price is fetched from service
-            }, "USD");
+            },             
+            "USD",
+            new ShippingAddressDto("Erwin Wilson Ceniza", "123 Test St", "Test City", "TS", "12345", "Test Country"),
+            "Unknown",
+            0,
+            "PROMOCODE", 
+            10.00m);
 
         var productDetails = new List<ProductDto>
         {
@@ -94,7 +100,13 @@ public class CreateOrderCommandHandlerTests
             new List<Application.Features.Orders.Commands.OrderItemDto>
             {
                 new("non-existent-product", 1, 0)
-            }, "USD");
+            }, 
+            "USD",
+            new ShippingAddressDto("Erwin", "123 Test St", "Test City", "TS", "12345", "Test Country"),
+            "Unknown",
+            0,
+            "PROMOCODE",
+            10.00m);
 
         _productCatalogServiceMock
             .Setup(s => s.GetProductsByIdsAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()))
@@ -111,7 +123,13 @@ public class CreateOrderCommandHandlerTests
         // No user claims are set up
         _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext()); // User is not authenticated
 
-        var command = new CreateOrderCommand(new List<Application.Features.Orders.Commands.OrderItemDto>(), "USD");
+        var command = new CreateOrderCommand(new List<Application.Features.Orders.Commands.OrderItemDto>(),
+            "USD",
+            new ShippingAddressDto("Erwin Wilson Ceniza", "123 Test St", "Test City", "TS", "12345", "Test Country"),
+            "Unknown",
+            0,
+            "PROMOCODE",
+            10.00m);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));

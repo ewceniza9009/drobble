@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿// ---- File: src/services/OrderManagement/Drobble.OrderManagement.Application/Features/Orders/Commands/CreateOrderCommand.cs ----
+using MediatR;
 using System;
 using System.Collections.Generic;
 
@@ -8,8 +9,11 @@ public record CreateOrderCommand(
     List<OrderItemDto> Items,
     string Currency,
     ShippingAddressDto ShippingAddress,
-    string PaymentMethod,   
-    decimal ShippingCost) : IRequest<Guid>;   
+    string PaymentMethod,
+    decimal ShippingCost,
+    // --- NEW PROPERTIES ---
+    string? AppliedPromoCode,
+    decimal DiscountAmount) : IRequest<Guid>;
 
 public record OrderItemDto(string ProductId, int Quantity, decimal Price);
 
