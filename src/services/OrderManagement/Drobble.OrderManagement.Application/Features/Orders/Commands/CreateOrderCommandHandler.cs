@@ -1,4 +1,5 @@
-﻿using Drobble.OrderManagement.Application.Contracts;
+﻿// ---- File: src/services/OrderManagement/Drobble.OrderManagement.Application/Features/Orders/Commands/CreateOrderCommandHandler.cs ----
+using Drobble.OrderManagement.Application.Contracts;
 using Drobble.OrderManagement.Domain.Entities;
 using Drobble.Shared.EventBus.Events;
 using MassTransit;
@@ -45,7 +46,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
             UserId = userId,
             Currency = request.Currency,
             Status = OrderStatus.Pending,
-            PaymentMethod = request.PaymentMethod,    
+            PaymentMethod = request.PaymentMethod,
             ShippingCost = request.ShippingCost,
             AppliedPromoCode = request.AppliedPromoCode,
             DiscountAmount = request.DiscountAmount
@@ -66,8 +67,11 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
             });
         }
 
+        // --- THE CORRECTED CALCULATION IS HERE ---
         var subtotal = order.OrderItems.Sum(item => item.Price * item.Quantity);
-        order.TotalAmount = (subtotal + order.ShippingCost) - order.DiscountAmount;
+        var tax = subtotal * 0.08m; // Using 8% to match the frontend
+        order.TotalAmount = (subtotal + order.ShippingCost + tax) - order.DiscountAmount;
+        // --- END OF FIX ---
 
         order.ShippingDetails = new Shipping
         {

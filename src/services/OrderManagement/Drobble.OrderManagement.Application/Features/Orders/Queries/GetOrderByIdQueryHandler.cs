@@ -1,9 +1,5 @@
 ﻿using Drobble.OrderManagement.Application.Contracts;
 using MediatR;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Drobble.OrderManagement.Application.Features.Orders.Queries;
 
@@ -35,6 +31,8 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
             CreatedAt = order.CreatedAt,
             PaymentMethod = order.PaymentMethod,
             ShippingCost = order.ShippingCost,
+            AppliedPromoCode = order.AppliedPromoCode,
+            DiscountAmount = order.DiscountAmount,
             Items = order.OrderItems.Select(oi => new OrderItemDto
             {
                 ProductId = oi.ProductId,

@@ -3,6 +3,7 @@ using Drobble.OrderManagement.Application.Features.Orders.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 [ApiController]
 [Route("api/v1/orders")]
@@ -10,11 +11,37 @@ using Microsoft.AspNetCore.Mvc;
 public class OrdersController : ControllerBase
 {
     private readonly IMediator _mediator;
-    public OrdersController(IMediator mediator) => _mediator = mediator;
+    private readonly ILogger<OrdersController> _logger;
 
-    [HttpPost]
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand command)
+    public OrdersController(IMediator mediator, ILogger<OrdersController> logger)
     {
+        _mediator = mediator;
+        _logger = logger;
+    }
+
+    // --- THIS IS THE MODIFIED METHOD ---
+    [HttpPost]
+    public async Task<IActionResult> CreateOrder([FromBody] JsonElement payload)
+    {
+        // 1. Log the raw JSON payload as a string to see exactly what we received.
+        var rawJson = payload.GetRawText();
+        _logger.LogWarning("RAW JSON PAYLOAD RECEIVED: {RawJson}", rawJson);
+
+        // 2. Manually deserialize the JSON into our command object.
+        var command = JsonSerializer.Deserialize<CreateOrderCommand>(rawJson, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true // Ensure camelCase from JS matches PascalCase in C#
+        });
+
+        if (command is null)
+        {
+            return BadRequest("Could not deserialize the command from the request body.");
+        }
+
+        // 3. Log the result of our manual deserialization.
+        _logger.LogInformation("DESERIALIZED COMMAND: AppliedPromoCode = {PromoCode}, DiscountAmount = {DiscountAmount}", command.AppliedPromoCode, command.DiscountAmount);
+
+        // 4. Send the command to the handler as before.
         var orderId = await _mediator.Send(command);
         var newOrderDto = await _mediator.Send(new GetOrderByIdQuery(orderId));
 
@@ -35,36 +62,30 @@ public class OrdersController : ControllerBase
         return Ok(orders);
     }
 
-    // --- ENDPOINT FOR USERS TO CANCEL ---
     [HttpPost("{id:guid}/cancel")]
     public async Task<IActionResult> CancelMyOrder(Guid id)
     {
-        // Note: The handler should verify that the calling user owns this order
         await _mediator.Send(new CancelOrderCommand(id));
         return NoContent();
     }
 
-    // --- ADMIN ENDPOINTS ---
     [HttpGet("admin")]
     [Authorize(Policy = "AdminOnly")]
-    public async Task<IActionResult> GetAllOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 10) // Add pagination
+    public async Task<IActionResult> GetAllOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var orders = await _mediator.Send(new GetAllOrdersQuery(page, pageSize));
         return Ok(orders);
     }
 
-    // --- ENDPOINT FOR ADMINS TO UPDATE STATUS ---
     [HttpPut("admin/{id:guid}/status")]
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> UpdateOrderStatus(Guid id, [FromBody] UpdateOrderStatusCommand command)
     {
         if (id != command.OrderId) return BadRequest("Mismatched Order ID.");
-
         await _mediator.Send(command);
         return NoContent();
     }
 
-    // --- NEW ENDPOINT FOR ADMINS TO SHIP AN ORDER ---
     public record ShipOrderRequest(string TrackingNumber);
 
     [HttpPost("admin/{id:guid}/ship")]
@@ -83,7 +104,6 @@ public class OrdersController : ControllerBase
         return NoContent();
     }
 
-    // --- VENDOR ENDPOINTS ---
     [HttpGet("vendor")]
     [Authorize(Policy = "VendorOnly")]
     public async Task<IActionResult> GetVendorOrders()

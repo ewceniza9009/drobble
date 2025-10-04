@@ -1,5 +1,5 @@
 // ---- File: src/clients/react-spa/src/pages/OrderConfirmationPage.tsx ----
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react'; // <-- 1. Import useRef
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import api from '../api/axios';
@@ -9,20 +9,25 @@ const OrderConfirmationPage = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
-    
+    const effectRan = useRef(false); // <-- 2. Add a ref to track if the effect has run
+
     // Get Order ID from either PayPal redirect or COD redirect
     const orderIdFromUrl = searchParams.get('orderId');
     const orderIdFromStorage = localStorage.getItem('drobbleOrderId');
     const finalOrderId = orderIdFromUrl || orderIdFromStorage;
 
     useEffect(() => {
-        const token = searchParams.get('token'); // From PayPal
-        const payerId = searchParams.get('PayerID'); // From PayPal
-        const isCod = !token; // If there's no token, we assume it's a COD order
+        // This check prevents the effect from running twice in development due to StrictMode
+        if (effectRan.current === true) {
+            return;
+        }
 
         const confirmOrder = async () => {
+            const token = searchParams.get('token');
+            const payerId = searchParams.get('PayerID');
+            const isCod = !token;
+
             if (isCod) {
-                // For COD, the order is already placed. Just show success.
                 if (!finalOrderId) {
                     setStatus('error');
                     toast.error("Could not find order information.");
@@ -30,7 +35,6 @@ const OrderConfirmationPage = () => {
                 }
                 setStatus('success');
             } else {
-                // For PayPal, we need to capture the payment.
                 if (!token || !payerId || !finalOrderId) {
                     toast.error("Payment information is incomplete.");
                     setStatus('error');
@@ -46,12 +50,17 @@ const OrderConfirmationPage = () => {
                     setStatus('error');
                 }
             }
-            // Clean up stored order ID
+            // Clean up the stored order ID only after the logic has completed
             localStorage.removeItem('drobbleOrderId');
         };
 
         confirmOrder();
-    }, [navigate, searchParams, finalOrderId]);
+
+        // 3. Mark that the effect has run
+        return () => {
+            effectRan.current = true;
+        };
+    }, [searchParams, finalOrderId, navigate]); // Dependencies remain the same
 
     if (status === 'processing') {
         return (
@@ -81,7 +90,6 @@ const OrderConfirmationPage = () => {
         );
     }
 
-    // Success state
     return (
         <div className="flex flex-col items-center justify-center text-center p-12 bg-white dark:bg-slate-800 rounded-xl shadow-lg">
             <FaCheckCircle className="text-6xl text-green-500 mb-6" />

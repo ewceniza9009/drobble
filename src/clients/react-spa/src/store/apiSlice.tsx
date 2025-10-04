@@ -26,7 +26,10 @@ interface Order {
   paymentMethod: string;
   shippingCost: number;
   items: { productId: string; quantity: number; price: number }[];
+  appliedPromoCode?: string; // It's optional as not all orders have one
+  discountAmount: number;
 }
+
 interface AdminUserDto {
   id: string;
   username: string;
