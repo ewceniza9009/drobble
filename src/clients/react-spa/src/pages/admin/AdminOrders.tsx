@@ -1,8 +1,8 @@
-// ---- Modify file: src/clients/react-spa/src/pages/admin/AdminOrders.tsx ----
+// ---- File: src/clients/react-spa/src/pages/admin/AdminOrders.tsx ----
 import { useGetAdminOrdersQuery, useShipOrderMutation, useCancelOrderMutation } from '../../store/apiSlice';
 import { toast } from 'react-hot-toast';
 import { formatCurrency } from '../../utils/formatting';
-import { FaShoppingBag, FaTruck, FaCheckCircle, FaTimesCircle, FaUser, FaCreditCard, FaMoneyBillWave, FaSync } from 'react-icons/fa';
+import { FaShoppingBag, FaTruck, FaCheckCircle, FaTimesCircle, FaUser, FaCreditCard, FaMoneyBillWave, FaSync, FaHourglassHalf, FaBox } from 'react-icons/fa';
 import { useState } from 'react';
 import Modal from '../../components/Modal';
 
@@ -15,8 +15,25 @@ interface Order {
     paymentMethod: string;
 }
 
+// Consistent StatusBadge component for orders
+const OrderStatusBadge = ({ status }: { status: string }) => {
+    const statusConfig: { [key: string]: { class: string; icon: JSX.Element } } = {
+        Pending: { class: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300', icon: <FaHourglassHalf /> },
+        Paid: { class: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300', icon: <FaCreditCard /> },
+        Shipped: { class: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300', icon: <FaTruck /> },
+        Delivered: { class: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300', icon: <FaBox /> },
+        Cancelled: { class: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300', icon: <FaTimesCircle /> },
+        Refunded: { class: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300', icon: <FaMoneyBillWave /> },
+    };
+    const config = statusConfig[status] || statusConfig.Pending;
+    return (
+        <span className={`px-2 py-1 text-xs font-semibold rounded-full inline-flex items-center gap-1.5 ring-1 ring-inset ${config.class} ring-opacity-30`}>
+            {config.icon} {status}
+        </span>
+    );
+};
+
 const AdminOrders = () => {
-    // ** THE FIX IS HERE (Step 1) **: Destructure the refetch function and isFetching state.
     const { data, error, isLoading, refetch, isFetching } = useGetAdminOrdersQuery();
     const [shipOrder, { isLoading: isShipping }] = useShipOrderMutation();
     const [cancelOrder, { isLoading: isCancelling }] = useCancelOrderMutation();
@@ -87,21 +104,59 @@ const AdminOrders = () => {
     if (error) return <div className="max-w-7xl mx-auto px-4 py-8"><p className="text-red-500">Error loading orders.</p></div>;
 
     const orders = data?.items || [];
+    const totalOrders = orders.length;
+    const pendingOrders = orders.filter(o => o.status === 'Pending').length;
+    const paidOrders = orders.filter(o => o.status === 'Paid').length;
+    const shippedOrders = orders.filter(o => o.status === 'Shipped').length;
+
 
     return (
-        <div className="max-w-7xl mx-4 px-4 pb-6 dark:border-slate-700 border rounded-xl">
-            {/* ** THE FIX IS HERE (Step 2) **: Added a header with a Refresh button */}
-            <div className="flex justify-between items-center my-6">
-                <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100">Order Management</h1>
-                <button
-                    onClick={() => refetch()}
-                    disabled={isFetching}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
-                >
-                    <FaSync className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
-                    Refresh
-                </button>
+        <div className="max-w-7xl mx-auto px-4">
+             {/* Header Section */}
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-700 mb-8">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center">
+                    <div className="flex items-center space-x-4">
+                         <div className="bg-white dark:bg-slate-700 p-3 rounded-lg shadow-sm">
+                            <FaShoppingBag className="text-3xl text-green-600" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100">Order Management</h1>
+                            <p className="text-gray-600 dark:text-slate-400 mt-1">View and process customer orders</p>
+                        </div>
+                    </div>
+                     <div className="flex items-center space-x-4 mt-4 lg:mt-0">
+                        <button
+                            onClick={() => refetch()}
+                            disabled={isFetching}
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
+                        >
+                            <FaSync className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
+                            Refresh
+                        </button>
+                    </div>
+                </div>
             </div>
+            
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700">
+                    <p className="text-sm font-medium text-gray-600 dark:text-slate-400">Total Orders</p>
+                    <p className="text-2xl font-bold text-gray-800 dark:text-slate-100">{totalOrders}</p>
+                </div>
+                 <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700">
+                    <p className="text-sm font-medium text-gray-600 dark:text-slate-400">Pending</p>
+                    <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{pendingOrders}</p>
+                </div>
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700">
+                    <p className="text-sm font-medium text-gray-600 dark:text-slate-400">Ready to Ship</p>
+                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{paidOrders}</p>
+                </div>
+                 <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-slate-700">
+                    <p className="text-sm font-medium text-gray-600 dark:text-slate-400">Shipped</p>
+                    <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{shippedOrders}</p>
+                </div>
+            </div>
+
 
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
@@ -133,7 +188,7 @@ const AdminOrders = () => {
                                         {order.paymentMethod === 'CashOnDelivery' ? 'COD' : order.paymentMethod}
                                     </div>
                                 </td>
-                                <td className="px-6 py-4"><span className={`px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300`}>{order.status}</span></td>
+                                <td className="px-6 py-4"><OrderStatusBadge status={order.status} /></td>
                                 <td className="px-6 py-4 text-right font-semibold text-gray-800 dark:text-slate-200">{formatCurrency(order.totalAmount)}</td>
                                 
                                 <td className="px-6 py-4 text-center">
