@@ -1,0 +1,77 @@
+[{
+  "_id": {
+    "$oid": "68e16e032170bad13be7054f"
+  },
+  "CreatedAt": {
+    "$date": "2025-10-04T18:57:05.892Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-04T18:57:05.892Z"
+  },
+  "Name": "Home & Kitchen",
+  "Slug": "home-kitchen",
+  "Description": "Everything for your home and kitchen.",
+  "ParentId": null
+},
+{
+  "_id": {
+    "$oid": "68e16e142170bad13be70550"
+  },
+  "CreatedAt": {
+    "$date": "2025-10-04T18:57:24.968Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-04T18:57:24.968Z"
+  },
+  "Name": "Kitchenware",
+  "Slug": "kitchenware",
+  "Description": "Tools and utensils for cooking.",
+  "ParentId": {
+    "$oid": "68e16e032170bad13be7054f"
+  }
+},
+{
+  "_id": {
+    "$oid": "68e16e142170bad13be70551"
+  },
+  "CreatedAt": {
+    "$date": "2025-10-04T18:57:24.982Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-04T18:57:24.982Z"
+  },
+  "Name": "Electronics",
+  "Slug": "electronics",
+  "Description": "Gadgets and electronic devices.",
+  "ParentId": null
+},
+{
+  "_id": {
+    "$oid": "68e16e142170bad13be70552"
+  },
+  "CreatedAt": {
+    "$date": "2025-10-04T18:57:24.984Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-04T20:03:44.436Z"
+  },
+  "Name": "Home Decor",
+  "Slug": "home-decor",
+  "Description": "Decorative items for your home.",
+  "ParentId": null
+},
+{
+  "_id": {
+    "$oid": "68e179f864754906b86d5ecd"
+  },
+  "CreatedAt": {
+    "$date": "2025-10-04T19:48:08.236Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-04T19:48:08.236Z"
+  },
+  "Name": "Apparell",
+  "Slug": "apparell",
+  "Description": "Fashion, Clothing and Current style trends",
+  "ParentId": null
+}]
