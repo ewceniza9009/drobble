@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import {
   useGetProductByIdQuery,
+  useGetCategoriesQuery,
   useCreateAdminProductMutation,
   useUpdateAdminProductMutation,
 } from "../../store/apiSlice";
@@ -49,6 +50,8 @@ const AdminProductEdit = () => {
     useUpdateAdminProductMutation();
   const isLoading = isLoadingProduct || isCreating || isUpdating;
 
+  const { data: categories = [], isLoading: isLoadingCategories } = useGetCategoriesQuery();
+
   // Populate form if we are editing
   useEffect(() => {
     if (isEditing && productData) {
@@ -56,7 +59,7 @@ const AdminProductEdit = () => {
       setDescription(productData.description);
       setPrice(productData.price);
       setStock(productData.stock || 0);
-      setCategoryId(productData.categoryId || "6745f5a2f372d8a156391d18");
+      setCategoryId(productData.categoryId || "");
       setIsFeatured(productData.isFeatured || false);
       setSku(productData.sku || "");
       setWeight(productData.weight || 0);
@@ -66,7 +69,7 @@ const AdminProductEdit = () => {
           : [""]
       );
     } else if (!isEditing) {
-      setCategoryId("6745f5a2f372d8a156391d18");
+      setCategoryId("");
       setSku(`SKU-${Date.now().toString().slice(-6)}`);
     }
   }, [productData, isEditing]);
@@ -91,6 +94,11 @@ const AdminProductEdit = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!categoryId) {
+        toast.error("Please select a category.");
+        return;
+    }
+
     if (price <= 0 || stock < 0) {
       toast.error("Price must be positive and Stock cannot be negative.");
       return;
@@ -328,24 +336,22 @@ const AdminProductEdit = () => {
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                        Category
-                      </label>
-                      <select
-                        value={categoryId}
-                        onChange={(e) => setCategoryId(e.target.value)}
-                        className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
-                      >
-                        <option value="6745f5a2f372d8a156391d18">
-                          Kitchenware
-                        </option>
-                        <option value="6745f5a2f372d8a156391d19">
-                          Home Decor
-                        </option>
-                        <option value="6745f5a2f372d8a156391d20">
-                          Electronics
-                        </option>
-                      </select>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                            Category
+                        </label>
+                        <select
+                            value={categoryId}
+                            onChange={(e) => setCategoryId(e.target.value)}
+                            className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg ..."
+                            disabled={isLoadingCategories}
+                        >
+                            <option value="">{isLoadingCategories ? 'Loading...' : 'Select a Category'}</option>
+                            {categories.map((cat) => (
+                                <option key={cat.id} value={cat.id}>
+                                    {cat.name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                     <div className="md:col-span-2">
                       <label className="flex items-center space-x-3">

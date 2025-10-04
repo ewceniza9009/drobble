@@ -141,7 +141,7 @@ const ProductDetailPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-4">
       {/* Navigation */}
-      <div className="py-6 mb-2">
+      <div className="mb-8">
         <Link
           to="/"
           className="inline-flex items-center text-green-600 hover:text-green-700 font-medium transition-colors duration-300 group"
@@ -217,7 +217,7 @@ const ProductDetailPage = () => {
                 </span>
               </div>
               
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-slate-100 mb-4 leading-tight">
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-slate-100 mb-4 leading-tight">
                 {product.name}
               </h1>
               
@@ -250,9 +250,6 @@ const ProductDetailPage = () => {
 
             {/* Quantity Selector */}
             <div>
-              <label className="block text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">
-                Quantity
-              </label>
               <div className="flex items-center space-x-4">
                 <div className="flex items-center border-2 border-gray-200 dark:border-slate-600 rounded-xl overflow-hidden">
                   <button

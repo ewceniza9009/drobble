@@ -1,6 +1,6 @@
 // ---- File: src/clients/react-spa/src/layouts/AdminLayout.tsx ----
 import { NavLink, Outlet } from 'react-router-dom';
-import { FaUsers, FaBox, FaBars, FaTimes, FaShoppingBag, FaTicketAlt } from 'react-icons/fa';
+import { FaUsers, FaBox, FaBars, FaTimes, FaShoppingBag, FaTicketAlt, FaTags } from 'react-icons/fa';
 import { FaComments } from 'react-icons/fa6';
 import { useState } from 'react';
 
@@ -85,6 +85,14 @@ const AdminLayout = () => {
             >
               <FaShoppingBag className="mr-3" />
               <span>Order Management</span>
+            </NavLink>
+             <NavLink
+                to="/admin/categories"
+                className={({ isActive }) => `${baseLinkClass} ${isActive ? activeLinkClass : ''}`}
+                onClick={closeSidebar}
+            >
+                <FaTags className="mr-3" />
+                <span>Product Categories</span>
             </NavLink>
             <NavLink
               to="/admin/promotions"

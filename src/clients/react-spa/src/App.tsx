@@ -18,6 +18,8 @@ import VendorReviews from './pages/vendor/VendorReviews';
 import Footer from './components/Footer';
 import ThemeToggle from './components/ThemeToggle';
 import toast from 'react-hot-toast/headless';
+import AdminCategories from './pages/admin/AdminCategories';
+import AdminCategoryEdit from './pages/admin/AdminCategoryEdit';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
@@ -128,6 +130,9 @@ function App() {
                 <Route path="reviews" element={<AdminReviews />} />
                 <Route path="products/new" element={<AdminProductEdit />} />
                 <Route path="products/edit/:productId" element={<AdminProductEdit />} />
+                <Route path="categories" element={<AdminCategories />} />
+                <Route path="categories/new" element={<AdminCategoryEdit />} />
+                <Route path="categories/edit/:categoryId" element={<AdminCategoryEdit />} />
                 <Route path="promotions" element={<AdminPromotions />} />
                 <Route path="promotions/new" element={<AdminPromotionCreate />} />
               </Route>

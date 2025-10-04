@@ -8,7 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using System.Security.Claims;    
+using System.Security.Claims;
+using Drobble.ProductCatalog.Domain.Entities;
+using System.Text.Json;
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
@@ -76,8 +78,63 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
 
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var productRepository = services.GetRequiredService<IProductRepository>();
+        if (!await productRepository.HasCategoriesAsync())
+        {
+            logger.LogInformation("Seeding categories into the database...");
+            var categoryData = await File.ReadAllTextAsync("categories.seed.json");
+            
+            var categoriesToSeed = JsonSerializer.Deserialize<List<CategorySeedDto>>(categoryData);
+
+            if (categoriesToSeed is not null)
+            {
+                var parentCategory = categoriesToSeed.First(c => c.Name == "Home & Kitchen");
+                var parentEntity = new Category { Name = parentCategory.Name, Description = parentCategory.Description, Slug = parentCategory.Slug };
+                await productRepository.AddCategoryAsync(parentEntity);
+
+                foreach (var catDto in categoriesToSeed)
+                {
+                    if (catDto.ParentId == "INJECT_PARENT_ID")
+                    {
+                        var category = new Category
+                        {
+                            Name = catDto.Name,
+                            Description = catDto.Description,
+                            Slug = catDto.Slug,
+                            ParentId = parentEntity.Id     
+                        };
+                        await productRepository.AddCategoryAsync(category);
+                    }
+                    else if (catDto.ParentId is null && catDto.Name != parentCategory.Name)
+                    {
+                         var category = new Category
+                        {
+                            Name = catDto.Name,
+                            Description = catDto.Description,
+                            Slug = catDto.Slug
+                        };
+                        await productRepository.AddCategoryAsync(category);
+                    }
+                }
+            }
+            logger.LogInformation("Database seeding completed.");
+        }
+        else
+        {
+            logger.LogInformation("Categories already exist. Skipping seed.");
+        }
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred during database seeding.");
+    }
+}
 app.UseAuthentication();
 
 app.Use(async (context, next) =>

@@ -111,6 +111,46 @@
 
     // --- ALL ORIGINAL PUBLIC & SECURE ROUTES ---
     {
+      "UpstreamPathTemplate": "/api/categories/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5220
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/categories/{everything}"
+    },
+    // POST /api/categories (Admin Only)
+    {
+      "UpstreamPathTemplate": "/api/categories",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5220
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/categories",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+    // PUT & DELETE /api/categories/{id} (Admin Only)
+    {
+      "UpstreamPathTemplate": "/api/categories/{id}",
+      "UpstreamHttpMethod": [ "PUT", "DELETE" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5220
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/categories/{id}",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+    {
       "UpstreamPathTemplate": "/api/products",
       "UpstreamHttpMethod": [ "GET", "POST" ],
       "DownstreamScheme": "http",

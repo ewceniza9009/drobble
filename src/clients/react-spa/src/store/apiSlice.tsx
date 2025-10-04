@@ -15,6 +15,13 @@ export interface Product {
   sku?: string;          
   weight?: number;       
 }
+export interface Category {
+    id: string;
+    name: string;
+    description?: string;
+    slug: string;
+    parentId?: string;
+}
 interface PaginatedResponse<T> {
   items: T[];
   total: number;
@@ -146,13 +153,56 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Product', 'Order', 'Review', 'AdminUser', 'PendingReview', 'AdminOrder', 'Promotion'],
+  tagTypes: ['Product', 'Category', 'Order', 'Review', 'AdminUser', 'PendingReview', 'AdminOrder', 'Promotion'],
   endpoints: (builder) => ({
 
     // --- PUBLIC & USER ENDPOINTS ---
-    getProducts: builder.query<PaginatedResponse<Product>, { page: number; pageSize: number }>({
-      query: ({ page, pageSize }) => `/products?page=${page}&pageSize=${pageSize}`,
+    getProducts: builder.query<PaginatedResponse<Product>, { page: number; pageSize: number; categoryId?: string; sortBy?: string }>({
+      query: ({ page, pageSize, categoryId, sortBy }) => {
+        const params = new URLSearchParams({
+          page: String(page),
+          pageSize: String(pageSize),
+        });
+        if (categoryId) {
+          params.append('categoryId', categoryId);
+        }
+        if (sortBy) {
+          params.append('sort', sortBy);
+        }
+        return `/products?${params.toString()}`;
+      },
       providesTags: (result) => result ? [...result.items.map(({ id }) => ({ type: 'Product' as const, id })), { type: 'Product', id: 'LIST' }] : [{ type: 'Product', id: 'LIST' }],
+    }),
+    getCategories: builder.query<Category[], void>({
+        query: () => '/categories',
+        providesTags: (result) => result ? [...result.map(({ id }) => ({ type: 'Category' as const, id })), { type: 'Category', id: 'LIST' }] : [{ type: 'Category', id: 'LIST' }],
+    }),
+    getCategoryById: builder.query<Category, string>({
+        query: (id) => `/categories/${id}`,
+        providesTags: (_result, _error, id) => [{ type: 'Category', id }],
+    }),
+    createCategory: builder.mutation<Category, Partial<Category>>({
+        query: (newCategory) => ({
+            url: '/categories',
+            method: 'POST',
+            body: newCategory,
+        }),
+        invalidatesTags: [{ type: 'Category', id: 'LIST' }],
+    }),
+    updateCategory: builder.mutation<void, Category>({
+        query: (category) => ({
+            url: `/categories/${category.id}`,
+            method: 'PUT',
+            body: category,
+        }),
+        invalidatesTags: (_result, _error, arg) => [{ type: 'Category', id: arg.id }, { type: 'Category', id: 'LIST' }],
+    }),
+    deleteCategory: builder.mutation<void, string>({
+        query: (id) => ({
+            url: `/categories/${id}`,
+            method: 'DELETE',
+        }),
+        invalidatesTags: [{ type: 'Category', id: 'LIST' }],
     }),
     getFeaturedProducts: builder.query<Product[], void>({
         query: () => `/products?isFeatured=true&pageSize=8`,
@@ -273,6 +323,11 @@ export const apiSlice = createApi({
 
 export const {
   useGetProductsQuery,
+  useGetCategoriesQuery,
+  useGetCategoryByIdQuery, 
+  useCreateCategoryMutation, 
+  useUpdateCategoryMutation, 
+  useDeleteCategoryMutation, 
   useGetProductByIdQuery,
   useGetOrderByIdQuery,
   useGetAdminUsersQuery,

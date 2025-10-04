@@ -11,12 +11,24 @@ namespace Drobble.ProductCatalog.Infrastructure.Persistence;
 public class ProductRepository : IProductRepository
 {
     private readonly IMongoCollection<Product> _productsCollection;
+    private readonly IMongoCollection<Category> _categoriesCollection;   
 
     public ProductRepository(IOptions<MongoDbSettings> mongoDbSettings)
     {
         var mongoClient = new MongoClient(mongoDbSettings.Value.ConnectionString);
         var mongoDatabase = mongoClient.GetDatabase(mongoDbSettings.Value.DatabaseName);
         _productsCollection = mongoDatabase.GetCollection<Product>(nameof(Product).ToLower() + "s");
+        _categoriesCollection = mongoDatabase.GetCollection<Category>(nameof(Category).ToLower() + "s");
+    }
+
+    public async Task AddCategoryAsync(Category category, CancellationToken cancellationToken = default)
+    {
+        await _categoriesCollection.InsertOneAsync(category, null, cancellationToken);
+    }
+
+    public async Task<IEnumerable<Category>> GetAllCategoriesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _categoriesCollection.Find(_ => true).ToListAsync(cancellationToken);
     }
 
     public async Task<Product?> GetByIdAsync(ObjectId id, CancellationToken cancellationToken = default)
@@ -29,7 +41,7 @@ public class ProductRepository : IProductRepository
         await _productsCollection.InsertOneAsync(product, null, cancellationToken);
     }
 
-    public async Task<(IEnumerable<Product> Products, int Total)> GetAllAsync(int page, int pageSize, bool? isFeatured, string? categoryId, string? excludeId, CancellationToken cancellationToken = default)
+    public async Task<(IEnumerable<Product> Products, int Total)> GetAllAsync(int page, int pageSize, bool? isFeatured, string? categoryId, string? excludeId, CancellationToken cancellationToken = default)
     {
         var builder = Builders<Product>.Filter;
         var filter = builder.Eq(p => p.IsActive, true);
@@ -46,8 +58,8 @@ public class ProductRepository : IProductRepository
 
         if (!string.IsNullOrEmpty(excludeId) && ObjectId.TryParse(excludeId, out var exId))
         {
-            filter &= builder.Ne(p => p.Id, exId);     
-        }
+            filter &= builder.Ne(p => p.Id, exId);
+        }
 
         var total = await _productsCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
 
@@ -94,8 +106,28 @@ public class ProductRepository : IProductRepository
 
         return cursor.ToEnumerable().Select(doc => doc["_id"].AsObjectId.ToString());
     }
-}
 
+    public async Task<bool> HasCategoriesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _categoriesCollection.CountDocumentsAsync(FilterDefinition<Category>.Empty, cancellationToken: cancellationToken) > 0;
+    }
+
+    public async Task<Category?> GetCategoryByIdAsync(ObjectId id, CancellationToken cancellationToken = default)
+    {
+        return await _categoriesCollection.Find(c => c.Id == id).FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task UpdateCategoryAsync(Category category, CancellationToken cancellationToken = default)
+    {
+        await _categoriesCollection.ReplaceOneAsync(c => c.Id == category.Id, category, cancellationToken: cancellationToken);
+    }
+
+    public async Task DeleteCategoryAsync(ObjectId id, CancellationToken cancellationToken = default)
+    {
+        await _categoriesCollection.DeleteOneAsync(c => c.Id == id, cancellationToken);
+    }
+
+}
 public class MongoDbSettings
 {
     public string ConnectionString { get; set; }

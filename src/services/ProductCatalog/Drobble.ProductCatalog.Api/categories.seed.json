@@ -1,0 +1,24 @@
+[
+  {
+    "Name": "Home & Kitchen",
+    "Description": "Everything for your home and kitchen.",
+    "Slug": "home-kitchen"
+  },
+  {
+    "Name": "Kitchenware",
+    "Description": "Tools and utensils for cooking.",
+    "Slug": "kitchenware",
+    "ParentId": "INJECT_PARENT_ID" 
+  },
+  {
+    "Name": "Electronics",
+    "Description": "Gadgets and electronic devices.",
+    "Slug": "electronics"
+  },
+  {
+    "Name": "Home Decor",
+    "Description": "Decorative items for your home.",
+    "Slug": "home-decor",
+    "ParentId": "INJECT_PARENT_ID"
+  }
+]
