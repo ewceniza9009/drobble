@@ -41,7 +41,7 @@ public class ProductRepository : IProductRepository
         await _productsCollection.InsertOneAsync(product, null, cancellationToken);
     }
 
-    public async Task<(IEnumerable<Product> Products, int Total)> GetAllAsync(int page, int pageSize, bool? isFeatured, string? categoryId, string? excludeId, CancellationToken cancellationToken = default)
+    public async Task<(IEnumerable<Product> Products, int Total)> GetAllAsync(int page, int pageSize, bool? isFeatured, string? categoryId, string? sort, string? excludeId, CancellationToken cancellationToken = default)
     {
         var builder = Builders<Product>.Filter;
         var filter = builder.Eq(p => p.IsActive, true);
@@ -61,12 +61,37 @@ public class ProductRepository : IProductRepository
             filter &= builder.Ne(p => p.Id, exId);
         }
 
+        SortDefinition<Product> sortDefinition = null;
+
+        switch (sort?.ToLower())
+        {
+            case "newest":
+                sortDefinition = Builders<Product>.Sort.Descending(p => p.CreatedAt);
+                break;
+            case "price_asc":
+                sortDefinition = Builders<Product>.Sort.Ascending(p => p.Price);
+                break;
+            case "price_desc":
+                sortDefinition = Builders<Product>.Sort.Descending(p => p.Price);
+                break;
+            default:
+                sortDefinition = Builders<Product>.Sort.Descending(p => p.CreatedAt);
+                break;
+        }
+
         var total = await _productsCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
 
-        var products = await _productsCollection.Find(filter)
-          .Skip((page - 1) * pageSize)
-          .Limit(pageSize)
-          .ToListAsync(cancellationToken);
+        var findQuery = _productsCollection.Find(filter);
+
+        if (sortDefinition != null)
+        {
+            findQuery = findQuery.Sort(sortDefinition);
+        }
+
+        var products = await findQuery
+            .Skip((page - 1) * pageSize)
+            .Limit(pageSize)
+            .ToListAsync(cancellationToken);
 
         return (products, (int)total);
     }

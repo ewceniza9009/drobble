@@ -33,10 +33,11 @@ public class ProductsController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] bool? isFeatured = null,
         [FromQuery] string? categoryId = null,
+        [FromQuery] string? sort = null,
         [FromQuery] string? exclude = null)
     {
         // Pass all parameters to the MediatR query
-        var result = await _mediator.Send(new GetProductsQuery(page, pageSize, isFeatured, categoryId, exclude));
+        var result = await _mediator.Send(new GetProductsQuery(page, pageSize, isFeatured, categoryId, sort, exclude));
         return Ok(result);
     }
 

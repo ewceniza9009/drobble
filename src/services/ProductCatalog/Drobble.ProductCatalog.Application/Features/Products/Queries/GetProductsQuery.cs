@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Drobble.ProductCatalog.Application.Features.Products.Queries;
 
-public record GetProductsQuery(int Page, int PageSize, bool? IsFeatured, string? CategoryId, string? ExcludeId) : IRequest<PaginatedResult<ProductDto>>;
+public record GetProductsQuery(int Page, int PageSize, bool? IsFeatured, string? CategoryId, string? sort, string? ExcludeId) : IRequest<PaginatedResult<ProductDto>>;
 
 public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, PaginatedResult<ProductDto>>
 {
@@ -16,7 +16,7 @@ public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, Paginat
 
     public async Task<PaginatedResult<ProductDto>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
-        var (products, total) = await _productRepository.GetAllAsync(request.Page, request.PageSize, request.IsFeatured, request.CategoryId, request.ExcludeId, cancellationToken);
+        var (products, total) = await _productRepository.GetAllAsync(request.Page, request.PageSize, request.IsFeatured, request.CategoryId, request.sort, request.ExcludeId, cancellationToken);
 
         var productDtos = products.Select(p => new ProductDto
         {
