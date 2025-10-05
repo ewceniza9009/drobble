@@ -1,6 +1,7 @@
 # ---- File: tye.yml ----
 name: drobble
 services:
+
 - name: product-catalog
   project: src/services/ProductCatalog/Drobble.ProductCatalog.Api/Drobble.ProductCatalog.Api.csproj
   bindings:

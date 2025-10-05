@@ -6,6 +6,8 @@ import { store } from './store/store'; // Import our store
 import './index.css';
 import App from './App.tsx';
 
+import 'leaflet/dist/leaflet.css';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}> {/* Add Provider wrapper */}

@@ -16,6 +16,7 @@ import {
     FaMoneyBillWave
 } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatting';
+import AddressMap from '../components/AddressMap';
 
 // Interfaces
 interface ProductDetail extends Omit<Product, 'imageUrls'> {
@@ -157,6 +158,13 @@ const CheckoutPage = () => {
         setShippingInfo(prev => ({ ...prev, [field]: value }));
     };
 
+    const handleAddressUpdateFromMap = (addressDetails: Partial<ShippingInfo>) => {
+        setShippingInfo(prev => ({
+            ...prev,
+            ...addressDetails
+        }));
+    };
+
     const handleProductClick = (productId: string) => {
         navigate(`/products/${productId}`);
     };
@@ -283,6 +291,10 @@ const CheckoutPage = () => {
                                 </div>
                                 <div>
                                     <h4 className="text-lg font-medium mb-4 text-gray-800 dark:text-slate-200">Shipping Address</h4>
+                                    <div className="mb-6">
+                                        <p className="text-sm text-gray-600 dark:text-slate-400 mb-2">Click on the map to set your location, or fill in the details below.</p>
+                                        <AddressMap onAddressSelect={handleAddressUpdateFromMap} />
+                                    </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">First Name *</label>
