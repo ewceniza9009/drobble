@@ -342,7 +342,7 @@ const AdminProductEdit = () => {
                         <select
                             value={categoryId}
                             onChange={(e) => setCategoryId(e.target.value)}
-                            className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg ..."
+                            className="w-full p-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-200"
                             disabled={isLoadingCategories}
                         >
                             <option value="">{isLoadingCategories ? 'Loading...' : 'Select a Category'}</option>

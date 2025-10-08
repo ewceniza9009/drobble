@@ -213,7 +213,7 @@ const ProductDetailPage = () => {
                   In Stock • {product.stock} available
                 </span>
                 <span className="text-sm text-gray-500 dark:text-slate-400 font-medium">
-                  SKU: {product.sku!.toUpperCase()}
+                  SKU: {product.sku!}
                 </span>
               </div>
               
