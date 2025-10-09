@@ -12,8 +12,8 @@ export interface Product {
   categoryId: string;
   imageUrls: string[]; 
   isFeatured?: boolean;
-  sku?: string;          
-  weight?: number;       
+  sku?: string;         
+  weight?: number;      
 }
 export interface Category {
     id: string;
@@ -35,7 +35,7 @@ interface Order {
   paymentMethod: string;
   shippingCost: number;
   items: { productId: string; quantity: number; price: number }[];
-  appliedPromoCode?: string; // It's optional as not all orders have one
+  appliedPromoCode?: string;
   discountAmount: number;
 }
 
@@ -308,6 +308,12 @@ export const apiSlice = createApi({
             body: args,
         }),
     }),
+    reindexProducts: builder.mutation<{ message: string }, void>({
+      query: () => ({
+        url: 'admin/products/reindex',
+        method: 'POST',
+      }),
+    }),
 
     // --- VENDOR ENDPOINTS ---
     getVendorProducts: builder.query<PaginatedResponse<Product>, { page?: number; pageSize?: number }>({
@@ -350,4 +356,5 @@ export const {
   useGetAdminPromotionsQuery,
   useCreateAdminPromotionMutation,
   useValidatePromoCodeMutation,
+  useReindexProductsMutation, // This is now correctly exported
 } = apiSlice;

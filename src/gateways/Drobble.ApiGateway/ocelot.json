@@ -68,6 +68,19 @@
       "DownstreamPathTemplate": "/api/v1/reviews/admin/{everything}",
       "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
     },
+    {
+      "UpstreamPathTemplate": "/api/admin/products/reindex",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5220
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v1/products/admin/reindex",
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
     // --- VENDOR ROUTES ---
     {
       "UpstreamPathTemplate": "/api/vendor/products/{everything}",

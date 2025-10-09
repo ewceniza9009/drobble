@@ -17,6 +17,7 @@ builder.Services.AddMassTransit(busConfig =>
 {
     busConfig.AddConsumer<ProductCreatedConsumer>();
     busConfig.AddConsumer<ProductUpdatedConsumer>();
+    busConfig.AddConsumer<ProductsReindexConsumer>();      
     busConfig.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host(builder.Configuration["RabbitMQ:Host"], "/", h =>

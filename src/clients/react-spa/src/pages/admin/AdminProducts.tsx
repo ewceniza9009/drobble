@@ -1,11 +1,32 @@
 // ---- File: src/pages/admin/AdminProducts.tsx ----
 import { Link } from 'react-router-dom';
-import { useGetProductsQuery } from '../../store/apiSlice';
+import { useGetProductsQuery, useReindexProductsMutation } from '../../store/apiSlice';
 import { formatCurrency } from '../../utils/formatting';
-import { FaPlus, FaEdit, FaBox, FaSearch, FaFilter, FaChartLine, FaDollarSign, FaWarehouse, FaEye } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaBox, FaSearch, FaFilter, FaChartLine, FaDollarSign, FaWarehouse, FaEye, FaSync } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
 
 const AdminProducts = () => {
   const { data, error, isLoading } = useGetProductsQuery({ page: 1, pageSize: 999 });
+  const [reindexProducts, { isLoading: isReindexing }] = useReindexProductsMutation();
+  const handleReindex = async () => {
+    if (!window.confirm("Are you sure you want to re-index all products? ...")) {
+      return; 
+    }
+
+    const loadingToastId = toast.loading('Starting re-index job...');
+    console.log("Loading toast should be visible now.");
+
+    try {
+      await reindexProducts().unwrap();
+      
+      toast.success('Successfully queued all products for re-indexing!', { id: loadingToastId });
+      console.log("API call succeeded. Success toast shown.");
+
+    } catch (err) {
+      toast.error('Failed to start re-index job.', { id: loadingToastId });
+      console.error("API call failed:", err);
+    }
+  };
 
   if (isLoading) return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -46,13 +67,24 @@ const AdminProducts = () => {
               <p className="text-gray-600 dark:text-slate-400 mt-1">Manage your product catalog and inventory</p>
             </div>
           </div>
-          <Link 
-            to="/admin/products/new" 
-            className="mt-4 lg:mt-0 flex items-center space-x-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all font-medium"
-          >
-            <FaPlus />
-            <span>Add New Product</span>
-          </Link>
+          <div className="flex items-center space-x-2 mt-4 lg:mt-0">
+            {/* --- 5. ADD THE RE-INDEX BUTTON --- */}
+            <button
+              onClick={handleReindex}
+              disabled={isReindexing}
+              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-all font-medium disabled:bg-gray-400"
+            >
+              <FaSync className={isReindexing ? 'animate-spin' : ''} />
+              <span>{isReindexing ? 'Re-indexing...' : 'Re-index Search'}</span>
+            </button>
+            <Link 
+              to="/admin/products/new" 
+              className="flex items-center space-x-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all font-medium"
+            >
+              <FaPlus />
+              <span>Add New Product</span>
+            </Link>
+          </div>
         </div>
       </div>
 

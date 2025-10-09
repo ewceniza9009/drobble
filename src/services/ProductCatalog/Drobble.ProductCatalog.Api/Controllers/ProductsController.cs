@@ -1,6 +1,8 @@
 ﻿using Drobble.ProductCatalog.Application.Features.Commands;
 using Drobble.ProductCatalog.Application.Features.Products.Commands;
 using Drobble.ProductCatalog.Application.Features.Products.Queries;
+using Drobble.Shared.EventBus.Events;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +13,49 @@ public class ProductsController : ControllerBase
 {
     private readonly ILogger<ProductsController> _logger;
     private readonly IMediator _mediator;
+    private readonly IPublishEndpoint _publishEndpoint; // --- 3. INJECT THE PUBLISH ENDPOINT ---
 
-    public ProductsController(ILogger<ProductsController> logger, IMediator mediator)
+    public ProductsController(ILogger<ProductsController> logger, IMediator mediator, IPublishEndpoint publishEndpoint)
     {
         _mediator = mediator;
         _logger = logger;
+        _publishEndpoint = publishEndpoint; // --- 4. ASSIGN IT ---
+    }
+
+    [HttpPost("admin/reindex")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> ReindexAllProducts()
+    {
+        _logger.LogInformation("Re-index request received. Fetching all products from the database.");
+
+        // --- THIS IS THE FIX ---
+        var result = await _mediator.Send(new GetProductsQuery(1, int.MaxValue, null, null, null, null));
+        var allProducts = result.Items;
+        var total = result.Total;
+        // --- END OF FIX ---
+
+        if (!allProducts.Any())
+        {
+            return Ok("No products found to re-index.");
+        }
+
+        _logger.LogInformation("Found {TotalProducts} products. Publishing ProductsReindexRequestedEvent.", total);
+
+        var productsToReindex = allProducts.Select(p => new ProductReindexData
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Description = p.Description,
+            Price = p.Price,
+            ImageUrl = p.ImageUrls.FirstOrDefault()
+        }).ToList();
+
+        await _publishEndpoint.Publish(new ProductsReindexRequestedEvent
+        {
+            Products = productsToReindex
+        });
+
+        return Ok(new { Message = $"Re-indexing job for {total} products has been queued successfully." });
     }
 
     // --- PUBLIC ENDPOINTS ---
