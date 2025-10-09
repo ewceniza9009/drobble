@@ -2,6 +2,7 @@
 using Drobble.ProductCatalog.Application.Contracts;
 using Drobble.ProductCatalog.Application.Features.Products.Commands;
 using Drobble.ProductCatalog.Infrastructure.Persistence;
+using Drobble.ProductCatalog.Domain.Entities;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -9,15 +10,15 @@ using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Security.Claims;
-using Drobble.ProductCatalog.Domain.Entities;
-using System.Text.Json;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization; // Required for BSON deserialization
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
 MongoDbPersistence.Configure();
 
 var builder = WebApplication.CreateBuilder(args);
 
+// --- Service Registrations ---
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddHttpContextAccessor();
@@ -45,7 +46,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
-
             RoleClaimType = ClaimTypes.Role
         };
     });
@@ -74,6 +74,7 @@ builder.Services.AddSwaggerGen(options => {
 
 var app = builder.Build();
 
+// --- Seeding Logic and Middleware Pipeline ---
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -85,49 +86,76 @@ if (app.Environment.IsDevelopment())
     try
     {
         var productRepository = services.GetRequiredService<IProductRepository>();
+
+        // SEED CATEGORIES from MongoDB Extended JSON format
         if (!await productRepository.HasCategoriesAsync())
         {
-            logger.LogInformation("Seeding categories into the database...");
-            var categoryData = await File.ReadAllTextAsync("categories.seed.json");
-            
-            var categoriesToSeed = JsonSerializer.Deserialize<List<CategorySeedDto>>(categoryData);
+            logger.LogInformation("Seeding categories from BSON file...");
+            var categoryData = await File.ReadAllTextAsync("Data/DrobbleProductCatalog.categorys.json");
 
-            if (categoriesToSeed is not null)
+            var categoryDocs = BsonSerializer.Deserialize<List<BsonDocument>>(categoryData);
+
+            foreach (var doc in categoryDocs)
             {
-                var parentCategory = categoriesToSeed.First(c => c.Name == "Home & Kitchen");
-                var parentEntity = new Category { Name = parentCategory.Name, Description = parentCategory.Description, Slug = parentCategory.Slug };
-                await productRepository.AddCategoryAsync(parentEntity);
-
-                foreach (var catDto in categoriesToSeed)
+                var category = new Category
                 {
-                    if (catDto.ParentId == "INJECT_PARENT_ID")
-                    {
-                        var category = new Category
-                        {
-                            Name = catDto.Name,
-                            Description = catDto.Description,
-                            Slug = catDto.Slug,
-                            ParentId = parentEntity.Id     
-                        };
-                        await productRepository.AddCategoryAsync(category);
-                    }
-                    else if (catDto.ParentId is null && catDto.Name != parentCategory.Name)
-                    {
-                         var category = new Category
-                        {
-                            Name = catDto.Name,
-                            Description = catDto.Description,
-                            Slug = catDto.Slug
-                        };
-                        await productRepository.AddCategoryAsync(category);
-                    }
+                    Name = doc["Name"].AsString,
+                    Slug = doc["Slug"].AsString,
+                    Description = doc["Description"].AsString,
+                    ParentId = doc["ParentId"].IsBsonNull ? ObjectId.Empty : doc["ParentId"].AsObjectId
+                };
+
+                if (doc.Contains("UpdatedAt"))
+                {
+                    category.UpdatedAt = doc["UpdatedAt"].ToUniversalTime();
                 }
+
+                await productRepository.AddCategoryAsync(category);
             }
-            logger.LogInformation("Database seeding completed.");
+            logger.LogInformation("Category seeding completed.");
         }
         else
         {
             logger.LogInformation("Categories already exist. Skipping seed.");
+        }
+
+        // SEED PRODUCTS from MongoDB Extended JSON format
+        if (!await productRepository.HasProductsAsync())
+        {
+            logger.LogInformation("Seeding products from BSON file...");
+            var productData = await File.ReadAllTextAsync("Data/DrobbleProductCatalog.products.json");
+
+            var productDocs = BsonSerializer.Deserialize<List<BsonDocument>>(productData);
+
+            foreach (var doc in productDocs)
+            {
+                var product = new Product
+                {
+                    Name = doc["Name"].AsString,
+                    Description = doc["Description"].AsString,
+                    Price = doc["Price"].ToDecimal(),
+                    Stock = doc["Stock"].AsInt32,
+                    CategoryId = doc["CategoryId"].AsObjectId,
+                    VendorId = doc["VendorId"].IsBsonNull ? null : doc["VendorId"].AsGuid,
+                    ImageUrls = doc["ImageUrls"].AsBsonArray.Select(url => url.AsString).ToList(),
+                    IsActive = doc["IsActive"].AsBoolean,
+                    IsFeatured = doc["IsFeatured"].AsBoolean,
+                    Sku = doc.Contains("Sku") && !doc["Sku"].IsBsonNull ? doc["Sku"].AsString : null,
+                    Weight = doc.Contains("Weight") && !doc["Weight"].IsBsonNull ? doc["Weight"].ToDecimal() : 0
+                };
+
+                if (doc.Contains("UpdatedAt"))
+                {
+                    product.UpdatedAt = doc["UpdatedAt"].ToUniversalTime();
+                }
+
+                await productRepository.AddAsync(product);
+            }
+            logger.LogInformation("Product seeding completed.");
+        }
+        else
+        {
+            logger.LogInformation("Products already exist. Skipping seed.");
         }
     }
     catch (Exception ex)
@@ -135,27 +163,8 @@ if (app.Environment.IsDevelopment())
         logger.LogError(ex, "An error occurred during database seeding.");
     }
 }
+
 app.UseAuthentication();
-
-app.Use(async (context, next) =>
-{
-    if (context.User.Identity?.IsAuthenticated == true)
-    {
-        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-
-        var userId = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var role = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-
-        logger.LogInformation("DEBUG_AUTH (FIXED): User '{UserId}' authenticated. Role claim found: '{Role}'", userId ?? "NULL", role ?? "NONE");
-
-        foreach (var claim in context.User.Claims)
-        {
-            logger.LogInformation("DEBUG_AUTH (FIXED): Claim Type: {Type}, Value: {Value}", claim.Type, claim.Value);
-        }
-    }
-    await next();
-});
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();

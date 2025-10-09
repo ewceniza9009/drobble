@@ -11,7 +11,7 @@ namespace Drobble.ProductCatalog.Infrastructure.Persistence;
 public class ProductRepository : IProductRepository
 {
     private readonly IMongoCollection<Product> _productsCollection;
-    private readonly IMongoCollection<Category> _categoriesCollection;   
+    private readonly IMongoCollection<Category> _categoriesCollection;
 
     public ProductRepository(IOptions<MongoDbSettings> mongoDbSettings)
     {
@@ -19,21 +19,6 @@ public class ProductRepository : IProductRepository
         var mongoDatabase = mongoClient.GetDatabase(mongoDbSettings.Value.DatabaseName);
         _productsCollection = mongoDatabase.GetCollection<Product>(nameof(Product).ToLower() + "s");
         _categoriesCollection = mongoDatabase.GetCollection<Category>(nameof(Category).ToLower() + "s");
-    }
-
-    public async Task AddCategoryAsync(Category category, CancellationToken cancellationToken = default)
-    {
-        await _categoriesCollection.InsertOneAsync(category, null, cancellationToken);
-    }
-
-    public async Task<IEnumerable<Category>> GetAllCategoriesAsync(CancellationToken cancellationToken = default)
-    {
-        return await _categoriesCollection.Find(_ => true).ToListAsync(cancellationToken);
-    }
-
-    public async Task<Product?> GetByIdAsync(ObjectId id, CancellationToken cancellationToken = default)
-    {
-        return await _productsCollection.Find(p => p.Id == id).FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task AddAsync(Product product, CancellationToken cancellationToken = default)
@@ -96,6 +81,11 @@ public class ProductRepository : IProductRepository
         return (products, (int)total);
     }
 
+    public async Task<Product?> GetByIdAsync(ObjectId id, CancellationToken cancellationToken = default)
+    {
+        return await _productsCollection.Find(p => p.Id == id).FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<IEnumerable<Product>> GetByIdsAsync(IEnumerable<ObjectId> ids, CancellationToken cancellationToken = default)
     {
         var filter = Builders<Product>.Filter.In(p => p.Id, ids);
@@ -132,6 +122,22 @@ public class ProductRepository : IProductRepository
         return cursor.ToEnumerable().Select(doc => doc["_id"].AsObjectId.ToString());
     }
 
+    public async Task<bool> HasProductsAsync(CancellationToken cancellationToken = default)
+    {
+        // This is the new method needed for seeding
+        return await _productsCollection.CountDocumentsAsync(FilterDefinition<Product>.Empty, cancellationToken: cancellationToken) > 0;
+    }
+
+    public async Task AddCategoryAsync(Category category, CancellationToken cancellationToken = default)
+    {
+        await _categoriesCollection.InsertOneAsync(category, null, cancellationToken);
+    }
+
+    public async Task<IEnumerable<Category>> GetAllCategoriesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _categoriesCollection.Find(_ => true).ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> HasCategoriesAsync(CancellationToken cancellationToken = default)
     {
         return await _categoriesCollection.CountDocumentsAsync(FilterDefinition<Category>.Empty, cancellationToken: cancellationToken) > 0;
@@ -151,8 +157,8 @@ public class ProductRepository : IProductRepository
     {
         await _categoriesCollection.DeleteOneAsync(c => c.Id == id, cancellationToken);
     }
-
 }
+
 public class MongoDbSettings
 {
     public string ConnectionString { get; set; }

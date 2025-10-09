@@ -1,0 +1,349 @@
+[{
+  "_id": {
+    "$oid": "68dd60f54f1d81f187e0cc23"
+  },
+  "CreatedAt": {
+    "$date": "2025-10-01T17:12:21.388Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-01T17:12:21.388Z"
+  },
+  "Name": "Fleece Zip-Up Hoodie",
+  "Description": "A comfortable and warm midweight fleece hoodie with a full-zip front, kangaroo pocket, and drawstring hood. Perfect for layering.",
+  "Price": {
+    "$numberDecimal": "57"
+  },
+  "Stock": 95,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d18"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=2070"
+  ],
+  "IsActive": true,
+  "IsFeatured": false
+},
+{
+  "_id": {
+    "$oid": "68d8ec8b261a0a182b7ab21f"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:06:35.256Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-09-28T08:06:35.256Z"
+  },
+  "Name": "Noise-Cancelling Over-Ear Headphones",
+  "Description": "Wireless Bluetooth headphones with industry-leading active noise cancellation. Features up to 30 hours of battery life and a comfortable, lightweight design.",
+  "Price": {
+    "$numberDecimal": "349.99"
+  },
+  "Stock": 20,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d20"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=2070"
+  ],
+  "IsActive": true,
+  "IsFeatured": false
+},
+{
+  "_id": {
+    "$oid": "68d8ec48261a0a182b7ab21e"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:05:28.162Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-01T17:21:39.480Z"
+  },
+  "Name": "Smart Thermostat with Voice Control",
+  "Description": "Wi-Fi enabled smart thermostat that learns your schedule and programs itself to help save energy.",
+  "Price": {
+    "$numberDecimal": "249"
+  },
+  "Stock": 0,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d18"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.pexels.com/photos/8748955/pexels-photo-8748955.jpeg?auto=compress&cs=tinysrgb&w=600"
+  ],
+  "IsActive": true,
+  "IsFeatured": false
+},
+{
+  "_id": {
+    "$oid": "68d8ed22261a0a182b7ab222"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:09:06.333Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-09-28T08:30:35.875Z"
+  },
+  "Name": "Men's Classic Denim Jacket",
+  "Description": "A timeless denim jacket made from 100% heavyweight cotton. Features a button-front closure, two chest pockets, and a classic fit.",
+  "Price": {
+    "$numberDecimal": "89.99"
+  },
+  "Stock": 210,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d19"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=600"
+  ],
+  "IsActive": true,
+  "IsFeatured": true
+},
+{
+  "_id": {
+    "$oid": "68d8ebc8261a0a182b7ab21c"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:03:20.341Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-09-28T08:21:42.347Z"
+  },
+  "Name": "4K Ultra-Wide Curved Monitor",
+  "Description": "34-inch ultra-wide QHD curved monitor with a 144Hz refresh rate and 1ms response time. Perfect for immersive gaming and productivity.",
+  "Price": {
+    "$numberDecimal": "799.99"
+  },
+  "Stock": 32,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d20"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.pexels.com/photos/777001/pexels-photo-777001.jpeg?auto=compress&cs=tinysrgb&w=600"
+  ],
+  "IsActive": true,
+  "IsFeatured": false
+},
+{
+  "_id": {
+    "$oid": "68d8ed5b261a0a182b7ab223"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:10:03.537Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-09-28T08:10:03.537Z"
+  },
+  "Name": "Smart Watch with GPS",
+  "Description": "Advanced fitness and health tracking smartwatch with built-in GPS, heart rate monitor, and a vibrant AMOLED display. Water-resistant up to 50 meters.",
+  "Price": {
+    "$numberDecimal": "299"
+  },
+  "Stock": 95,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d18"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=1964"
+  ],
+  "IsActive": true,
+  "IsFeatured": true
+},
+{
+  "_id": {
+    "$oid": "68d8eb54261a0a182b7ab21b"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:01:24.335Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-08T20:58:18.440Z"
+  },
+  "Name": "Ergonomic Mechanical Keyboard",
+  "Description": "A split, ergonomic mechanical keyboard with Cherry MX Brown switches, fully programmable keys, and RGB backlighting. Designed for maximum comfort and typing efficiency.",
+  "Price": {
+    "$numberDecimal": "185.5"
+  },
+  "Stock": 75,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d18"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?q=80&w=2070",
+    "https://images.unsplash.com/photo-1587829741301-dc798b83add3?q=80&w=1165&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  ],
+  "IsActive": true,
+  "IsFeatured": true,
+  "Sku": "",
+  "Weight": {
+    "$numberDecimal": "0"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8ed8f261a0a182b7ab224"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:10:55.033Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-09-28T08:31:00.536Z"
+  },
+  "Name": "Insulated Stainless Steel Water Bottle",
+  "Description": "32 oz double-wall vacuum insulated water bottle. Keeps drinks cold for 24 hours or hot for 12 hours. BPA-free with a leak-proof lid.",
+  "Price": {
+    "$numberDecimal": "28.5"
+  },
+  "Stock": 500,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d18"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.pexels.com/photos/9889392/pexels-photo-9889392.jpeg?auto=compress&cs=tinysrgb&w=600"
+  ],
+  "IsActive": true,
+  "IsFeatured": false
+},
+{
+  "_id": {
+    "$oid": "68d8eced261a0a182b7ab221"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:08:13.829Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-09-28T08:08:13.829Z"
+  },
+  "Name": "Pour-Over Coffee Maker Set",
+  "Description": "Complete borosilicate glass coffee maker set including a dripper cone, carafe, and a box of 100 paper filters. Brew the perfect cup of coffee every morning.",
+  "Price": {
+    "$numberDecimal": "45.95"
+  },
+  "Stock": 0,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d18"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.unsplash.com/photo-1545665225-b23b99e4d45e?q=80&w=1974"
+  ],
+  "IsActive": true,
+  "IsFeatured": false
+},
+{
+  "_id": {
+    "$oid": "68d8edc7261a0a182b7ab225"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:11:51.903Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-08T21:08:20.273Z"
+  },
+  "Name": "Luxury Watch Tissot (Made in Cebu)",
+  "Description": "Compact and waterproof luxury wear watch with 12 hours of playtime. Delivers surprisingly powerful clock tick sound for its size.",
+  "Price": {
+    "$numberDecimal": "79.95"
+  },
+  "Stock": 120,
+  "CategoryId": {
+    "$oid": "68e6cdfe6702d5bb54349cbd"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.pexels.com/photos/277390/pexels-photo-277390.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.unsplash.com/photo-1620625515032-6ed0c1790c75?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1517463700628-5103184eac47?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  ],
+  "IsActive": true,
+  "IsFeatured": true,
+  "Sku": "SK1010202010331",
+  "Weight": {
+    "$numberDecimal": "0"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8ee14261a0a182b7ab226"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:13:08.631Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-09-28T08:13:08.631Z"
+  },
+  "Name": "Yoga Mat with Carrying Strap",
+  "Description": "Extra thick, non-slip yoga mat for all types of yoga, pilates, and floor exercises. Made from eco-friendly, non-toxic TPE material. Includes a convenient carry strap.",
+  "Price": {
+    "$numberDecimal": "35"
+  },
+  "Stock": 300,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d18"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.unsplash.com/photo-1591291621164-2c6367723315?q=80&w=2071"
+  ],
+  "IsActive": true,
+  "IsFeatured": false
+},
+{
+  "_id": {
+    "$oid": "68d8ecb6261a0a182b7ab220"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:07:18.302Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-09-28T08:45:47.600Z"
+  },
+  "Name": "Modern Minimalist Desk Lamp",
+  "Description": "Sleek LED desk lamp with adjustable brightness levels and color temperatures. Features a USB charging port and a minimalist aluminum design.",
+  "Price": {
+    "$numberDecimal": "45.95"
+  },
+  "Stock": 148,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d18"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.pexels.com/photos/3932957/pexels-photo-3932957.jpeg?auto=compress&cs=tinysrgb&w=600"
+  ],
+  "IsActive": true,
+  "IsFeatured": true
+},
+{
+  "_id": {
+    "$oid": "68d8ec0c261a0a182b7ab21d"
+  },
+  "CreatedAt": {
+    "$date": "2025-09-28T08:04:28.166Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-09-28T08:19:53.757Z"
+  },
+  "Name": "Handmade Leather Messenger Bag",
+  "Description": "A vintage-style messenger bag crafted from full-grain buffalo leather. Features a padded laptop compartment. Durable and stylish for everyday use.",
+  "Price": {
+    "$numberDecimal": "120"
+  },
+  "Stock": 110,
+  "CategoryId": {
+    "$oid": "6745f5a2f372d8a156391d20"
+  },
+  "VendorId": null,
+  "ImageUrls": [
+    "https://images.pexels.com/photos/1546912/pexels-photo-1546912.jpeg?auto=compress&cs=tinysrgb&w=600"
+  ],
+  "IsActive": true,
+  "IsFeatured": false
+}]

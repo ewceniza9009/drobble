@@ -1,0 +1,64 @@
+[{
+  "_id": {
+    "$oid": "68e6cdfd6702d5bb54349cbb"
+  },
+  "CreatedAt": {
+    "$date": "2025-10-08T20:47:57.968Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-08T20:47:57.968Z"
+  },
+  "Name": "Home & Kitchen",
+  "Slug": "home-kitchen",
+  "Description": "Everything for your home and kitchen.",
+  "ParentId": null
+},
+{
+  "_id": {
+    "$oid": "68e6cdfe6702d5bb54349cbc"
+  },
+  "CreatedAt": {
+    "$date": "2025-10-08T20:47:58.294Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-08T20:47:58.294Z"
+  },
+  "Name": "Kitchenware",
+  "Slug": "kitchenware",
+  "Description": "Tools and utensils for cooking.",
+  "ParentId": {
+    "$oid": "68e6cdfd6702d5bb54349cbb"
+  }
+},
+{
+  "_id": {
+    "$oid": "68e6cdfe6702d5bb54349cbd"
+  },
+  "CreatedAt": {
+    "$date": "2025-10-08T20:47:58.313Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-08T20:47:58.313Z"
+  },
+  "Name": "Electronics",
+  "Slug": "electronics",
+  "Description": "Gadgets and electronic devices.",
+  "ParentId": null
+},
+{
+  "_id": {
+    "$oid": "68e6cdfe6702d5bb54349cbe"
+  },
+  "CreatedAt": {
+    "$date": "2025-10-08T20:47:58.326Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-08T20:47:58.326Z"
+  },
+  "Name": "Home Decor",
+  "Slug": "home-decor",
+  "Description": "Decorative items for your home.",
+  "ParentId": {
+    "$oid": "68e6cdfd6702d5bb54349cbb"
+  }
+}]
