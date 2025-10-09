@@ -1,41 +1,43 @@
 [{
   "_id": {
-    "$oid": "68e6cdfd6702d5bb54349cbb"
+    "$oid": "68e7684194755f389721222e"
   },
   "CreatedAt": {
-    "$date": "2025-10-08T20:47:57.968Z"
+    "$date": "2025-10-09T07:46:09.720Z"
   },
   "UpdatedAt": {
-    "$date": "2025-10-08T20:47:57.968Z"
+    "$date": "2025-10-09T08:28:07.394Z"
   },
   "Name": "Home & Kitchen",
   "Slug": "home-kitchen",
   "Description": "Everything for your home and kitchen.",
-  "ParentId": null
+  "ParentId": {
+    "$oid": "000000000000000000000000"
+  }
 },
 {
   "_id": {
-    "$oid": "68e6cdfe6702d5bb54349cbc"
+    "$oid": "68e7684294755f389721222f"
   },
   "CreatedAt": {
-    "$date": "2025-10-08T20:47:58.294Z"
+    "$date": "2025-10-09T07:46:10.093Z"
   },
   "UpdatedAt": {
-    "$date": "2025-10-08T20:47:58.294Z"
+    "$date": "2025-10-09T08:28:16.483Z"
   },
   "Name": "Kitchenware",
   "Slug": "kitchenware",
   "Description": "Tools and utensils for cooking.",
   "ParentId": {
-    "$oid": "68e6cdfd6702d5bb54349cbb"
+    "$oid": "68e7684194755f389721222e"
   }
 },
 {
   "_id": {
-    "$oid": "68e6cdfe6702d5bb54349cbd"
+    "$oid": "68e7684294755f3897212230"
   },
   "CreatedAt": {
-    "$date": "2025-10-08T20:47:58.313Z"
+    "$date": "2025-10-09T07:46:10.109Z"
   },
   "UpdatedAt": {
     "$date": "2025-10-08T20:47:58.313Z"
@@ -43,14 +45,16 @@
   "Name": "Electronics",
   "Slug": "electronics",
   "Description": "Gadgets and electronic devices.",
-  "ParentId": null
+  "ParentId": {
+    "$oid": "000000000000000000000000"
+  }
 },
 {
   "_id": {
-    "$oid": "68e6cdfe6702d5bb54349cbe"
+    "$oid": "68e7684294755f3897212231"
   },
   "CreatedAt": {
-    "$date": "2025-10-08T20:47:58.326Z"
+    "$date": "2025-10-09T07:46:10.121Z"
   },
   "UpdatedAt": {
     "$date": "2025-10-08T20:47:58.326Z"
@@ -61,4 +65,19 @@
   "ParentId": {
     "$oid": "68e6cdfd6702d5bb54349cbb"
   }
+},
+{
+  "_id": {
+    "$oid": "68e7720c0b0905223b57ecc6"
+  },
+  "CreatedAt": {
+    "$date": "2025-10-09T08:27:56.019Z"
+  },
+  "UpdatedAt": {
+    "$date": "2025-10-09T08:27:56.019Z"
+  },
+  "Name": "Apparell",
+  "Slug": "apparell",
+  "Description": "Clothing, new fashion trend, culture and style",
+  "ParentId": null
 }]
